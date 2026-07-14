@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bongkar Pasang PC — Simulator Rakit Komputer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080a; --bg-2:#0c0e12;
+  --panel:#12151a; --panel-2:#171b21; --panel-3:#1c212a;
+  --stroke:#262b33; --stroke-soft:#1b1f26;
+  --case-1:#2c3037; --case-2:#15171c;
+  --pcb-1:#14171c; --pcb-2:#090a0c; --pcb-trace:rgba(96,224,206,.11); --pcb-pad:#1e232b;
+  --teal:#4fd8c4; --teal-dim:#2a7c70; --teal-glow:rgba(79,216,196,.5); --teal-soft:rgba(79,216,196,.12);
+  --copper:#d99a63; --copper-dim:#8a5a34;
+  --violet:#8b7cf6;
+  --gold:#e0b84a;
+  --text-hi:#f2f5f8; --text-mid:#a7b0bd; --text-low:#6b7280; --text-faint:#3d434d;
+  --r-card:16px;
+  font-family:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text-hi);}
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(79,216,196,.09), transparent 55%),
+    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(139,124,246,.07), transparent 50%),
+    var(--bg);
+  padding:28px 16px 70px;
+}
+.wrap{max-width:1240px;margin:0 auto;}
+
+.eyebrow{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin:0 0 8px;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal-glow);}
+h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacing:-.015em;}
+.sub{color:var(--text-mid);font-size:15px;line-height:1.65;max-width:680px;margin:0;}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 6px;align-items:center;}
+.btn{font-family:'Space Mono',monospace;font-size:12.5px;letter-spacing:.02em;background:var(--panel);color:var(--text-hi);border:1px solid var(--stroke);border-radius:10px;padding:11px 18px;cursor:pointer;transition:.2s;}
+.btn:hover{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft);}
+.btn.primary{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
+.btn.primary:hover{box-shadow:0 0 0 3px rgba(79,216,196,.22);}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 2px 22px;font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
+.legend span{display:inline-flex;align-items:center;gap:7px;}
+.legend i{width:13px;height:13px;border-radius:4px;display:inline-block;}
+.legend .i-removable{background:var(--panel-3);border:1.5px solid var(--teal-dim);}
+.legend .i-fixed{background:transparent;border:1.5px dashed var(--text-faint);}
+
+.workspace{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
+.case-col{flex:1 1 620px;min-width:300px;}
+.tray-col{flex:1 1 380px;min-width:300px;}
+
+.case-canvas-wrapper{
+  position:relative;width:100%;border-radius:22px;overflow:visible;
+  background:linear-gradient(180deg,#0e1013,#08090b);
+  border:1px solid var(--stroke-soft);
+  padding:36px 0 0;
+  box-shadow:0 40px 80px -30px rgba(0,0,0,.6);
+}
+.case-canvas{position:relative;width:720px;height:890px;transform-origin:top left;margin:0 auto;}
+
+.case-shell{position:absolute;border-radius:16px;
+  background:linear-gradient(145deg,var(--case-1),var(--case-2));
+  border:1px solid #3a3f47;
+  box-shadow:inset 0 0 70px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.04);
+}
+.case-shell::before{content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
+  background:repeating-linear-gradient(102deg, rgba(255,255,255,.018) 0 2px, transparent 2px 6px);}
+.case-shell::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;border-radius:16px 16px 0 0;
+  background:linear-gradient(90deg,transparent,var(--teal) 20%,var(--teal) 80%,transparent);opacity:.55;}
+.screw{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8a8f97,#2a2d32 72%);box-shadow:inset 0 0 2px #000;}
+.case-tag{position:absolute;left:22px;bottom:16px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#4b5058;text-transform:uppercase;}
+
+.ghost{position:absolute;border:1.5px dashed #363c45;border-radius:7px;opacity:.5;transition:.4s;pointer-events:none;}
+.ghost.active{border-color:var(--teal);opacity:1;box-shadow:0 0 20px rgba(79,216,196,.3), inset 0 0 20px rgba(79,216,196,.06);}
+.ghost-label{position:absolute;font-family:'Space Mono',monospace;font-size:9px;color:#4b515b;letter-spacing:.07em;text-transform:uppercase;pointer-events:none;}
+
+.part-slot{position:absolute;cursor:grab;transform-origin:center center;
+  transition:transform .62s cubic-bezier(.32,1.4,.44,1), filter .3s;
+  transform:translate(0,0) scale(1) rotate(0deg);}
+.part-slot:active{cursor:grabbing;}
+.part-slot.pulled{z-index:120;filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px var(--teal-glow));}
+.part-slot.pulled{transform:translate(var(--ex),var(--ey)) scale(var(--es,1.1)) rotate(var(--er,0deg));}
+.part-visual{width:100%;height:100%;transition:transform .25s ease;}
+.part-slot:hover .part-visual{transform:translateY(-3px) scale(1.02);}
+.part-tag{position:absolute;top:-23px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:10px;color:var(--teal);
+  background:rgba(8,10,12,.9);padding:3px 8px;border-radius:6px;white-space:nowrap;opacity:0;transition:.22s;border:1px solid rgba(79,216,196,.35);pointer-events:none;}
+.part-slot.pulled .part-tag,.part-slot:hover .part-tag{opacity:1;top:-27px;}
+
+.sheen{position:relative;overflow:hidden;}
+.sheen::after{content:'';position:absolute;top:-40%;left:-25%;width:55%;height:180%;pointer-events:none;
+  background:linear-gradient(78deg, transparent 32%, rgba(255,255,255,.09) 48%, rgba(255,255,255,.02) 56%, transparent 68%);}
+
+.hotspot{position:absolute;cursor:help;border-radius:6px;border:1.5px dashed #454c57;background:rgba(255,255,255,.02);transition:.25s;}
+.hotspot:hover{border-color:var(--copper);background:rgba(217,154,99,.08);}
+.hotspot-badge{position:absolute;top:-8px;right:-8px;width:17px;height:17px;border-radius:50%;background:var(--panel);border:1.5px solid var(--copper);
+  color:var(--copper);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.hotspot .ping{position:absolute;inset:-6px;border-radius:9px;border:2px solid var(--copper);opacity:0;pointer-events:none;}
+.hotspot.pinged .ping{animation:pingPulse .65s ease-out;}
+@keyframes pingPulse{0%{opacity:.85;transform:scale(.92);}100%{opacity:0;transform:scale(1.3);}}
+
+.v-board{width:100%;height:100%;border-radius:9px;position:relative;overflow:hidden;
+  background:linear-gradient(160deg,var(--pcb-1),var(--pcb-2));
+  border:1.5px solid #05070a;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);}
+.v-board::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg, var(--pcb-trace) 0 1.4px, transparent 1.4px 24px),
+             repeating-linear-gradient(0deg, var(--pcb-trace) 0 1.4px, transparent 1.4px 24px);}
+.v-pad{position:absolute;background:var(--pcb-pad);border-radius:2px;border:1px solid #000;}
+.v-io{position:absolute;left:5px;top:5px;width:24px;height:120px;background:#08090b;border-radius:3px;
+  background-image:repeating-linear-gradient(0deg,#2f353e 0 3px,#08090b 3px 13px);}
+.v-screwhole{position:absolute;width:8px;height:8px;border-radius:50%;background:#06070a;border:1px solid #2b3038;}
+
+.v-cpu{width:100%;height:100%;border-radius:4px;position:relative;
+  background:linear-gradient(135deg,#eef1f4,#aab1ba 60%,#8b929c);border:1px solid #4c515a;box-shadow:0 5px 12px rgba(0,0,0,.45);}
+.v-cpu::after{content:'';position:absolute;top:5px;left:5px;width:7px;height:7px;background:var(--gold);border-radius:1px;transform:rotate(45deg);}
+.v-cpu .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;color:#5a5f66;letter-spacing:.04em;}
+
+.v-cooler{width:100%;height:100%;border-radius:9px;position:relative;background:linear-gradient(180deg,#363b42,#16181c);border:1px solid #050506;box-shadow:0 12px 20px rgba(0,0,0,.5);}
+.v-heatpipe{position:absolute;width:5px;top:8px;bottom:8px;border-radius:3px;background:linear-gradient(90deg,#a85c2c,#f0b487 45%,#a85c2c);}
+.v-fan{position:absolute;left:50%;top:50%;width:80%;height:80%;border-radius:50%;transform:translate(-50%,-50%);border:2px solid #050506;
+  background:radial-gradient(circle at 50% 50%, #1a1c1f 0 15%, transparent 16%),
+    conic-gradient(from 0deg,#3d434b 0deg 24deg,#17191d 24deg 46deg,#3d434b 46deg 70deg,#17191d 70deg 92deg,
+      #3d434b 92deg 116deg,#17191d 116deg 138deg,#3d434b 138deg 162deg,#17191d 162deg 184deg,
+      #3d434b 184deg 208deg,#17191d 208deg 230deg,#3d434b 230deg 254deg,#17191d 254deg 276deg,
+      #3d434b 276deg 300deg,#17191d 300deg 322deg,#3d434b 322deg 346deg,#17191d 346deg 360deg);
+  animation:spin 2.4s linear infinite;}
+.v-fan::after{content:'';position:absolute;inset:38%;border-radius:50%;background:radial-gradient(circle,#2c2f34,#0d0e10);border:1px solid #000;}
+.v-ring{position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid var(--teal);opacity:.4;filter:blur(.4px);}
+.part-slot:hover .v-fan,.part-slot.pulled .v-fan{animation-duration:.6s;}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+
+.v-ram{width:100%;height:100%;border-radius:3px;position:relative;background:linear-gradient(180deg,#1b1e23,#0c0d10);border:1px solid #000;box-shadow:0 7px 14px rgba(0,0,0,.4);}
+.v-ram-top{position:absolute;top:0;left:0;right:0;height:16%;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--teal),var(--teal-dim));box-shadow:0 0 10px var(--teal-glow);}
+.v-ram-pins{position:absolute;bottom:0;left:2px;right:2px;height:12px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 1.4px,#1b1e23 1.4px 3px);}
+
+.v-cmos{width:100%;height:100%;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#e7e2d8,#8f8b7f 55%,#5c584e);border:1px solid #3a3733;box-shadow:0 4px 8px rgba(0,0,0,.4);}
+.v-cmos::after{content:'CR2032';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:5.6px;color:#4a473f;letter-spacing:.02em;}
+
+.v-m2{width:100%;height:100%;position:relative;}
+.v-m2-board{position:absolute;left:0;right:14%;top:22%;bottom:22%;background:linear-gradient(160deg,#173a52,#0c2033);border-radius:2px;border:1px solid #000;}
+.v-m2-hs{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(160deg,#3a3f46,#1a1c20);border-radius:3px;border:1px solid #000;box-shadow:0 4px 8px rgba(0,0,0,.35);}
+.v-m2-hs::before{content:'';position:absolute;inset:3px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px, transparent 1px 5px);}
+
+.v-hdd{width:100%;height:100%;border-radius:4px;position:relative;background:repeating-linear-gradient(102deg,#ced3da 0 2px,#9aa1ab 2px 4px);border:1px solid #4a4f57;box-shadow:0 9px 16px rgba(0,0,0,.45);}
+.v-hdd-sticker{position:absolute;left:9px;top:9px;right:9px;bottom:24px;background:linear-gradient(160deg,#1c3a63,#122540);border-radius:2px;color:#bcd7f7;font-family:'Space Mono',monospace;font-size:8.5px;padding:6px;line-height:1.5;}
+.v-hdd-conn{position:absolute;right:0;bottom:0;top:0;width:13px;background:#0c0d0f;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;padding:4px 3px;}
+.v-hdd-conn span{height:7px;background:var(--gold);border-radius:1px;}
+
+.v-ssd{width:100%;height:100%;border-radius:4px;position:relative;background:linear-gradient(160deg,#1c1f25,#0d0f12);border:1px solid #000;box-shadow:0 6px 13px rgba(0,0,0,.35);}
+.v-ssd-strip{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal),transparent 85%);border-radius:4px 4px 0 0;}
+.v-ssd .v-pad{position:absolute;}
+.v-ssd-edge{position:absolute;left:8px;right:8px;bottom:-4px;height:7px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 3px,#0d0f12 3px 6px);}
+
+.v-gpu{width:100%;height:100%;border-radius:7px;position:relative;background:linear-gradient(180deg,#2c3036,#131519);border:1px solid #000;box-shadow:0 14px 22px rgba(0,0,0,.5);}
+.v-gpu-strip{position:absolute;top:0;left:8%;right:8%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--violet),var(--teal),transparent);}
+.v-gpu-fan{position:absolute;top:18%;width:38%;aspect-ratio:1;border-radius:50%;border:2px solid #050506;
+  background:radial-gradient(circle,#1c1e21 0 22%,transparent 23%),repeating-conic-gradient(#3d434b 0deg 15deg,#17191d 15deg 30deg);
+  animation:spin 3.2s linear infinite;}
+.v-gpu-edge{position:absolute;bottom:-6px;left:8%;right:8%;height:9px;border-radius:0 0 3px 3px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 4px,#131519 4px 8px);}
+.v-gpu-back{position:absolute;left:0;right:0;bottom:0;top:60%;background:repeating-linear-gradient(100deg,#2c3036 0 3px,#1c1f24 3px 6px);border-radius:0 0 7px 7px;opacity:.6;}
+
+.v-psu{width:100%;height:100%;border-radius:7px;position:relative;background:linear-gradient(160deg,#282c33,#111318);border:1px solid #000;box-shadow:0 14px 22px rgba(0,0,0,.45);}
+.v-psu-fan{position:absolute;left:6%;top:16%;width:44%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#0d0e10 0 3px,#2c2f34 3px 6px);border:2px solid #050506;}
+.v-psu-label{position:absolute;right:6%;top:18%;bottom:18%;width:42%;border-radius:3px;background:linear-gradient(160deg,#f1eee2,#dcd8c8);color:#141414;font-family:'Space Mono',monospace;font-size:8.5px;padding:7px;line-height:1.55;}
+.v-psu-ports{position:absolute;left:6%;bottom:9%;display:flex;gap:5px;}
+.v-psu-ports span{width:8px;height:8px;background:#000;border-radius:1px;display:block;}
+
+.v-casefan{width:100%;height:100%;border-radius:9px;position:relative;background:linear-gradient(160deg,#282c32,#131518);border:1px solid #000;box-shadow:0 8px 16px rgba(0,0,0,.4);}
+.v-casefan .v-fan{width:82%;height:82%;}
+.v-casefan .screw{opacity:.85;}
+
+.v-filter{width:100%;height:100%;border-radius:5px;position:relative;background:#0e1013;border:1px solid #2a2f37;overflow:hidden;box-shadow:0 6px 12px rgba(0,0,0,.35);}
+.v-filter::before{content:'';position:absolute;inset:0;background:
+  repeating-linear-gradient(45deg,#2a3038 0 1.6px,transparent 1.6px 7px),
+  repeating-linear-gradient(-45deg,#2a3038 0 1.6px,transparent 1.6px 7px);}
+.v-filter-frame{position:absolute;inset:0;border-radius:5px;border:3px solid #33383f;pointer-events:none;}
+
+.cage{position:absolute;border:1.5px dashed #363c45;border-radius:7px;opacity:.4;pointer-events:none;}
+
+.cable-svg{position:absolute;left:0;top:0;width:720px;height:890px;z-index:9;overflow:visible;}
+.cable-g{cursor:grab;transition:transform .62s cubic-bezier(.32,1.4,.44,1);}
+.cable-g:active{cursor:grabbing;}
+.cable-g.pulled{transform:translate(var(--ex),var(--ey)) rotate(var(--er,0deg));z-index:120;}
+.cable-installed{transition:opacity .3s ease;}
+.cable-g.pulled .cable-installed{opacity:0;}
+.cable-coiled{opacity:0;transition:opacity .3s ease .1s;}
+.cable-g.pulled .cable-coiled{opacity:1;}
+.cable-line{fill:none;stroke:#0c0d0f;stroke-width:8;stroke-linecap:round;}
+.cable-line.sata{stroke:#12211a;}
+.cable-line.eps{stroke:#0c0d0f;}
+.cable-core{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-dasharray:1 8;opacity:.7;}
+.cable-plug{fill:#0a0b0d;stroke:#000;stroke-width:1;}
+.cable-pin{fill:var(--gold);}
+.cable-tagbg{fill:rgba(8,10,12,.92);stroke:rgba(79,216,196,.35);stroke-width:1;}
+.cable-tagtxt{fill:var(--teal);font-family:'Space Mono',monospace;font-size:9px;opacity:0;transition:opacity .2s;}
+.cable-g.pulled .cable-tagtxt,.cable-g:hover .cable-tagtxt{opacity:1;}
+.cable-g.pulled .cable-tagbg,.cable-g:hover .cable-tagbg{opacity:1;}
+.cable-tagbg{opacity:0;transition:opacity .2s;}
+
+.tray-panel{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:18px 16px 20px;max-height:890px;overflow-y:auto;}
+.tray-panel::-webkit-scrollbar{width:8px;}
+.tray-panel::-webkit-scrollbar-thumb{background:#2a2f37;border-radius:8px;}
+.tray-panel::-webkit-scrollbar-track{background:transparent;}
+.tray-section{margin-bottom:20px;}
+.tray-section:last-of-type{margin-bottom:8px;}
+.tray-head{display:flex;align-items:baseline;justify-content:space-between;margin:2px 4px 10px;}
+.tray-head h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--copper);font-family:'Space Mono',monospace;font-weight:700;}
+.tray-head span{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--text-faint);}
+.tray-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px;}
+.tray-card{position:relative;background:var(--panel-2);border:1px solid var(--stroke);border-radius:11px;padding:10px 8px 9px;cursor:pointer;transition:.2s;text-align:center;}
+.tray-card:hover{border-color:var(--teal-dim);transform:translateY(-2px);}
+.tray-card.active{border-color:var(--teal);background:var(--panel-3);box-shadow:0 0 0 1px var(--teal) inset, 0 6px 16px -6px var(--teal-glow);}
+.tray-card svg{width:26px;height:26px;color:var(--text-mid);margin-bottom:6px;transition:.2s;}
+.tray-card.active svg{color:var(--teal);}
+.tray-card .lbl{display:block;font-size:10.5px;line-height:1.3;color:var(--text-mid);font-weight:600;}
+.tray-card.active .lbl{color:var(--text-hi);}
+.tray-card .dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--stroke);}
+.tray-card.active .dot{background:var(--teal);box-shadow:0 0 6px var(--teal-glow);}
+
+.fixed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.fixed-chip{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-mid);background:transparent;border:1.5px dashed var(--stroke);border-radius:20px;padding:8px 13px;cursor:help;transition:.2s;}
+.fixed-chip:hover{color:var(--copper);border-color:var(--copper-dim);}
+
+.info{margin-top:22px;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:24px 26px;min-height:170px;}
+.info .empty{color:var(--text-low);font-size:14px;font-family:'Space Mono',monospace;}
+.info h2{margin:0 0 4px;font-size:22px;font-weight:800;}
+.info .kicker{font-family:'Space Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.info .kicker.fixed-kicker{color:var(--copper);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px;}
+@media (max-width:640px){.info-grid{grid-template-columns:1fr;}}
+.info-grid h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--copper);font-family:'Space Mono',monospace;}
+.info-grid p{margin:0;font-size:14.5px;line-height:1.7;color:#dbe0e6;}
+
+footer{margin-top:34px;color:var(--text-faint);font-size:12px;text-align:center;font-family:'Space Mono',monospace;}
+
+@media (max-width:900px){
+  .case-canvas-wrapper{padding-top:28px;}
+  .tray-panel{max-height:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Simulator Perakitan · Hardware Explorer</p>
+    <h1>Bongkar Pasang PC</h1>
+    <p class="sub">Tarik komponen langsung dari casing untuk melepasnya, atau pilih dari panel komponen di sebelah kanan. Tiap komponen menampilkan fungsi dan cara kerjanya secara lengkap.</p>
+  </header>
+
+  <div class="toolbar">
+    <button class="btn primary" id="explodeAll">⛶ Bongkar Semua</button>
+    <button class="btn" id="assembleAll">⤓ Pasang Semua</button>
+  </div>
+  <div class="legend">
+    <span><i class="i-removable"></i> Bisa dilepas — klik untuk membongkar</span>
+    <span><i class="i-fixed"></i> Menyatu di board — klik untuk info</span>
+  </div>
+
+  <div class="workspace">
+    <div class="case-col">
+      <div class="case-canvas-wrapper">
+        <div class="case-canvas" id="caseCanvas"></div>
+      </div>
+    </div>
+    <div class="tray-col">
+      <div class="tray-panel" id="trayPanel"></div>
+    </div>
+  </div>
+
+  <div class="info" id="info"><p class="empty">// Pilih komponen untuk melihat penjelasannya di sini</p></div>
+
+  <footer>Seret imajinasi Anda — komponen tidak akan benar-benar rusak. 🔧</footer>
+</div>
+
+<script>
+const PARTS = [
+  { key:'motherboard', type:'board', cat:'brain', x:70,y:60,w:400,h:560, ex:-60,ey:35,er:-3,es:1.0, z:2,
+    name:'Motherboard',
+    fungsi:'Motherboard adalah papan sirkuit utama tempat semua komponen PC saling terhubung — CPU, RAM, penyimpanan, kartu grafis, hingga panel depan casing.',
+    cara:'Jalur tembaga (trace) di dalam PCB menyalurkan listrik dan data antar komponen melalui chipset, yang mengatur lalu lintas komunikasi agar CPU, RAM, dan perangkat lain bisa bekerja bersamaan tanpa bentrok.' },
+  { key:'cpu', type:'cpu', cat:'brain', x:190,y:100,w:64,h:64, ex:-55,ey:-65,er:0,es:1.7, z:4,
+    name:'Processor (CPU)',
+    fungsi:'CPU adalah otak komputer yang mengeksekusi instruksi program — melakukan perhitungan, pengambilan keputusan logika, dan mengoordinasikan kerja komponen lain.',
+    cara:'CPU membaca instruksi dari RAM, memprosesnya lewat miliaran transistor dalam siklus clock per detik, lalu mengirim hasilnya kembali. Karena bekerja sangat cepat, CPU menghasilkan panas dan butuh pendingin aktif.' },
+  { key:'cpu_cooler', type:'cooler', cat:'brain', x:170,y:72,w:110,h:150, ex:205,ey:-95,er:8,es:1.0, z:10,
+    name:'Kipas & Heatsink CPU',
+    fungsi:'Komponen ini menjaga suhu CPU tetap stabil dengan membuang panas yang dihasilkan saat prosesor bekerja, mencegah performa turun (thermal throttling) atau kerusakan.',
+    cara:'Heatpipe tembaga menyerap panas dari permukaan CPU lalu menyalurkannya ke sirip-sirip logam; kipas kemudian meniupkan udara melewati sirip tersebut untuk melepaskan panas ke udara sekitar.' },
+  { key:'ram1', type:'ram', cat:'brain', x:326,y:95,w:20,h:200, ex:35,ey:-120,er:-4,es:1.15, z:6,
+    name:'RAM — Slot A2',
+    fungsi:'RAM menyimpan data dan instruksi yang sedang aktif digunakan CPU, memungkinkan akses jauh lebih cepat dibanding penyimpanan permanen seperti HDD/SSD.',
+    cara:'Saat program dijalankan, datanya dipindah sementara dari penyimpanan ke RAM dan dibaca-tulis CPU dalam hitungan nanodetik. Modul ini dipasang di slot kedua (bukan pertama) agar mode dual-channel aktif bersama pasangannya.' },
+  { key:'ram2', type:'ram', cat:'brain', x:378,y:95,w:20,h:200, ex:95,ey:-95,er:5,es:1.15, z:6,
+    name:'RAM — Slot B2',
+    fungsi:'Memasang dua keping RAM sekaligus (dual-channel) membuat CPU bisa mengakses dua jalur memori bersamaan, meningkatkan bandwidth dibanding satu keping saja.',
+    cara:'Kedua modul bekerja paralel: satu permintaan data dipecah dan diproses lewat dua kanal secara bersamaan, sehingga transfer data ke CPU jadi lebih cepat.' },
+  { key:'cmos_battery', type:'cmos', cat:'brain', x:400,y:400,w:28,h:28, ex:75,ey:-25,er:0,es:2.4, z:5,
+    name:'Baterai CMOS',
+    fungsi:'Baterai kecil ini menjaga pengaturan BIOS — tanggal, waktu, konfigurasi hardware — tetap tersimpan meski komputer mati total dan dicabut dari listrik.',
+    cara:'Baterai koin CR2032 mengalirkan daya sangat kecil namun terus-menerus ke chip CMOS di motherboard, sehingga memori pengaturan tidak ikut hilang saat daya utama terputus.' },
+
+  { key:'m2_ssd', type:'m2', cat:'storage', x:215,y:465,w:105,h:33, ex:-70,ey:55,er:-3,es:1.3, z:5,
+    name:'SSD M.2 (NVMe)',
+    fungsi:'SSD M.2 adalah penyimpanan super cepat yang tertancap langsung ke motherboard tanpa kabel, umumnya dipakai sebagai drive utama sistem operasi.',
+    cara:'Modul ini terhubung lewat jalur PCI Express langsung ke CPU/chipset, sehingga transfer data berkali-kali lipat lebih cepat dibanding SATA karena tidak dibatasi bandwidth antarmuka SATA yang lebih tua.' },
+  { key:'hdd', type:'hdd', cat:'storage', x:500,y:160,w:150,h:90, ex:95,ey:-25,er:0,es:1.05, z:5,
+    name:'Hard Disk Drive (HDD)',
+    fungsi:'HDD adalah penyimpanan permanen berkapasitas besar dengan harga per-gigabyte murah, cocok untuk menyimpan file dalam jumlah banyak.',
+    cara:'Di dalamnya ada piringan magnetik yang berputar puluhan ribu RPM; sebuah lengan dengan head magnetik bergerak membaca dan menulis data pada piringan tersebut secara fisik.' },
+  { key:'ssd', type:'ssd', cat:'storage', x:510,y:265,w:120,h:44, ex:105,ey:25,er:0,es:1.2, z:5,
+    name:'SSD SATA 2.5"',
+    fungsi:'SSD SATA menyimpan data secara permanen jauh lebih cepat dari HDD karena tanpa komponen bergerak, mempercepat booting dan loading aplikasi.',
+    cara:'Data disimpan dalam chip flash NAND dan diakses langsung secara elektronik, tanpa piringan berputar atau head mekanis — lebih cepat dan lebih tahan guncangan dibanding HDD.' },
+
+  { key:'gpu', type:'gpu', cat:'power', x:85,y:608,w:270,h:92, ex:-95,ey:55,er:-2,es:1.0, z:5,
+    name:'Kartu Grafis (GPU)',
+    fungsi:'GPU mengolah dan merender gambar, video, serta efek 3D — penting untuk gaming, desain grafis, editing video, dan machine learning.',
+    cara:'Berbeda dari CPU yang punya sedikit inti serba-guna, GPU memiliki ribuan inti kecil yang bekerja paralel, sangat efisien untuk menghitung jutaan piksel dan polygon dalam waktu bersamaan.' },
+  { key:'psu', type:'psu', cat:'power', x:70,y:712,w:260,h:100, ex:45,ey:95,er:0,es:1.0, z:5,
+    name:'Power Supply (PSU)',
+    fungsi:'PSU mengubah arus listrik AC dari stopkontak menjadi arus DC bertegangan rendah dan stabil yang dibutuhkan seluruh komponen PC.',
+    cara:'Trafo dan rangkaian di dalam PSU menurunkan tegangan lalu menyearahkan arus AC menjadi DC (umumnya jalur 12V, 5V, 3.3V), kemudian mendistribusikannya lewat kabel ke motherboard, penyimpanan, dan GPU.' },
+
+  { key:'case_fan_front1', type:'fan', cat:'cooling', x:48,y:240,w:92,h:90, ex:-75,ey:-15,er:-8,es:1.05, z:7,
+    name:'Kipas Depan 1 (Intake)',
+    fungsi:'Kipas depan menghisap udara sejuk dari luar casing masuk ke dalam, menjadi pasokan udara utama untuk mendinginkan seluruh komponen.',
+    cara:'Bilah kipas berputar mendorong udara searah aliran yang tercetak di bodinya; posisinya di depan membuat udara segar langsung melewati drive menuju motherboard.' },
+  { key:'case_fan_front2', type:'fan', cat:'cooling', x:48,y:340,w:92,h:90, ex:-75,ey:25,er:8,es:1.05, z:7,
+    name:'Kipas Depan 2 (Intake)',
+    fungsi:'Kipas kedua menambah volume udara masuk, terutama membantu mendinginkan drive bay dan area bawah motherboard secara lebih merata.',
+    cara:'Bekerja paralel dengan kipas depan pertama, menciptakan aliran udara yang lebih besar dan merata dibanding hanya mengandalkan satu kipas saja.' },
+  { key:'case_fan_rear', type:'fan', cat:'cooling', x:580,y:60,w:82,h:82, ex:70,ey:-45,er:10,es:1.05, z:8,
+    name:'Kipas Belakang (Exhaust)',
+    fungsi:'Kipas belakang membuang udara panas yang sudah menyerap panas dari CPU dan GPU keluar dari casing, melengkapi siklus sirkulasi udara.',
+    cara:'Ditempatkan sejalur dengan aliran udara alami (udara panas naik dan mengalir ke belakang), kipas ini bekerja sama dengan kipas depan menciptakan tekanan udara positif agar debu lebih sulit menyelinap dari celah lain.' },
+  { key:'dust_filter', type:'filter', cat:'cooling', x:70,y:818,w:260,h:20, ex:20,ey:48,er:0,es:1.1, z:5,
+    name:'Filter Debu',
+    fungsi:'Filter mesh ini menyaring debu sebelum udara masuk ke casing, menjaga komponen tetap bersih dan aliran udara tetap optimal dalam jangka panjang.',
+    cara:'Anyaman mesh halus menahan partikel debu berukuran besar sementara udara tetap bisa lewat; filter ini bisa dilepas-pasang untuk dibersihkan secara berkala.' },
+
+  { key:'cable_24pin', type:'cable', cat:'cables', ax:200,ay:650, ex:130,ey:-70,er:0,
+    name:'Kabel 24-Pin ATX',
+    fungsi:'Kabel ini adalah jalur daya utama dari PSU ke motherboard, menyalakan seluruh papan sirkuit beserta komponen yang terpasang di atasnya.',
+    cara:'24 pin membawa beberapa jalur tegangan berbeda (12V, 5V, 3.3V) sekaligus; motherboard mendistribusikannya ke VRM yang menyesuaikan tegangan untuk CPU, RAM, dan chipset.' },
+  { key:'cable_eps', type:'cable', cat:'cables', ax:300,ay:600, ex:75,ey:-95,er:0,
+    name:'Kabel EPS 4+4 Pin (Daya CPU)',
+    fungsi:'Mengalirkan daya khusus dari PSU langsung ke area VRM di dekat CPU, terpisah dari jalur 24-pin karena CPU modern butuh arus besar dan stabil.',
+    cara:'Membawa jalur tegangan 12V berarus tinggi menuju VRM, yang kemudian menurunkannya menjadi tegangan rendah sesuai kebutuhan CPU. Konektornya berbentuk 4+4 pin agar kompatibel dengan motherboard kecil maupun besar.' },
+  { key:'cable_pcie', type:'cable', cat:'cables', ax:240,ay:660, ex:-45,ey:60,er:0,
+    name:'Kabel PCIe 6+2 Pin (Daya GPU)',
+    fungsi:'Kartu grafis kelas menengah ke atas butuh daya lebih dari yang bisa disuplai slot PCIe di motherboard saja, sehingga perlu kabel daya tambahan langsung dari PSU.',
+    cara:'Setiap konektor 6+2 pin mampu menyalurkan daya tambahan (umumnya hingga 150W per kabel); GPU berdaya tinggi bisa membutuhkan dua kabel ini atau lebih sekaligus.' },
+  { key:'cable_sata_power', type:'cable', cat:'cables', ax:140,ay:690, ex:135,ey:35,er:0,
+    name:'Kabel Daya SATA',
+    fungsi:'Menyalurkan daya dari PSU ke HDD maupun SSD 2.5" agar piringan atau chip di dalamnya bisa aktif dan beroperasi.',
+    cara:'Satu kabel daya SATA biasanya punya beberapa konektor berurutan sehingga bisa menyalakan lebih dari satu drive sekaligus dari satu jalur PSU yang sama.' },
+  { key:'cable_sata_data', type:'cable', cat:'cables', ax:430,ay:470, ex:110,ey:60,er:0,
+    name:'Kabel Data SATA',
+    fungsi:'Menghubungkan HDD/SSD ke motherboard agar data bisa dibaca dan ditulis sistem operasi — tanpa kabel ini, drive terpasang tapi tidak terdeteksi.',
+    cara:'Sinyal digital mengalir dua arah lewat kabel tipis ini antara controller SATA di chipset dan controller di dalam drive, dengan kecepatan hingga 6 Gbps pada SATA III.' },
+  { key:'cable_frontpanel', type:'cable', cat:'cables', ax:75,ay:480, ex:-60,ey:-45,er:0,
+    name:'Kabel Panel Depan',
+    fungsi:'Kumpulan kabel kecil ini menghubungkan tombol power, tombol reset, dan lampu indikator di casing ke motherboard.',
+    cara:'Tiap kabel kecil dipasang satu-satu ke pin header sesuai label di manual motherboard; tombol power misalnya hanya menghubungkan dua pin sesaat untuk memberi sinyal "nyalakan sistem".' },
+];
+
+const FIXED = [
+  { key:'chipset', x:215,y:395,w:75,h:53,
+    name:'Chipset (PCH)',
+    fungsi:'Chipset mengatur lalu lintas data antara CPU dan komponen lain seperti port USB, SATA, dan slot ekspansi — semacam "pengatur lalu lintas" di dalam motherboard.',
+    cara:'Chipset disolder permanen ke motherboard dan terhubung ke CPU lewat jalur khusus berkecepatan tinggi; ia menentukan fitur apa saja yang didukung, seperti jumlah port USB atau jalur PCIe tambahan.' },
+  { key:'vrm', x:112,y:85,w:76,h:55,
+    name:'VRM (Voltage Regulator Module)',
+    fungsi:'VRM mengubah tegangan 12V dari PSU menjadi tegangan rendah dan stabil yang dibutuhkan CPU agar bekerja dengan aman, biasanya di bawah 1.5V.',
+    cara:'Rangkaian MOSFET dan induktor di VRM menurunkan dan menghaluskan tegangan berkali-kali per detik; heatsink di atasnya membuang panas dari proses konversi ini, terutama saat CPU bekerja berat.' },
+  { key:'top_io', x:440,y:36,w:120,h:18,
+    name:'Panel I/O Depan',
+    fungsi:'Panel ini berisi tombol power, port USB, dan jack audio yang mudah dijangkau tanpa perlu menjangkau bagian belakang casing.',
+    cara:'Kabel-kabel kecil dari panel ini terhubung ke header USB dan front panel header di motherboard, meneruskan sinyal tombol tekan dan koneksi data USB ke sistem.' },
+];
+
+const CATS = {
+  brain:   { title:'Otak & Memori' },
+  storage: { title:'Penyimpanan' },
+  power:   { title:'Grafis & Daya' },
+  cooling: { title:'Pendinginan & Casing' },
+  cables:  { title:'Kabel-Kabel' },
+};
+
+const ICON = {
+  board:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><path d="M13 3v4M17 3v4M3 13h4M3 17h4"/>',
+  cpu:'<rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3"/>',
+  cooler:'<circle cx="12" cy="12" r="7"/><path d="M12 5c1.5 0 2 2 1 3M19 12c0 1.5-2 2-3 1M12 19c-1.5 0-2-2-1-3M5 12c0-1.5 2-2 3-1"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  ram:'<rect x="7" y="2" width="4" height="17" rx="1"/><rect x="13" y="2" width="4" height="17" rx="1"/><path d="M5 21h14" stroke-linecap="round"/>',
+  cmos:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/>',
+  m2:'<rect x="3" y="9" width="18" height="7" rx="1.5"/><path d="M6 9V7M10 9V7" stroke-linecap="round"/>',
+  hdd:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="9" cy="12" r="3.2"/><path d="M15 8h3M15 16h3" stroke-linecap="round"/>',
+  ssd:'<rect x="3" y="6" width="18" height="12" rx="1.5"/><rect x="7" y="10" width="4" height="4"/><rect x="13" y="10" width="4" height="4"/>',
+  gpu:'<rect x="2" y="7" width="20" height="11" rx="1.5"/><circle cx="8" cy="12.5" r="3"/><circle cx="16" cy="12.5" r="3"/><path d="M2 18v2M22 18v2" stroke-linecap="round"/>',
+  psu:'<rect x="3" y="4" width="18" height="16" rx="1.5"/><circle cx="9" cy="10" r="3.4"/><path d="M6 16h9M6 18h6" stroke-linecap="round"/>',
+  fan:'<circle cx="12" cy="12" r="9"/><path d="M12 12c0-3 2-6 5-6-1 3-1 6 0 8-3 1-5-1-5-2ZM12 12c0 3-2 6-5 6 1-3 1-6 0-8 3-1 5 1 5 2Z" fill="currentColor" stroke="none" opacity=".85"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+  filter:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 6v12M9.5 6v12M13 6v12M16.5 6v12" opacity=".6"/>',
+  cable:'<path d="M4 6c4 0 4 5 8 5s4-5 8-5M4 18c4 0 4-5 8-5s4 5 8 5" stroke-linecap="round"/><rect x="1.5" y="4" width="4" height="4" rx="1"/><rect x="18.5" y="4" width="4" height="4" rx="1"/>',
+};
+
+const RENDER = {
+  board:()=>'<div class="v-board sheen"><div class="v-io"></div>'+
+      '<div class="v-pad" style="left:340px;top:18px;width:52px;height:32px;"></div>'+
+      '<div class="v-pad" style="left:60px;top:520px;width:70px;height:16px;"></div>'+
+      '<div class="v-screwhole" style="left:14px;top:14px;"></div>'+
+      '<div class="v-screwhole" style="left:380px;top:14px;"></div>'+
+      '<div class="v-screwhole" style="left:14px;top:540px;"></div>'+
+      '<div class="v-screwhole" style="left:380px;top:540px;"></div></div>',
+  cpu:()=>'<div class="v-cpu"><span class="lbl">CPU</span></div>',
+  cooler:()=>'<div class="v-cooler sheen">'+
+      '<div class="v-heatpipe" style="left:16px;"></div>'+
+      '<div class="v-heatpipe" style="left:28px;"></div>'+
+      '<div class="v-heatpipe" style="right:16px;"></div>'+
+      '<div class="v-fan"></div><div class="v-ring"></div></div>',
+  ram:()=>'<div class="v-ram"><div class="v-ram-top"></div><div class="v-ram-pins"></div></div>',
+  cmos:()=>'<div class="v-cmos"></div>',
+  m2:()=>'<div class="v-m2"><div class="v-m2-board"></div><div class="v-m2-hs"></div></div>',
+  hdd:()=>'<div class="v-hdd"><div class="v-hdd-sticker">1&nbsp;TB<br>7200 RPM</div><div class="v-hdd-conn"><span></span><span></span></div></div>',
+  ssd:()=>'<div class="v-ssd sheen"><div class="v-ssd-strip"></div>'+
+      '<div class="v-pad" style="left:10px;top:14px;width:24px;height:18px;"></div>'+
+      '<div class="v-pad" style="left:42px;top:10px;width:14px;height:26px;"></div>'+
+      '<div class="v-pad" style="left:64px;top:10px;width:14px;height:26px;"></div>'+
+      '<div class="v-ssd-edge"></div></div>',
+  gpu:()=>'<div class="v-gpu sheen"><div class="v-gpu-strip"></div><div class="v-gpu-back"></div>'+
+      '<div class="v-gpu-fan" style="left:14%;"></div><div class="v-gpu-fan" style="left:56%;"></div>'+
+      '<div class="v-gpu-edge"></div></div>',
+  psu:()=>'<div class="v-psu sheen"><div class="v-psu-fan"></div><div class="v-psu-label">80+ BRONZE<br>650W ATX</div>'+
+      '<div class="v-psu-ports"><span></span><span></span><span></span><span></span></div></div>',
+  fan:()=>'<div class="v-casefan sheen">'+
+      '<div class="screw" style="left:4px;top:4px;"></div><div class="screw" style="right:4px;top:4px;"></div>'+
+      '<div class="screw" style="left:4px;bottom:4px;"></div><div class="screw" style="right:4px;bottom:4px;"></div>'+
+      '<div class="v-fan"></div></div>',
+  filter:()=>'<div class="v-filter"><div class="v-filter-frame"></div></div>',
+};
+
+const canvas = document.getElementById('caseCanvas');
+function addHTML(html){ canvas.insertAdjacentHTML('beforeend', html); }
+
+addHTML('<div class="case-shell" style="left:40px;top:30px;width:640px;height:820px;"></div>'+
+  '<div class="screw" style="left:52px;top:42px;"></div><div class="screw" style="left:668px;top:42px;"></div>'+
+  '<div class="screw" style="left:52px;top:838px;"></div><div class="screw" style="left:668px;top:838px;"></div>'+
+  '<div class="case-tag">ATX Mid Tower — Panel Samping Terbuka</div>');
+
+addHTML('<div class="ghost" style="left:300px;top:95px;width:20px;height:200px;"></div>'+
+  '<div class="ghost-label" style="left:284px;top:300px;">Slot Kosong</div>'+
+  '<div class="ghost" style="left:352px;top:95px;width:20px;height:200px;"></div>'+
+  '<div class="ghost-label" style="left:336px;top:300px;">Slot Kosong</div>');
+
+addHTML('<div class="cage" style="left:494px;top:154px;width:162px;height:102px;"></div>'+
+  '<div class="ghost-label" style="left:498px;top:142px;">Drive Bay 3.5"</div>'+
+  '<div class="cage" style="left:504px;top:259px;width:132px;height:56px;"></div>'+
+  '<div class="ghost-label" style="left:508px;top:326px;">Drive Bay 2.5"</div>');
+
+addHTML('<div style="position:absolute;left:440px;top:36px;width:120px;height:18px;border-radius:4px;'+
+    'background:linear-gradient(160deg,#2c3036,#131518);border:1px solid #000;display:flex;align-items:center;justify-content:space-evenly;z-index:3;">'+
+    '<div style="width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 5px var(--teal-glow);"></div>'+
+    '<div style="width:12px;height:5px;border-radius:1px;background:#555;"></div>'+
+    '<div style="width:12px;height:5px;border-radius:1px;background:#555;"></div>'+
+    '<div style="width:6px;height:6px;border-radius:50%;background:#444;"></div></div>');
+
+PARTS.filter(function(p){return p.type!=='cable';}).forEach(function(p){
+  addHTML('<div class="ghost" id="ghost-'+p.key+'" style="left:'+p.x+'px;top:'+p.y+'px;width:'+p.w+'px;height:'+p.h+'px;"></div>');
+  const inner = RENDER[p.type] ? RENDER[p.type](p) : '';
+  addHTML('<div class="part-slot" id="'+p.key+'" data-key="'+p.key+'" '+
+      'style="left:'+p.x+'px;top:'+p.y+'px;width:'+p.w+'px;height:'+p.h+'px;z-index:'+p.z+';--ex:'+p.ex+'px;--ey:'+p.ey+'px;--er:'+p.er+'deg;--es:'+p.es+';">'+
+      '<div class="part-tag">'+p.name+'</div>'+
+      '<div class="part-visual">'+inner+'</div></div>');
+});
+
+FIXED.forEach(function(f){
+  addHTML('<div class="hotspot" id="'+f.key+'" data-key="'+f.key+'" style="left:'+f.x+'px;top:'+f.y+'px;width:'+f.w+'px;height:'+f.h+'px;z-index:3;">'+
+      '<div class="hotspot-badge">i</div><div class="ping"></div></div>');
+});
+
+function cablePath(p){
+  const routes = {
+    cable_24pin:{d:'M180 712 C 260 550, 380 300, 452 195', plug:[440,175,24,20], cls:''},
+    cable_eps:{d:'M280 712 C 340 500, 380 200, 400 84', plug:[388,72,26,18], cls:'eps'},
+    cable_pcie:{d:'M220 712 C 260 670, 280 640, 300 610', plug:[286,600,26,16], cls:''},
+    cable_sata_power:{d:'M110 712 C 300 760, 550 400, 645 205', plug:[636,196,18,16], cls:'sata'},
+    cable_sata_data:{d:'M450 558 C 480 420, 490 300, 500 215', plug:[490,206,18,16], cls:'sata'},
+    cable_frontpanel:{d:'M110 570 C 80 450, 60 200, 60 68', plug:[50,58,18,16], cls:''},
+  };
+  return routes[p.key];
+}
+let svg = '<svg class="cable-svg" viewBox="0 0 720 890">';
+PARTS.filter(function(p){return p.type==='cable';}).forEach(function(p){
+  const r = cablePath(p);
+  svg += '<g class="cable-g" id="'+p.key+'" data-key="'+p.key+'" style="--ex:'+p.ex+'px;--ey:'+p.ey+'px;--er:'+p.er+'deg;">'+
+      '<g class="cable-installed">'+
+        '<path class="cable-line '+r.cls+'" d="'+r.d+'"/>'+
+        '<path class="cable-core" style="stroke:var(--teal)" d="'+r.d+'"/>'+
+        '<rect class="cable-plug" x="'+r.plug[0]+'" y="'+r.plug[1]+'" width="'+r.plug[2]+'" height="'+r.plug[3]+'" rx="2"/>'+
+      '</g>'+
+      '<g class="cable-coiled" transform="translate('+(p.ax-24)+','+(p.ay-14)+')">'+
+        '<path class="cable-line '+r.cls+'" d="M4 14 Q14 -2 24 14 Q34 30 44 14" style="stroke-width:6"/>'+
+        '<rect class="cable-plug" x="0" y="8" width="10" height="12" rx="2"/>'+
+      '</g>'+
+      '<rect class="cable-tagbg" x="'+(p.ax-46)+'" y="'+(p.ay-30)+'" width="92" height="18" rx="5"/>'+
+      '<text class="cable-tagtxt" x="'+p.ax+'" y="'+(p.ay-17)+'" text-anchor="middle">'+p.name+'</text>'+
+    '</g>';
+});
+svg += '</svg>';
+canvas.insertAdjacentHTML('beforeend', svg);
+
+const tray = document.getElementById('trayPanel');
+let trayHTML = '';
+Object.keys(CATS).forEach(function(catKey){
+  const items = PARTS.filter(function(p){return p.cat===catKey;});
+  trayHTML += '<div class="tray-section"><div class="tray-head"><h3>'+CATS[catKey].title+'</h3><span>'+items.length+' bagian</span></div><div class="tray-grid">';
+  items.forEach(function(p){
+    trayHTML += '<div class="tray-card" data-key="'+p.key+'" id="card-'+p.key+'">'+
+        '<span class="dot"></span>'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
+        '<span class="lbl">'+p.name+'</span></div>';
+  });
+  trayHTML += '</div></div>';
+});
+trayHTML += '<div class="tray-section"><div class="tray-head"><h3>Fitur Tetap di Board</h3><span>'+FIXED.length+' bagian</span></div><div class="fixed-row">';
+FIXED.forEach(function(f){ trayHTML += '<div class="fixed-chip" data-key="'+f.key+'" id="chip-'+f.key+'">'+f.name+'</div>'; });
+trayHTML += '</div></div>';
+tray.innerHTML = trayHTML;
+
+const state = {};
+PARTS.forEach(function(p){ state[p.key]=false; });
+
+function applyState(key){
+  const pulled = state[key];
+  const el = document.getElementById(key);
+  if(el) el.classList.toggle('pulled', pulled);
+  const ghost = document.getElementById('ghost-'+key);
+  if(ghost) ghost.classList.toggle('active', pulled);
+  const card = document.getElementById('card-'+key);
+  if(card) card.classList.toggle('active', pulled);
+}
+
+function showInfo(cfg, isFixed){
+  const info = document.getElementById('info');
+  info.innerHTML = '<p class="kicker '+(isFixed?'fixed-kicker':'')+'">'+(isFixed?'Fitur Tetap · Info':'Komponen Terpilih')+'</p>'+
+    '<h2>'+cfg.name+'</h2>'+
+    '<div class="info-grid">'+
+      '<div><h3>Fungsi</h3><p>'+cfg.fungsi+'</p></div>'+
+      '<div><h3>Cara Kerja</h3><p>'+cfg.cara+'</p></div>'+
+    '</div>';
+}
+
+const PARTS_BY_KEY = {};
+PARTS.forEach(function(p){ PARTS_BY_KEY[p.key]=p; });
+const FIXED_BY_KEY = {};
+FIXED.forEach(function(f){ FIXED_BY_KEY[f.key]=f; });
+
+function toggle(key){
+  state[key] = !state[key];
+  applyState(key);
+  showInfo(PARTS_BY_KEY[key], false);
+}
+
+function ping(key){
+  showInfo(FIXED_BY_KEY[key], true);
+  [document.getElementById(key), document.getElementById('chip-'+key)].forEach(function(el){
+    if(!el) return;
+    el.classList.remove('pinged'); void el.offsetWidth; el.classList.add('pinged');
+  });
+}
+
+PARTS.forEach(function(p){
+  const el = document.getElementById(p.key);
+  const card = document.getElementById('card-'+p.key);
+  if(el) el.addEventListener('click', function(){ toggle(p.key); });
+  if(card) card.addEventListener('click', function(){ toggle(p.key); });
+});
+FIXED.forEach(function(f){
+  const el = document.getElementById(f.key);
+  const chip = document.getElementById('chip-'+f.key);
+  if(el) el.addEventListener('click', function(){ ping(f.key); });
+  if(chip) chip.addEventListener('click', function(){ ping(f.key); });
+});
+
+document.getElementById('explodeAll').addEventListener('click', function(){
+  PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=true; applyState(p.key); }, i*26); });
+});
+document.getElementById('assembleAll').addEventListener('click', function(){
+  PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=false; applyState(p.key); }, i*26); });
+});
+
+function resizeCanvas(){
+  const wrapper = document.querySelector('.case-canvas-wrapper');
+  const available = wrapper.clientWidth;
+  const scale = Math.min(1, available/720);
+  canvas.style.transform = 'scale('+scale+')';
+  wrapper.style.height = (890*scale + 36) + 'px';
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+</script>
+</body>
+</html>
