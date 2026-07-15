@@ -17,6 +17,7 @@
   --copper:#d99a63; --copper-dim:#8a5a34;
   --violet:#8b7cf6;
   --gold:#e0b84a;
+  --danger:#ef6a5a;
   --text-hi:#f2f5f8; --text-mid:#a7b0bd; --text-low:#6b7280; --text-faint:#3d434d;
   --r-card:16px;
   font-family:'Inter',system-ui,sans-serif;
@@ -43,12 +44,50 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .btn:hover{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft);}
 .btn.primary{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
 .btn.primary:hover{box-shadow:0 0 0 3px rgba(79,216,196,.22);}
+.btn.tutorial-toggle-btn.active{border-color:var(--violet);color:#d9d3ff;box-shadow:0 0 0 3px rgba(139,124,246,.18);}
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 2px 22px;font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
 .legend span{display:inline-flex;align-items:center;gap:7px;}
 .legend i{width:13px;height:13px;border-radius:4px;display:inline-block;}
 .legend .i-removable{background:var(--panel-3);border:1.5px solid var(--teal-dim);}
 .legend .i-fixed{background:transparent;border:1.5px dashed var(--text-faint);}
 
+/* ---------- console (monitor + power + spec) ---------- */
+.console-section{display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 26px;align-items:stretch;}
+.monitor-wrap{flex:1 1 460px;min-width:280px;display:flex;flex-direction:column;align-items:center;}
+.monitor-frame{width:100%;max-width:600px;background:linear-gradient(160deg,#2a2e35,#141619);border-radius:14px;padding:14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.6);border:1px solid #383d45;}
+.monitor-glass{width:100%;aspect-ratio:16/9;background:#020304;border-radius:6px;border:2px solid #000;overflow:hidden;position:relative;padding:16px;font-family:'Space Mono',monospace;font-size:12.5px;line-height:1.75;color:var(--teal);box-shadow:inset 0 0 40px rgba(0,0,0,.8);}
+.monitor-glass.off{color:#333;}
+.monitor-glass.failed{color:var(--danger);}
+.monitor-stand{width:110px;height:16px;background:linear-gradient(160deg,#2a2e35,#16181c);margin:10px auto 0;border-radius:0 0 4px 4px;}
+.monitor-stand::after{content:'';display:block;width:170px;height:6px;background:#1a1c20;border-radius:3px;margin:6px auto 0;}
+.mon-line{margin-bottom:2px;}
+.mon-ok{color:var(--teal);} .mon-warn{color:var(--copper);} .mon-fail{color:var(--danger);}
+.mon-fail-block{margin-top:10px;padding:10px 12px;border:1px dashed var(--danger);border-radius:6px;background:rgba(239,106,90,.06);}
+.mon-standby{display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;letter-spacing:.15em;color:#2c2f33;}
+.dash-title{color:var(--text-hi);font-size:12px;margin-bottom:10px;letter-spacing:.08em;}
+.dash-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:11px;}
+.dash-row .lbl{width:80px;color:var(--text-mid);flex-shrink:0;}
+.bar{flex:1;height:8px;background:#111;border-radius:4px;overflow:hidden;border:1px solid #1e2024;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal));transition:width .8s ease;}
+.dash-row .val{width:70px;text-align:right;color:var(--text-hi);flex-shrink:0;}
+.mon-card h4{margin:0 0 6px;color:var(--text-hi);font-size:13px;}
+.mon-card p{margin:0;color:var(--text-mid);font-size:11px;line-height:1.65;}
+
+.console-controls{flex:1 1 260px;min-width:240px;display:flex;flex-direction:column;gap:14px;}
+.power-btn{display:flex;align-items:center;gap:10px;justify-content:center;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;letter-spacing:.05em;
+  padding:16px;border-radius:12px;border:1px solid var(--stroke);background:var(--panel);color:var(--text-hi);cursor:pointer;transition:.2s;}
+.power-btn:hover{border-color:var(--teal);}
+.power-btn.is-on{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
+.power-dot{width:11px;height:11px;border-radius:50%;background:#3a3f46;transition:.3s;}
+.power-btn.is-on .power-dot{background:var(--teal);box-shadow:0 0 10px var(--teal-glow);}
+
+.spec-card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;}
+.spec-card h3{margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--copper);font-family:'Space Mono',monospace;}
+.spec-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--stroke-soft);color:var(--text-mid);}
+.spec-row:last-child{border-bottom:none;}
+.spec-row b{color:var(--text-hi);font-weight:700;}
+
+/* ---------- workspace: case column + tray column ---------- */
 .workspace{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
 .case-col{flex:1 1 620px;min-width:300px;}
 .tray-col{flex:1 1 380px;min-width:300px;}
@@ -84,7 +123,7 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .part-slot:active{cursor:grabbing;}
 .part-slot.pulled{z-index:120;filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px var(--teal-glow));}
 .part-slot.pulled{transform:translate(var(--ex),var(--ey)) scale(var(--es,1.1)) rotate(var(--er,0deg));}
-.part-visual{width:100%;height:100%;transition:transform .25s ease;}
+.part-visual{width:100%;height:100%;transition:transform .25s ease;position:relative;}
 .part-slot:hover .part-visual{transform:translateY(-3px) scale(1.02);}
 .part-tag{position:absolute;top:-23px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:10px;color:var(--teal);
   background:rgba(8,10,12,.9);padding:3px 8px;border-radius:6px;white-space:nowrap;opacity:0;transition:.22s;border:1px solid rgba(79,216,196,.35);pointer-events:none;}
@@ -118,6 +157,8 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
   background:linear-gradient(135deg,#eef1f4,#aab1ba 60%,#8b929c);border:1px solid #4c515a;box-shadow:0 5px 12px rgba(0,0,0,.45);}
 .v-cpu::after{content:'';position:absolute;top:5px;left:5px;width:7px;height:7px;background:var(--gold);border-radius:1px;transform:rotate(45deg);}
 .v-cpu .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;color:#5a5f66;letter-spacing:.04em;}
+.has-paste::before{content:'';position:absolute;left:22%;top:22%;width:56%;height:56%;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#aaa,#6b6b6b 60%,#4a4a4a);opacity:.92;z-index:2;}
 
 .v-cooler{width:100%;height:100%;border-radius:9px;position:relative;background:linear-gradient(180deg,#363b42,#16181c);border:1px solid #050506;box-shadow:0 12px 20px rgba(0,0,0,.5);}
 .v-heatpipe{position:absolute;width:5px;top:8px;bottom:8px;border-radius:3px;background:linear-gradient(90deg,#a85c2c,#f0b487 45%,#a85c2c);}
@@ -129,7 +170,7 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
       #3d434b 276deg 300deg,#17191d 300deg 322deg,#3d434b 322deg 346deg,#17191d 346deg 360deg);
   animation:spin 2.4s linear infinite;}
 .v-fan::after{content:'';position:absolute;inset:38%;border-radius:50%;background:radial-gradient(circle,#2c2f34,#0d0e10);border:1px solid #000;}
-.v-ring{position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid var(--teal);opacity:.4;filter:blur(.4px);}
+.v-ring{position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid var(--teal);opacity:.4;}
 .part-slot:hover .v-fan,.part-slot.pulled .v-fan{animation-duration:.6s;}
 @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}
 
@@ -152,7 +193,6 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 
 .v-ssd{width:100%;height:100%;border-radius:4px;position:relative;background:linear-gradient(160deg,#1c1f25,#0d0f12);border:1px solid #000;box-shadow:0 6px 13px rgba(0,0,0,.35);}
 .v-ssd-strip{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal),transparent 85%);border-radius:4px 4px 0 0;}
-.v-ssd .v-pad{position:absolute;}
 .v-ssd-edge{position:absolute;left:8px;right:8px;bottom:-4px;height:7px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 3px,#0d0f12 3px 6px);}
 
 .v-gpu{width:100%;height:100%;border-radius:7px;position:relative;background:linear-gradient(180deg,#2c3036,#131519);border:1px solid #000;box-shadow:0 14px 22px rgba(0,0,0,.5);}
@@ -191,15 +231,12 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .cable-g.pulled .cable-coiled{opacity:1;}
 .cable-line{fill:none;stroke:#0c0d0f;stroke-width:8;stroke-linecap:round;}
 .cable-line.sata{stroke:#12211a;}
-.cable-line.eps{stroke:#0c0d0f;}
 .cable-core{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-dasharray:1 8;opacity:.7;}
 .cable-plug{fill:#0a0b0d;stroke:#000;stroke-width:1;}
-.cable-pin{fill:var(--gold);}
-.cable-tagbg{fill:rgba(8,10,12,.92);stroke:rgba(79,216,196,.35);stroke-width:1;}
+.cable-tagbg{fill:rgba(8,10,12,.92);stroke:rgba(79,216,196,.35);stroke-width:1;opacity:0;transition:opacity .2s;}
 .cable-tagtxt{fill:var(--teal);font-family:'Space Mono',monospace;font-size:9px;opacity:0;transition:opacity .2s;}
 .cable-g.pulled .cable-tagtxt,.cable-g:hover .cable-tagtxt{opacity:1;}
 .cable-g.pulled .cable-tagbg,.cable-g:hover .cable-tagbg{opacity:1;}
-.cable-tagbg{opacity:0;transition:opacity .2s;}
 
 .tray-panel{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:18px 16px 20px;max-height:890px;overflow-y:auto;}
 .tray-panel::-webkit-scrollbar{width:8px;}
@@ -225,6 +262,24 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .fixed-chip{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-mid);background:transparent;border:1.5px dashed var(--stroke);border-radius:20px;padding:8px 13px;cursor:help;transition:.2s;}
 .fixed-chip:hover{color:var(--copper);border-color:var(--copper-dim);}
 
+/* tutorial panel (replaces tray content while active) */
+.tut-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.tut-head h3{margin:0;font-size:13px;color:var(--violet);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.08em;}
+.tut-score{font-family:'Space Mono',monospace;font-size:12px;color:var(--text-hi);background:var(--panel-3);padding:5px 11px;border-radius:20px;border:1px solid var(--stroke);}
+.tut-step{display:flex;gap:11px;align-items:flex-start;padding:10px 8px;border-radius:10px;margin-bottom:5px;transition:.2s;}
+.tut-step.current{background:rgba(139,124,246,.1);border:1px solid rgba(139,124,246,.35);}
+.tut-step.done{opacity:.5;}
+.tut-num{width:22px;height:22px;border-radius:50%;background:var(--panel-3);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;flex-shrink:0;color:var(--text-mid);}
+.tut-step.done .tut-num{background:var(--teal-dim);border-color:var(--teal);color:#04211c;}
+.tut-step.current .tut-num{background:var(--violet);border-color:var(--violet);color:#fff;}
+.tut-step .txt{font-size:13px;color:var(--text-mid);padding-top:2px;}
+.tut-step.current .txt{color:var(--text-hi);font-weight:600;}
+.tut-action-btn{margin-top:8px;font-family:'Space Mono',monospace;font-size:11.5px;background:var(--violet);color:#fff;border:none;border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-block;}
+.tut-feedback{margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12px;font-family:'Space Mono',monospace;}
+.tut-feedback.warn{background:rgba(239,106,90,.1);color:var(--danger);border:1px solid rgba(239,106,90,.3);}
+.tut-feedback.ok{background:rgba(79,216,196,.1);color:var(--teal);border:1px solid rgba(79,216,196,.3);}
+.tut-exit{margin-top:14px;width:100%;font-family:'Space Mono',monospace;font-size:11.5px;background:transparent;border:1px dashed var(--stroke);color:var(--text-low);padding:9px;border-radius:8px;cursor:pointer;}
+
 .info{margin-top:22px;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:24px 26px;min-height:170px;}
 .info .empty{color:var(--text-low);font-size:14px;font-family:'Space Mono',monospace;}
 .info h2{margin:0 0 4px;font-size:22px;font-weight:800;}
@@ -248,16 +303,32 @@ footer{margin-top:34px;color:var(--text-faint);font-size:12px;text-align:center;
   <header>
     <p class="eyebrow">Simulator Perakitan · Hardware Explorer</p>
     <h1>Bongkar Pasang PC</h1>
-    <p class="sub">Tarik komponen langsung dari casing untuk melepasnya, atau pilih dari panel komponen di sebelah kanan. Tiap komponen menampilkan fungsi dan cara kerjanya secara lengkap.</p>
+    <p class="sub">Tarik komponen langsung dari casing, coba Mode Tutorial untuk merakit dari nol sambil dapat skor, lalu tekan Power On untuk melihat PC-mu benar-benar menyala (atau gagal boot kalau ada yang kurang).</p>
   </header>
 
   <div class="toolbar">
     <button class="btn primary" id="explodeAll">⛶ Bongkar Semua</button>
     <button class="btn" id="assembleAll">⤓ Pasang Semua</button>
+    <button class="btn tutorial-toggle-btn" id="tutorialBtn">🎓 Mode Tutorial</button>
   </div>
   <div class="legend">
     <span><i class="i-removable"></i> Bisa dilepas — klik untuk membongkar</span>
     <span><i class="i-fixed"></i> Menyatu di board — klik untuk info</span>
+  </div>
+
+  <div class="console-section">
+    <div class="monitor-wrap">
+      <div class="monitor-frame">
+        <div class="monitor-glass off" id="monitorGlass">
+          <div id="monitorContent"><div class="mon-standby">NO SIGNAL — TEKAN POWER ON</div></div>
+        </div>
+      </div>
+      <div class="monitor-stand"></div>
+    </div>
+    <div class="console-controls">
+      <button class="power-btn" id="powerBtn"><span class="power-dot"></span> POWER ON</button>
+      <div class="spec-card" id="specCard"></div>
+    </div>
   </div>
 
   <div class="workspace">
@@ -277,6 +348,9 @@ footer{margin-top:34px;color:var(--text-faint);font-size:12px;text-align:center;
 </div>
 
 <script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
 const PARTS = [
   { key:'motherboard', type:'board', cat:'brain', x:70,y:60,w:400,h:560, ex:-60,ey:35,er:-3,es:1.0, z:2,
     name:'Motherboard',
@@ -336,7 +410,7 @@ const PARTS = [
   { key:'case_fan_rear', type:'fan', cat:'cooling', x:580,y:60,w:82,h:82, ex:70,ey:-45,er:10,es:1.05, z:8,
     name:'Kipas Belakang (Exhaust)',
     fungsi:'Kipas belakang membuang udara panas yang sudah menyerap panas dari CPU dan GPU keluar dari casing, melengkapi siklus sirkulasi udara.',
-    cara:'Ditempatkan sejalur dengan aliran udara alami (udara panas naik dan mengalir ke belakang), kipas ini bekerja sama dengan kipas depan menciptakan tekanan udara positif agar debu lebih sulit menyelinap dari celah lain.' },
+    cara:'Ditempatkan sejalur dengan aliran udara alami, kipas ini bekerja sama dengan kipas depan menciptakan tekanan udara positif agar debu lebih sulit menyelinap dari celah lain.' },
   { key:'dust_filter', type:'filter', cat:'cooling', x:70,y:818,w:260,h:20, ex:20,ey:48,er:0,es:1.1, z:5,
     name:'Filter Debu',
     fungsi:'Filter mesh ini menyaring debu sebelum udara masuk ke casing, menjaga komponen tetap bersih dan aliran udara tetap optimal dalam jangka panjang.',
@@ -391,6 +465,8 @@ const CATS = {
   cables:  { title:'Kabel-Kabel' },
 };
 
+const WATT = {board:30,cpu:65,cooler:5,ram:5,cmos:0,m2:6,hdd:7,ssd:3,gpu:170,psu:0,fan:2,filter:0,cable:0};
+
 const ICON = {
   board:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><path d="M13 3v4M17 3v4M3 13h4M3 17h4"/>',
   cpu:'<rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3"/>',
@@ -408,40 +484,43 @@ const ICON = {
 };
 
 const RENDER = {
-  board:()=>'<div class="v-board sheen"><div class="v-io"></div>'+
+  board:function(){return '<div class="v-board sheen"><div class="v-io"></div>'+
       '<div class="v-pad" style="left:340px;top:18px;width:52px;height:32px;"></div>'+
       '<div class="v-pad" style="left:60px;top:520px;width:70px;height:16px;"></div>'+
       '<div class="v-screwhole" style="left:14px;top:14px;"></div>'+
       '<div class="v-screwhole" style="left:380px;top:14px;"></div>'+
       '<div class="v-screwhole" style="left:14px;top:540px;"></div>'+
-      '<div class="v-screwhole" style="left:380px;top:540px;"></div></div>',
-  cpu:()=>'<div class="v-cpu"><span class="lbl">CPU</span></div>',
-  cooler:()=>'<div class="v-cooler sheen">'+
+      '<div class="v-screwhole" style="left:380px;top:540px;"></div></div>';},
+  cpu:function(){return '<div class="v-cpu"><span class="lbl">CPU</span></div>';},
+  cooler:function(){return '<div class="v-cooler sheen">'+
       '<div class="v-heatpipe" style="left:16px;"></div>'+
       '<div class="v-heatpipe" style="left:28px;"></div>'+
       '<div class="v-heatpipe" style="right:16px;"></div>'+
-      '<div class="v-fan"></div><div class="v-ring"></div></div>',
-  ram:()=>'<div class="v-ram"><div class="v-ram-top"></div><div class="v-ram-pins"></div></div>',
-  cmos:()=>'<div class="v-cmos"></div>',
-  m2:()=>'<div class="v-m2"><div class="v-m2-board"></div><div class="v-m2-hs"></div></div>',
-  hdd:()=>'<div class="v-hdd"><div class="v-hdd-sticker">1&nbsp;TB<br>7200 RPM</div><div class="v-hdd-conn"><span></span><span></span></div></div>',
-  ssd:()=>'<div class="v-ssd sheen"><div class="v-ssd-strip"></div>'+
+      '<div class="v-fan"></div><div class="v-ring"></div></div>';},
+  ram:function(){return '<div class="v-ram"><div class="v-ram-top"></div><div class="v-ram-pins"></div></div>';},
+  cmos:function(){return '<div class="v-cmos"></div>';},
+  m2:function(){return '<div class="v-m2"><div class="v-m2-board"></div><div class="v-m2-hs"></div></div>';},
+  hdd:function(){return '<div class="v-hdd"><div class="v-hdd-sticker">1&nbsp;TB<br>7200 RPM</div><div class="v-hdd-conn"><span></span><span></span></div></div>';},
+  ssd:function(){return '<div class="v-ssd sheen"><div class="v-ssd-strip"></div>'+
       '<div class="v-pad" style="left:10px;top:14px;width:24px;height:18px;"></div>'+
       '<div class="v-pad" style="left:42px;top:10px;width:14px;height:26px;"></div>'+
       '<div class="v-pad" style="left:64px;top:10px;width:14px;height:26px;"></div>'+
-      '<div class="v-ssd-edge"></div></div>',
-  gpu:()=>'<div class="v-gpu sheen"><div class="v-gpu-strip"></div><div class="v-gpu-back"></div>'+
+      '<div class="v-ssd-edge"></div></div>';},
+  gpu:function(){return '<div class="v-gpu sheen"><div class="v-gpu-strip"></div><div class="v-gpu-back"></div>'+
       '<div class="v-gpu-fan" style="left:14%;"></div><div class="v-gpu-fan" style="left:56%;"></div>'+
-      '<div class="v-gpu-edge"></div></div>',
-  psu:()=>'<div class="v-psu sheen"><div class="v-psu-fan"></div><div class="v-psu-label">80+ BRONZE<br>650W ATX</div>'+
-      '<div class="v-psu-ports"><span></span><span></span><span></span><span></span></div></div>',
-  fan:()=>'<div class="v-casefan sheen">'+
+      '<div class="v-gpu-edge"></div></div>';},
+  psu:function(){return '<div class="v-psu sheen"><div class="v-psu-fan"></div><div class="v-psu-label">80+ BRONZE<br>650W ATX</div>'+
+      '<div class="v-psu-ports"><span></span><span></span><span></span><span></span></div></div>';},
+  fan:function(){return '<div class="v-casefan sheen">'+
       '<div class="screw" style="left:4px;top:4px;"></div><div class="screw" style="right:4px;top:4px;"></div>'+
       '<div class="screw" style="left:4px;bottom:4px;"></div><div class="screw" style="right:4px;bottom:4px;"></div>'+
-      '<div class="v-fan"></div></div>',
-  filter:()=>'<div class="v-filter"><div class="v-filter-frame"></div></div>',
+      '<div class="v-fan"></div></div>';},
+  filter:function(){return '<div class="v-filter"><div class="v-filter-frame"></div></div>';},
 };
 
+/* ============================================================
+   BUILD CASE CANVAS
+   ============================================================ */
 const canvas = document.getElementById('caseCanvas');
 function addHTML(html){ canvas.insertAdjacentHTML('beforeend', html); }
 
@@ -484,7 +563,7 @@ FIXED.forEach(function(f){
 function cablePath(p){
   const routes = {
     cable_24pin:{d:'M180 712 C 260 550, 380 300, 452 195', plug:[440,175,24,20], cls:''},
-    cable_eps:{d:'M280 712 C 340 500, 380 200, 400 84', plug:[388,72,26,18], cls:'eps'},
+    cable_eps:{d:'M280 712 C 340 500, 380 200, 400 84', plug:[388,72,26,18], cls:''},
     cable_pcie:{d:'M220 712 C 260 670, 280 640, 300 610', plug:[286,600,26,16], cls:''},
     cable_sata_power:{d:'M110 712 C 300 760, 550 400, 645 205', plug:[636,196,18,16], cls:'sata'},
     cable_sata_data:{d:'M450 558 C 480 420, 490 300, 500 215', plug:[490,206,18,16], cls:'sata'},
@@ -512,26 +591,44 @@ PARTS.filter(function(p){return p.type==='cable';}).forEach(function(p){
 svg += '</svg>';
 canvas.insertAdjacentHTML('beforeend', svg);
 
+/* ============================================================
+   TRAY (free mode)
+   ============================================================ */
 const tray = document.getElementById('trayPanel');
-let trayHTML = '';
-Object.keys(CATS).forEach(function(catKey){
-  const items = PARTS.filter(function(p){return p.cat===catKey;});
-  trayHTML += '<div class="tray-section"><div class="tray-head"><h3>'+CATS[catKey].title+'</h3><span>'+items.length+' bagian</span></div><div class="tray-grid">';
-  items.forEach(function(p){
-    trayHTML += '<div class="tray-card" data-key="'+p.key+'" id="card-'+p.key+'">'+
-        '<span class="dot"></span>'+
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
-        '<span class="lbl">'+p.name+'</span></div>';
+function renderFreeTray(){
+  let trayHTML = '';
+  Object.keys(CATS).forEach(function(catKey){
+    const items = PARTS.filter(function(p){return p.cat===catKey;});
+    trayHTML += '<div class="tray-section"><div class="tray-head"><h3>'+CATS[catKey].title+'</h3><span>'+items.length+' bagian</span></div><div class="tray-grid">';
+    items.forEach(function(p){
+      trayHTML += '<div class="tray-card" data-key="'+p.key+'" id="card-'+p.key+'">'+
+          '<span class="dot"></span>'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
+          '<span class="lbl">'+p.name+'</span></div>';
+    });
+    trayHTML += '</div></div>';
   });
+  trayHTML += '<div class="tray-section"><div class="tray-head"><h3>Fitur Tetap di Board</h3><span>'+FIXED.length+' bagian</span></div><div class="fixed-row">';
+  FIXED.forEach(function(f){ trayHTML += '<div class="fixed-chip" data-key="'+f.key+'" id="chip-'+f.key+'">'+f.name+'</div>'; });
   trayHTML += '</div></div>';
-});
-trayHTML += '<div class="tray-section"><div class="tray-head"><h3>Fitur Tetap di Board</h3><span>'+FIXED.length+' bagian</span></div><div class="fixed-row">';
-FIXED.forEach(function(f){ trayHTML += '<div class="fixed-chip" data-key="'+f.key+'" id="chip-'+f.key+'">'+f.name+'</div>'; });
-trayHTML += '</div></div>';
-tray.innerHTML = trayHTML;
+  tray.innerHTML = trayHTML;
+  PARTS.forEach(function(p){
+    const card = document.getElementById('card-'+p.key);
+    if(card) card.addEventListener('click', function(){ toggle(p.key); });
+    applyState(p.key);
+  });
+  FIXED.forEach(function(f){
+    const chip = document.getElementById('chip-'+f.key);
+    if(chip) chip.addEventListener('click', function(){ ping(f.key); });
+  });
+}
 
+/* ============================================================
+   STATE / INTERACTION (free mode)
+   ============================================================ */
 const state = {};
 PARTS.forEach(function(p){ state[p.key]=false; });
+function installed(key){ return !state[key]; }
 
 function applyState(key){
   const pulled = state[key];
@@ -541,6 +638,7 @@ function applyState(key){
   if(ghost) ghost.classList.toggle('active', pulled);
   const card = document.getElementById('card-'+key);
   if(card) card.classList.toggle('active', pulled);
+  renderSpec();
 }
 
 function showInfo(cfg, isFixed){
@@ -553,15 +651,15 @@ function showInfo(cfg, isFixed){
     '</div>';
 }
 
-const PARTS_BY_KEY = {};
-PARTS.forEach(function(p){ PARTS_BY_KEY[p.key]=p; });
-const FIXED_BY_KEY = {};
-FIXED.forEach(function(f){ FIXED_BY_KEY[f.key]=f; });
+const PARTS_BY_KEY = {}; PARTS.forEach(function(p){ PARTS_BY_KEY[p.key]=p; });
+const FIXED_BY_KEY = {}; FIXED.forEach(function(f){ FIXED_BY_KEY[f.key]=f; });
 
 function toggle(key){
+  if(tutorialActive){ handleTutorialClick(key); return; }
   state[key] = !state[key];
   applyState(key);
   showInfo(PARTS_BY_KEY[key], false);
+  if(powerState==='on') showMonitorCard(PARTS_BY_KEY[key].name, PARTS_BY_KEY[key].fungsi);
 }
 
 function ping(key){
@@ -570,27 +668,289 @@ function ping(key){
     if(!el) return;
     el.classList.remove('pinged'); void el.offsetWidth; el.classList.add('pinged');
   });
+  if(powerState==='on') showMonitorCard(FIXED_BY_KEY[key].name, FIXED_BY_KEY[key].fungsi);
 }
 
 PARTS.forEach(function(p){
   const el = document.getElementById(p.key);
-  const card = document.getElementById('card-'+p.key);
   if(el) el.addEventListener('click', function(){ toggle(p.key); });
-  if(card) card.addEventListener('click', function(){ toggle(p.key); });
 });
 FIXED.forEach(function(f){
   const el = document.getElementById(f.key);
-  const chip = document.getElementById('chip-'+f.key);
   if(el) el.addEventListener('click', function(){ ping(f.key); });
-  if(chip) chip.addEventListener('click', function(){ ping(f.key); });
 });
 
 document.getElementById('explodeAll').addEventListener('click', function(){
+  if(tutorialActive) return;
   PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=true; applyState(p.key); }, i*26); });
 });
 document.getElementById('assembleAll').addEventListener('click', function(){
+  if(tutorialActive) return;
   PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=false; applyState(p.key); }, i*26); });
 });
+
+/* ============================================================
+   SPEC / WATTAGE CALCULATOR
+   ============================================================ */
+function calcSpec(){
+  let total=0;
+  PARTS.forEach(function(p){ if(installed(p.key)) total += (WATT[p.type]||0); });
+  const psuOptions=[450,550,650,750,850,1000];
+  let rec = 1000;
+  for(let i=0;i<psuOptions.length;i++){ if(psuOptions[i] >= total*1.35){ rec=psuOptions[i]; break; } }
+  const hasGpu = installed('gpu');
+  const useCase = hasGpu ? 'Gaming + Editing' : (installed('cpu') ? 'Produktivitas & Office' : '—');
+  return {total:total, rec:rec, useCase:useCase};
+}
+function renderSpec(){
+  const s = calcSpec();
+  const el = document.getElementById('specCard');
+  if(!el) return;
+  el.innerHTML = '<h3>Spesifikasi Rakitan</h3>'+
+    '<div class="spec-row"><span>Estimasi Daya</span><b>'+s.total+' W</b></div>'+
+    '<div class="spec-row"><span>Rekomendasi PSU</span><b>'+s.rec+' W</b></div>'+
+    '<div class="spec-row"><span>Cocok untuk</span><b>'+s.useCase+'</b></div>';
+}
+
+/* ============================================================
+   MONITOR / POWER-ON / POST / DASHBOARD
+   ============================================================ */
+let powerState = 'off';
+let dashInterval = null;
+let monTimers = [];
+let cardTimer = null;
+
+function clearMonTimers(){ monTimers.forEach(function(t){ clearTimeout(t); }); monTimers=[]; }
+function setMonitorClass(cls){ document.getElementById('monitorGlass').className = 'monitor-glass '+cls; }
+
+function getChecks(){
+  const ramCount = (installed('ram1')?1:0)+(installed('ram2')?1:0);
+  const storageCount = ['hdd','ssd','m2_ssd'].filter(installed).length;
+  return [
+    {label:'PSU', ok:installed('psu'), critical:true, msg:'Tidak ada daya — PSU belum terpasang'},
+    {label:'Kabel 24-Pin ATX', ok:installed('cable_24pin'), critical:true, msg:'Motherboard tidak menerima daya — kabel 24-pin belum terhubung'},
+    {label:'Motherboard', ok:installed('motherboard'), critical:true, msg:'Tidak ada motherboard terpasang di case'},
+    {label:'Processor (CPU)', ok:installed('cpu'), critical:true, msg:'CPU tidak terdeteksi'},
+    {label:'CPU Cooler', ok:installed('cpu_cooler'), critical:false, msg:'Tidak ada pendingin — risiko overheat tinggi'},
+    {label:'Memory (RAM)', ok:ramCount>0, critical:true, msg:'Memory not found — tidak ada RAM terpasang',
+      extra: ramCount>0 ? (ramCount+'/2 slot aktif'+(ramCount===1?' — dual-channel belum optimal':' — dual-channel aktif')) : null},
+    {label:'Storage', ok:storageCount>0, critical:true, msg:'Storage not found — tidak ada media untuk boot OS'},
+    {label:'GPU', ok:installed('gpu'), critical:false, msg:'Tidak terdeteksi — pakai grafis onboard bila tersedia'},
+  ];
+}
+
+function powerOff(){
+  powerState='off';
+  clearInterval(dashInterval); dashInterval=null;
+  clearMonTimers();
+  setMonitorClass('off');
+  document.getElementById('monitorContent').innerHTML = '<div class="mon-standby">NO SIGNAL — TEKAN POWER ON</div>';
+  const btn = document.getElementById('powerBtn');
+  btn.classList.remove('is-on');
+  btn.innerHTML = '<span class="power-dot"></span> POWER ON';
+}
+
+function runPOST(){
+  powerState='booting';
+  clearMonTimers();
+  setMonitorClass('on');
+  const content = document.getElementById('monitorContent');
+  content.innerHTML = '<div class="mon-line mon-ok">POST CHECK</div><div class="mon-line">&nbsp;</div>';
+  const checks = getChecks();
+  let failed = null;
+  checks.forEach(function(c,i){
+    monTimers.push(setTimeout(function(){
+      let cls, prefix;
+      if(c.ok){ cls='mon-ok'; prefix='&#10003;'; }
+      else if(c.critical){ cls='mon-fail'; prefix='&#10007;'; }
+      else { cls='mon-warn'; prefix='&#9888;'; }
+      const line = document.createElement('div');
+      line.className = 'mon-line '+cls;
+      line.innerHTML = prefix+' '+c.label+(c.ok && c.extra ? ' &mdash; '+c.extra : (!c.ok ? ' &mdash; belum terpasang' : ''));
+      content.appendChild(line);
+      if(!c.ok && c.critical && !failed){ failed = c; }
+      if(i===checks.length-1){
+        monTimers.push(setTimeout(function(){
+          if(failed){
+            const block = document.createElement('div');
+            block.className='mon-fail-block';
+            block.innerHTML = '&#9888; BOOT FAILED<br><br>Penyebab:<br>'+failed.msg+'<br><br>Solusi:<br>Pasang kembali komponen yang hilang, lalu tekan tombol lagi.';
+            content.appendChild(block);
+            powerState='failed';
+            setMonitorClass('failed');
+            const btn=document.getElementById('powerBtn');
+            btn.classList.remove('is-on');
+            btn.innerHTML = '<span class="power-dot"></span> COBA LAGI';
+          } else {
+            const line2=document.createElement('div');
+            line2.className='mon-line mon-ok';
+            line2.textContent='Booting sistem operasi...';
+            content.appendChild(line2);
+            monTimers.push(setTimeout(startDashboard, 700));
+          }
+        }, 320));
+      }
+    }, 340*i + 200));
+  });
+}
+
+function storageTotalGB(){
+  let t=0;
+  if(installed('hdd')) t+=1000;
+  if(installed('ssd')) t+=512;
+  if(installed('m2_ssd')) t+=1000;
+  return t;
+}
+
+function startDashboard(){
+  powerState='on';
+  const btn = document.getElementById('powerBtn');
+  btn.classList.add('is-on');
+  btn.innerHTML = '<span class="power-dot"></span> POWER OFF';
+  renderDashboard();
+  clearInterval(dashInterval);
+  dashInterval = setInterval(renderDashboard, 2600);
+}
+
+function renderDashboard(){
+  if(powerState!=='on') return;
+  const cpuPct = Math.round(30+Math.random()*55);
+  const ramPct = Math.round(35+Math.random()*40);
+  const gpuOn = installed('gpu');
+  const gpuTemp = gpuOn ? Math.round(50+Math.random()*30) : 0;
+  const totalGB = storageTotalGB();
+  const usedGB = totalGB ? Math.round(totalGB*(0.3+Math.random()*0.35)) : 0;
+  document.getElementById('monitorContent').innerHTML =
+    '<div class="dash-title">SYSTEM MONITOR</div>'+
+    '<div class="dash-row"><span class="lbl">CPU Usage</span><div class="bar"><div class="bar-fill" style="width:'+cpuPct+'%"></div></div><span class="val">'+cpuPct+'%</span></div>'+
+    '<div class="dash-row"><span class="lbl">RAM</span><div class="bar"><div class="bar-fill" style="width:'+ramPct+'%"></div></div><span class="val">'+ramPct+'%</span></div>'+
+    '<div class="dash-row"><span class="lbl">GPU Temp</span><div class="bar"><div class="bar-fill" style="width:'+(gpuOn?(gpuTemp/95*100):0)+'%"></div></div><span class="val">'+(gpuOn?gpuTemp+'&deg;C':'N/A')+'</span></div>'+
+    '<div class="dash-row"><span class="lbl">Storage</span><div class="bar"><div class="bar-fill" style="width:'+(totalGB?(usedGB/totalGB*100):0)+'%"></div></div><span class="val">'+(totalGB?usedGB+'/'+totalGB+'GB':'&mdash;')+'</span></div>'+
+    '<div class="dash-row"><span class="lbl">Network</span><span style="color:var(--teal);margin-left:4px;">&#9679; Connected</span></div>';
+}
+
+function showMonitorCard(name, fungsi){
+  if(powerState!=='on') return;
+  clearTimeout(cardTimer);
+  document.getElementById('monitorContent').innerHTML = '<div class="mon-card"><h4>'+name+'</h4><p>'+fungsi+'</p></div>';
+  cardTimer = setTimeout(renderDashboard, 4200);
+}
+
+document.getElementById('powerBtn').addEventListener('click', function(){
+  if(powerState==='on'){ powerOff(); } else { runPOST(); }
+});
+
+/* ============================================================
+   TUTORIAL MODE
+   ============================================================ */
+const TUTORIAL_STEPS = [
+  {label:'Pasang CPU ke Socket', type:'part', key:'cpu'},
+  {label:'Oleskan Thermal Paste', type:'action'},
+  {label:'Pasang Cooler CPU', type:'part', key:'cpu_cooler'},
+  {label:'Pasang RAM (2 slot)', type:'multi', keys:['ram1','ram2']},
+  {label:'Pasang Motherboard ke Case', type:'part', key:'motherboard'},
+  {label:'Pasang PSU', type:'part', key:'psu'},
+  {label:'Hubungkan Semua Kabel', type:'multi', keys:['cable_24pin','cable_eps','cable_pcie','cable_sata_power','cable_sata_data','cable_frontpanel']},
+];
+let tutorialActive=false, tutorialStep=0, tutorialScore=0, tutFeedback=null, tutFeedbackType='ok';
+
+function isBeforeCurrentStep(key){
+  for(let i=0;i<tutorialStep;i++){
+    const st=TUTORIAL_STEPS[i];
+    if(st.type==='part' && st.key===key) return true;
+    if(st.type==='multi' && st.keys.indexOf(key)!==-1) return true;
+  }
+  return false;
+}
+
+function startTutorial(){
+  tutorialActive=true; tutorialStep=0; tutorialScore=0;
+  tutFeedback='Mulai dengan memasang CPU ke socket motherboard.'; tutFeedbackType='ok';
+  PARTS.forEach(function(p){ state[p.key]=true; applyState(p.key); });
+  const cpuEl=document.getElementById('cpu'); if(cpuEl) cpuEl.classList.remove('has-paste');
+  document.getElementById('tutorialBtn').classList.add('active');
+  renderTutorialPanel();
+}
+function exitTutorial(){
+  tutorialActive=false;
+  document.getElementById('tutorialBtn').classList.remove('active');
+  renderFreeTray();
+}
+window.exitTutorial = exitTutorial;
+
+function afterTutorialAdvance(){
+  if(tutorialStep>=TUTORIAL_STEPS.length){
+    tutFeedback='Rakitan selesai! Total skor: '+tutorialScore+'/70. Coba tekan POWER ON untuk menyalakannya.';
+    tutFeedbackType='ok';
+  }
+}
+
+function handleTutorialClick(key){
+  const step = TUTORIAL_STEPS[tutorialStep];
+  if(!step){ return; }
+  if(step.type==='part'){
+    if(key===step.key){
+      state[key]=false; applyState(key);
+      tutorialScore+=10; tutFeedback='Benar! '+step.label+' selesai. +10 poin'; tutFeedbackType='ok';
+      tutorialStep++; afterTutorialAdvance();
+    } else if(isBeforeCurrentStep(key)){
+      state[key]=!state[key]; applyState(key);
+    } else {
+      tutFeedback='Belum saatnya. Langkah sekarang: '+step.label; tutFeedbackType='warn';
+    }
+  } else if(step.type==='multi'){
+    if(step.keys.indexOf(key)!==-1){
+      state[key]=false; applyState(key);
+      const doneCount = step.keys.filter(function(k){return !state[k];}).length;
+      if(doneCount===step.keys.length){
+        tutorialScore+=10; tutFeedback='Semua kabel terhubung! +10 poin'; tutFeedbackType='ok';
+        tutorialStep++; afterTutorialAdvance();
+      } else {
+        tutFeedback=doneCount+'/'+step.keys.length+' kabel terpasang, lanjutkan...'; tutFeedbackType='ok';
+      }
+    } else if(isBeforeCurrentStep(key)){
+      state[key]=!state[key]; applyState(key);
+    } else {
+      tutFeedback='Selesaikan dulu: '+step.label; tutFeedbackType='warn';
+    }
+  }
+  renderTutorialPanel();
+}
+
+function applyPaste(){
+  if(tutorialActive && TUTORIAL_STEPS[tutorialStep] && TUTORIAL_STEPS[tutorialStep].type==='action'){
+    const cpuEl=document.getElementById('cpu'); if(cpuEl) cpuEl.classList.add('has-paste');
+    tutorialScore+=10; tutFeedback='Thermal paste dioleskan tipis dan merata. +10 poin'; tutFeedbackType='ok';
+    tutorialStep++; afterTutorialAdvance(); renderTutorialPanel();
+  }
+}
+window.applyPaste = applyPaste;
+
+function renderTutorialPanel(){
+  let html = '<div class="tut-head"><h3>Mode Tutorial</h3><span class="tut-score">Skor: '+tutorialScore+'</span></div>';
+  TUTORIAL_STEPS.forEach(function(st,i){
+    const done = i<tutorialStep, current = i===tutorialStep;
+    html += '<div class="tut-step '+(done?'done':'')+' '+(current?'current':'')+'">'+
+      '<div class="tut-num">'+(done?'&#10003;':(i+1))+'</div>'+
+      '<div class="txt">'+st.label+(st.type==='action' && current ? '<br><button class="tut-action-btn" onclick="applyPaste()">Oleskan Thermal Paste</button>' : '')+'</div></div>';
+  });
+  if(tutFeedback){
+    html += '<div class="tut-feedback '+(tutFeedbackType==='warn'?'warn':'ok')+'">'+tutFeedback+'</div>';
+  }
+  html += '<button class="tut-exit" onclick="exitTutorial()">&larr; Kembali ke Mode Bebas</button>';
+  tray.innerHTML = html;
+}
+
+document.getElementById('tutorialBtn').addEventListener('click', function(){
+  if(tutorialActive) exitTutorial(); else startTutorial();
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderFreeTray();
+renderSpec();
+powerOff();
 
 function resizeCanvas(){
   const wrapper = document.querySelector('.case-canvas-wrapper');
