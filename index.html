@@ -45,31 +45,95 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .btn.primary{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
 .btn.primary:hover{box-shadow:0 0 0 3px rgba(79,216,196,.22);}
 .btn.tutorial-toggle-btn.active{border-color:var(--violet);color:#d9d3ff;box-shadow:0 0 0 3px rgba(139,124,246,.18);}
+.btn.guided-toggle-btn.active{border-color:var(--gold);color:#fff3d0;box-shadow:0 0 0 3px rgba(224,184,74,.18);}
+.btn.assembly-toggle-btn.active{border-color:var(--copper);color:#ffe3c7;box-shadow:0 0 0 3px rgba(217,154,99,.2);}
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 2px 22px;font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
 .legend span{display:inline-flex;align-items:center;gap:7px;}
 .legend i{width:13px;height:13px;border-radius:4px;display:inline-block;}
 .legend .i-removable{background:var(--panel-3);border:1.5px solid var(--teal-dim);}
 .legend .i-fixed{background:transparent;border:1.5px dashed var(--text-faint);}
 
+/* ---------- guided tour bar ---------- */
+.tour-bar{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:16px 20px;margin:0 0 20px;display:none;}
+.tour-bar.show{display:block;animation:tourIn .35s ease;}
+@keyframes tourIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.tour-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.tour-instruction{font-size:14px;font-weight:700;color:var(--text-hi);}
+.tour-instruction .accent{color:var(--gold);}
+.tour-count{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
+.tour-count a{color:var(--text-low);}
+.tour-track{height:8px;border-radius:5px;background:#1a1d22;overflow:hidden;border:1px solid var(--stroke-soft);}
+.tour-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--teal));transition:width .55s cubic-bezier(.34,1.4,.44,1);width:0%;}
+.tour-dots{display:flex;gap:6px;margin-top:10px;}
+.tour-dot{width:9px;height:9px;border-radius:50%;background:#262b33;transition:.3s;}
+.tour-dot.done{background:var(--teal);}
+.tour-dot.current{background:var(--gold);box-shadow:0 0 0 4px rgba(224,184,74,.25);}
+.tour-done-msg{color:var(--teal);}
+.tour-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%) translateY(-16px);background:var(--panel-3);border:1px solid var(--teal);color:var(--teal);
+  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;padding:12px 22px;border-radius:30px;opacity:0;pointer-events:none;
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.6);z-index:999;transition:opacity .3s, transform .3s;}
+.tour-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.tour-toast.error{border-color:var(--danger);color:var(--danger);}
+
+.tour-target{animation:tourPulse 1.4s ease-in-out infinite;}
+@keyframes tourPulse{
+  0%,100%{ filter:drop-shadow(0 0 0 rgba(224,184,74,0)); }
+  50%{ filter:drop-shadow(0 0 18px rgba(224,184,74,.9)); }
+}
+.tray-card.tour-target{border-color:var(--gold);}
+
+/* ---------- assembly simulator (drag & drop) ---------- */
+.ghost.assembly-highlight{border-color:var(--copper);animation:assemblyGlow 1.6s ease-in-out infinite;}
+@keyframes assemblyGlow{0%,100%{box-shadow:0 0 0 rgba(217,154,99,0);}50%{box-shadow:0 0 18px rgba(217,154,99,.55), inset 0 0 14px rgba(217,154,99,.1);}}
+.part-slot.assembly-pending{opacity:0;pointer-events:none;}
+.part-slot.snap-in{animation:snapIn .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes snapIn{0%{transform:scale(1.5);filter:brightness(1.9) drop-shadow(0 0 26px var(--copper));}55%{transform:scale(.93);}100%{transform:scale(1);}}
+.tray-card.assembly-card{cursor:grab;touch-action:none;user-select:none;}
+.tray-card.assembly-card:active{cursor:grabbing;}
+.assembly-ghost-drag{position:fixed;z-index:9999;pointer-events:none;background:var(--panel-3);border:2px solid var(--copper);border-radius:12px;
+  padding:9px 14px;display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:12px;color:var(--text-hi);
+  box-shadow:0 14px 32px -8px rgba(0,0,0,.6);transform:translate(-50%,-50%);}
+.assembly-ghost-drag svg{width:20px;height:20px;color:var(--copper);flex-shrink:0;}
+.assembly-hint{font-size:12.5px;color:var(--text-mid);line-height:1.6;margin:0 0 14px;}
+.assembly-complete-btn{width:100%;margin-top:10px;}
+
 /* ---------- console (monitor + power + spec) ---------- */
 .console-section{display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 26px;align-items:stretch;}
 .monitor-wrap{flex:1 1 460px;min-width:280px;display:flex;flex-direction:column;align-items:center;}
 .monitor-frame{width:100%;max-width:600px;background:linear-gradient(160deg,#2a2e35,#141619);border-radius:14px;padding:14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.6);border:1px solid #383d45;}
 .monitor-glass{width:100%;aspect-ratio:16/9;background:#020304;border-radius:6px;border:2px solid #000;overflow:hidden;position:relative;padding:16px;font-family:'Space Mono',monospace;font-size:12.5px;line-height:1.75;color:var(--teal);box-shadow:inset 0 0 40px rgba(0,0,0,.8);}
-.monitor-glass.off{color:#333;}
+.monitor-glass.off{color:#333;background:#020304;}
 .monitor-glass.failed{color:var(--danger);}
+@keyframes screenWake{0%{filter:brightness(0);}20%{filter:brightness(2.6);}45%{filter:brightness(.5);}100%{filter:brightness(1);}}
+.monitor-glass.waking{animation:screenWake .65s ease-out;}
 .monitor-stand{width:110px;height:16px;background:linear-gradient(160deg,#2a2e35,#16181c);margin:10px auto 0;border-radius:0 0 4px 4px;}
 .monitor-stand::after{content:'';display:block;width:170px;height:6px;background:#1a1c20;border-radius:3px;margin:6px auto 0;}
-.mon-line{margin-bottom:2px;}
-.mon-ok{color:var(--teal);} .mon-warn{color:var(--copper);} .mon-fail{color:var(--danger);}
+
+.bios-splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;animation:biosIn .4s ease;}
+.bios-splash.fade-out{animation:biosOut .3s ease forwards;}
+@keyframes biosIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+@keyframes biosOut{to{opacity:0;transform:scale(1.05);}}
+.bios-logo{font-size:32px;filter:drop-shadow(0 0 12px var(--teal-glow));}
+.bios-brand{font-size:12.5px;letter-spacing:.14em;color:var(--text-hi);}
+.bios-ver{font-size:10px;color:var(--text-low);letter-spacing:.05em;}
+
+.post-header{font-size:12.5px;letter-spacing:.1em;color:var(--text-hi);margin-bottom:12px;}
+.post-line{display:flex;align-items:baseline;gap:6px;margin-bottom:7px;opacity:0;animation:lineIn .3s forwards;}
+@keyframes lineIn{from{opacity:0;transform:translateX(-4px);}to{opacity:1;transform:translateX(0);}}
+.post-line .plabel{white-space:nowrap;color:var(--text-mid);}
+.post-line .pdots{flex:1;border-bottom:2px dotted #2a2f37;height:0;margin-bottom:4px;}
+.post-line .pstatus{white-space:nowrap;font-weight:700;}
+.post-line .pstatus.ok{color:var(--teal);}
+.post-line .pstatus.fail{color:var(--danger);}
+.post-line .pstatus.warn{color:var(--copper);}
+
 .mon-fail-block{margin-top:10px;padding:10px 12px;border:1px dashed var(--danger);border-radius:6px;background:rgba(239,106,90,.06);}
-.mon-standby{display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;letter-spacing:.15em;color:#2c2f33;}
 .dash-title{color:var(--text-hi);font-size:12px;margin-bottom:10px;letter-spacing:.08em;}
-.dash-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:11px;}
-.dash-row .lbl{width:80px;color:var(--text-mid);flex-shrink:0;}
+.dash-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:10.5px;}
+.dash-row .lbl{width:120px;color:var(--text-mid);flex-shrink:0;}
 .bar{flex:1;height:8px;background:#111;border-radius:4px;overflow:hidden;border:1px solid #1e2024;}
 .bar-fill{height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal));transition:width .8s ease;}
-.dash-row .val{width:70px;text-align:right;color:var(--text-hi);flex-shrink:0;}
+.dash-row .val{width:64px;text-align:right;color:var(--text-hi);flex-shrink:0;}
 .mon-card h4{margin:0 0 6px;color:var(--text-hi);font-size:13px;}
 .mon-card p{margin:0;color:var(--text-mid);font-size:11px;line-height:1.65;}
 
@@ -118,7 +182,7 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .ghost-label{position:absolute;font-family:'Space Mono',monospace;font-size:9px;color:#4b515b;letter-spacing:.07em;text-transform:uppercase;pointer-events:none;}
 
 .part-slot{position:absolute;cursor:grab;transform-origin:center center;
-  transition:transform .62s cubic-bezier(.32,1.4,.44,1), filter .3s;
+  transition:transform .62s cubic-bezier(.32,1.4,.44,1), filter .3s, opacity .3s;
   transform:translate(0,0) scale(1) rotate(0deg);}
 .part-slot:active{cursor:grabbing;}
 .part-slot.pulled{z-index:120;filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px var(--teal-glow));}
@@ -262,7 +326,7 @@ h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacin
 .fixed-chip{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-mid);background:transparent;border:1.5px dashed var(--stroke);border-radius:20px;padding:8px 13px;cursor:help;transition:.2s;}
 .fixed-chip:hover{color:var(--copper);border-color:var(--copper-dim);}
 
-/* tutorial panel (replaces tray content while active) */
+/* tutorial / assembly panel (replaces tray content while active) */
 .tut-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .tut-head h3{margin:0;font-size:13px;color:var(--violet);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.08em;}
 .tut-score{font-family:'Space Mono',monospace;font-size:12px;color:var(--text-hi);background:var(--panel-3);padding:5px 11px;border-radius:20px;border:1px solid var(--stroke);}
@@ -300,27 +364,32 @@ footer{margin-top:34px;color:var(--text-faint);font-size:12px;text-align:center;
 </head>
 <body>
 <div class="wrap">
+  <div class="tour-toast" id="tourToast"></div>
   <header>
     <p class="eyebrow">Simulator Perakitan · Hardware Explorer</p>
     <h1>Bongkar Pasang PC</h1>
-    <p class="sub">Tarik komponen langsung dari casing, coba Mode Tutorial untuk merakit dari nol sambil dapat skor, lalu tekan Power On untuk melihat PC-mu benar-benar menyala (atau gagal boot kalau ada yang kurang).</p>
+    <p class="sub">Tarik komponen langsung dari casing, coba Start Learning untuk tur cepat, Mode Tutorial untuk merakit berskor, atau PC Assembly Simulator untuk drag-and-drop komponen ke posisi yang benar. Tekan Power On untuk melihat PC-mu menyala.</p>
   </header>
 
   <div class="toolbar">
     <button class="btn primary" id="explodeAll">⛶ Bongkar Semua</button>
     <button class="btn" id="assembleAll">⤓ Pasang Semua</button>
+    <button class="btn guided-toggle-btn" id="startLearningBtn">▶ Start Learning</button>
     <button class="btn tutorial-toggle-btn" id="tutorialBtn">🎓 Mode Tutorial</button>
+    <button class="btn assembly-toggle-btn" id="assemblyBtn">🔧 PC Assembly Simulator</button>
   </div>
   <div class="legend">
     <span><i class="i-removable"></i> Bisa dilepas — klik untuk membongkar</span>
     <span><i class="i-fixed"></i> Menyatu di board — klik untuk info</span>
   </div>
 
+  <div class="tour-bar" id="tourBar"></div>
+
   <div class="console-section">
     <div class="monitor-wrap">
       <div class="monitor-frame">
         <div class="monitor-glass off" id="monitorGlass">
-          <div id="monitorContent"><div class="mon-standby">NO SIGNAL — TEKAN POWER ON</div></div>
+          <div id="monitorContent"></div>
         </div>
       </div>
       <div class="monitor-stand"></div>
@@ -621,6 +690,7 @@ function renderFreeTray(){
     const chip = document.getElementById('chip-'+f.key);
     if(chip) chip.addEventListener('click', function(){ ping(f.key); });
   });
+  if(guidedActive) updateTourTarget();
 }
 
 /* ============================================================
@@ -655,11 +725,13 @@ const PARTS_BY_KEY = {}; PARTS.forEach(function(p){ PARTS_BY_KEY[p.key]=p; });
 const FIXED_BY_KEY = {}; FIXED.forEach(function(f){ FIXED_BY_KEY[f.key]=f; });
 
 function toggle(key){
+  if(assemblyActive) return;
   if(tutorialActive){ handleTutorialClick(key); return; }
   state[key] = !state[key];
   applyState(key);
   showInfo(PARTS_BY_KEY[key], false);
   if(powerState==='on') showMonitorCard(PARTS_BY_KEY[key].name, PARTS_BY_KEY[key].fungsi);
+  checkGuidedProgress(key);
 }
 
 function ping(key){
@@ -681,11 +753,11 @@ FIXED.forEach(function(f){
 });
 
 document.getElementById('explodeAll').addEventListener('click', function(){
-  if(tutorialActive) return;
+  if(tutorialActive || assemblyActive) return;
   PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=true; applyState(p.key); }, i*26); });
 });
 document.getElementById('assembleAll').addEventListener('click', function(){
-  if(tutorialActive) return;
+  if(tutorialActive || assemblyActive) return;
   PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=false; applyState(p.key); }, i*26); });
 });
 
@@ -721,19 +793,17 @@ let monTimers = [];
 let cardTimer = null;
 
 function clearMonTimers(){ monTimers.forEach(function(t){ clearTimeout(t); }); monTimers=[]; }
-function setMonitorClass(cls){ document.getElementById('monitorGlass').className = 'monitor-glass '+cls; }
 
 function getChecks(){
   const ramCount = (installed('ram1')?1:0)+(installed('ram2')?1:0);
   const storageCount = ['hdd','ssd','m2_ssd'].filter(installed).length;
   return [
     {label:'PSU', ok:installed('psu'), critical:true, msg:'Tidak ada daya — PSU belum terpasang'},
-    {label:'Kabel 24-Pin ATX', ok:installed('cable_24pin'), critical:true, msg:'Motherboard tidak menerima daya — kabel 24-pin belum terhubung'},
+    {label:'Power Cable', ok:installed('cable_24pin'), critical:true, msg:'Motherboard tidak menerima daya — kabel 24-pin belum terhubung'},
     {label:'Motherboard', ok:installed('motherboard'), critical:true, msg:'Tidak ada motherboard terpasang di case'},
-    {label:'Processor (CPU)', ok:installed('cpu'), critical:true, msg:'CPU tidak terdeteksi'},
-    {label:'CPU Cooler', ok:installed('cpu_cooler'), critical:false, msg:'Tidak ada pendingin — risiko overheat tinggi'},
-    {label:'Memory (RAM)', ok:ramCount>0, critical:true, msg:'Memory not found — tidak ada RAM terpasang',
-      extra: ramCount>0 ? (ramCount+'/2 slot aktif'+(ramCount===1?' — dual-channel belum optimal':' — dual-channel aktif')) : null},
+    {label:'CPU', ok:installed('cpu'), critical:true, msg:'CPU tidak terdeteksi'},
+    {label:'Cooling', ok:installed('cpu_cooler'), critical:false, msg:'Tidak ada pendingin — risiko overheat tinggi'},
+    {label:'RAM', ok:ramCount>0, critical:true, msg:'Memory not found — tidak ada RAM terpasang'},
     {label:'Storage', ok:storageCount>0, critical:true, msg:'Storage not found — tidak ada media untuk boot OS'},
     {label:'GPU', ok:installed('gpu'), critical:false, msg:'Tidak terdeteksi — pakai grafis onboard bila tersedia'},
   ];
@@ -743,8 +813,8 @@ function powerOff(){
   powerState='off';
   clearInterval(dashInterval); dashInterval=null;
   clearMonTimers();
-  setMonitorClass('off');
-  document.getElementById('monitorContent').innerHTML = '<div class="mon-standby">NO SIGNAL — TEKAN POWER ON</div>';
+  document.getElementById('monitorGlass').className='monitor-glass off';
+  document.getElementById('monitorContent').innerHTML='';
   const btn = document.getElementById('powerBtn');
   btn.classList.remove('is-on');
   btn.innerHTML = '<span class="power-dot"></span> POWER ON';
@@ -753,44 +823,61 @@ function powerOff(){
 function runPOST(){
   powerState='booting';
   clearMonTimers();
-  setMonitorClass('on');
+  const glass = document.getElementById('monitorGlass');
+  glass.className = 'monitor-glass on waking';
   const content = document.getElementById('monitorContent');
-  content.innerHTML = '<div class="mon-line mon-ok">POST CHECK</div><div class="mon-line">&nbsp;</div>';
+  content.innerHTML = '';
+  monTimers.push(setTimeout(function(){
+    glass.classList.remove('waking');
+    content.innerHTML = '<div class="bios-splash" id="biosSplash">'+
+        '<div class="bios-logo">&#9889;</div>'+
+        '<div class="bios-brand">HARDWARE EXPLORER BIOS</div>'+
+        '<div class="bios-ver">v2.4.1 &middot; PC Builder Simulator</div>'+
+      '</div>';
+    monTimers.push(setTimeout(function(){
+      const splash = document.getElementById('biosSplash');
+      if(splash) splash.classList.add('fade-out');
+      monTimers.push(setTimeout(startPostChecks, 320));
+    }, 1150));
+  }, 650));
+}
+
+function startPostChecks(){
+  const content = document.getElementById('monitorContent');
+  content.innerHTML = '<div class="post-header">POWER ON SELF TEST</div>';
   const checks = getChecks();
   let failed = null;
   checks.forEach(function(c,i){
     monTimers.push(setTimeout(function(){
-      let cls, prefix;
-      if(c.ok){ cls='mon-ok'; prefix='&#10003;'; }
-      else if(c.critical){ cls='mon-fail'; prefix='&#10007;'; }
-      else { cls='mon-warn'; prefix='&#9888;'; }
+      const statusWord = c.ok ? 'OK' : (c.critical ? 'FAIL' : 'WARN');
+      const statusCls = c.ok ? 'ok' : (c.critical ? 'fail' : 'warn');
       const line = document.createElement('div');
-      line.className = 'mon-line '+cls;
-      line.innerHTML = prefix+' '+c.label+(c.ok && c.extra ? ' &mdash; '+c.extra : (!c.ok ? ' &mdash; belum terpasang' : ''));
+      line.className='post-line';
+      line.innerHTML = '<span class="plabel">Checking '+c.label+'</span><span class="pdots"></span><span class="pstatus '+statusCls+'">'+statusWord+'</span>';
       content.appendChild(line);
-      if(!c.ok && c.critical && !failed){ failed = c; }
+      if(!c.ok && c.critical && !failed){ failed=c; }
       if(i===checks.length-1){
         monTimers.push(setTimeout(function(){
           if(failed){
-            const block = document.createElement('div');
+            const block=document.createElement('div');
             block.className='mon-fail-block';
-            block.innerHTML = '&#9888; BOOT FAILED<br><br>Penyebab:<br>'+failed.msg+'<br><br>Solusi:<br>Pasang kembali komponen yang hilang, lalu tekan tombol lagi.';
+            block.innerHTML='&#9888; BOOT FAILED<br><br>Penyebab:<br>'+failed.msg+'<br><br>Solusi:<br>Pasang kembali komponen yang hilang, lalu tekan tombol lagi.';
             content.appendChild(block);
             powerState='failed';
-            setMonitorClass('failed');
+            document.getElementById('monitorGlass').className='monitor-glass failed';
             const btn=document.getElementById('powerBtn');
             btn.classList.remove('is-on');
-            btn.innerHTML = '<span class="power-dot"></span> COBA LAGI';
+            btn.innerHTML='<span class="power-dot"></span> COBA LAGI';
           } else {
-            const line2=document.createElement('div');
-            line2.className='mon-line mon-ok';
-            line2.textContent='Booting sistem operasi...';
-            content.appendChild(line2);
-            monTimers.push(setTimeout(startDashboard, 700));
+            const l2=document.createElement('div');
+            l2.className='post-line'; l2.style.marginTop='10px';
+            l2.innerHTML='<span class="plabel" style="color:var(--teal)">Booting sistem operasi...</span>';
+            content.appendChild(l2);
+            monTimers.push(setTimeout(startDashboard,700));
           }
-        }, 320));
+        },320));
       }
-    }, 340*i + 200));
+    }, 260*i + 150));
   });
 }
 
@@ -814,19 +901,19 @@ function startDashboard(){
 
 function renderDashboard(){
   if(powerState!=='on') return;
-  const cpuPct = Math.round(30+Math.random()*55);
+  const cpuTemp = Math.round(42+Math.random()*30);
   const ramPct = Math.round(35+Math.random()*40);
   const gpuOn = installed('gpu');
-  const gpuTemp = gpuOn ? Math.round(50+Math.random()*30) : 0;
+  const gpuPct = gpuOn ? Math.round(15+Math.random()*70) : 0;
   const totalGB = storageTotalGB();
   const usedGB = totalGB ? Math.round(totalGB*(0.3+Math.random()*0.35)) : 0;
   document.getElementById('monitorContent').innerHTML =
     '<div class="dash-title">SYSTEM MONITOR</div>'+
-    '<div class="dash-row"><span class="lbl">CPU Usage</span><div class="bar"><div class="bar-fill" style="width:'+cpuPct+'%"></div></div><span class="val">'+cpuPct+'%</span></div>'+
-    '<div class="dash-row"><span class="lbl">RAM</span><div class="bar"><div class="bar-fill" style="width:'+ramPct+'%"></div></div><span class="val">'+ramPct+'%</span></div>'+
-    '<div class="dash-row"><span class="lbl">GPU Temp</span><div class="bar"><div class="bar-fill" style="width:'+(gpuOn?(gpuTemp/95*100):0)+'%"></div></div><span class="val">'+(gpuOn?gpuTemp+'&deg;C':'N/A')+'</span></div>'+
-    '<div class="dash-row"><span class="lbl">Storage</span><div class="bar"><div class="bar-fill" style="width:'+(totalGB?(usedGB/totalGB*100):0)+'%"></div></div><span class="val">'+(totalGB?usedGB+'/'+totalGB+'GB':'&mdash;')+'</span></div>'+
-    '<div class="dash-row"><span class="lbl">Network</span><span style="color:var(--teal);margin-left:4px;">&#9679; Connected</span></div>';
+    '<div class="dash-row"><span class="lbl">CPU Temperature</span><div class="bar"><div class="bar-fill" style="width:'+(cpuTemp/90*100)+'%"></div></div><span class="val">'+cpuTemp+'&deg;C</span></div>'+
+    '<div class="dash-row"><span class="lbl">RAM Usage</span><div class="bar"><div class="bar-fill" style="width:'+ramPct+'%"></div></div><span class="val">'+ramPct+'%</span></div>'+
+    '<div class="dash-row"><span class="lbl">GPU Usage</span><div class="bar"><div class="bar-fill" style="width:'+(gpuOn?gpuPct:0)+'%"></div></div><span class="val">'+(gpuOn?gpuPct+'%':'N/A')+'</span></div>'+
+    '<div class="dash-row"><span class="lbl">Storage Status</span><div class="bar"><div class="bar-fill" style="width:'+(totalGB?(usedGB/totalGB*100):0)+'%"></div></div><span class="val">'+(totalGB?usedGB+'/'+totalGB+'GB':'&mdash;')+'</span></div>'+
+    '<div class="dash-row"><span class="lbl">Network Status</span><span style="color:var(--teal);margin-left:4px;">&#9679; Connected</span></div>';
 }
 
 function showMonitorCard(name, fungsi){
@@ -841,7 +928,7 @@ document.getElementById('powerBtn').addEventListener('click', function(){
 });
 
 /* ============================================================
-   TUTORIAL MODE
+   TUTORIAL MODE (build-from-scratch, scored)
    ============================================================ */
 const TUTORIAL_STEPS = [
   {label:'Pasang CPU ke Socket', type:'part', key:'cpu'},
@@ -864,6 +951,8 @@ function isBeforeCurrentStep(key){
 }
 
 function startTutorial(){
+  if(guidedActive) exitGuided();
+  if(assemblyActive) exitAssembly();
   tutorialActive=true; tutorialStep=0; tutorialScore=0;
   tutFeedback='Mulai dengan memasang CPU ke socket motherboard.'; tutFeedbackType='ok';
   PARTS.forEach(function(p){ state[p.key]=true; applyState(p.key); });
@@ -943,6 +1032,237 @@ function renderTutorialPanel(){
 
 document.getElementById('tutorialBtn').addEventListener('click', function(){
   if(tutorialActive) exitTutorial(); else startTutorial();
+});
+
+/* ============================================================
+   GUIDED TOUR — "Start Learning" (find & click each component)
+   ============================================================ */
+const GUIDED_STEPS = [
+  {label:'Cari Processor (CPU)', keys:['cpu']},
+  {label:'Cari RAM', keys:['ram1','ram2']},
+  {label:'Cari Motherboard', keys:['motherboard']},
+  {label:'Cari GPU (Kartu Grafis)', keys:['gpu']},
+  {label:'Cari SSD', keys:['ssd','m2_ssd']},
+  {label:'Cari Power Supply (PSU)', keys:['psu']},
+];
+let guidedActive=false, guidedStep=0;
+
+function clearTourTarget(){
+  document.querySelectorAll('.tour-target').forEach(function(el){ el.classList.remove('tour-target'); });
+}
+function updateTourTarget(){
+  clearTourTarget();
+  if(!guidedActive || guidedStep>=GUIDED_STEPS.length) return;
+  const step = GUIDED_STEPS[guidedStep];
+  step.keys.forEach(function(k){
+    const el=document.getElementById(k); if(el) el.classList.add('tour-target');
+    const card=document.getElementById('card-'+k); if(card) card.classList.add('tour-target');
+  });
+}
+
+function startGuided(){
+  if(tutorialActive) exitTutorial();
+  if(assemblyActive) exitAssembly();
+  guidedActive=true; guidedStep=0;
+  document.getElementById('startLearningBtn').classList.add('active');
+  renderGuidedBar();
+  updateTourTarget();
+}
+function exitGuided(){
+  guidedActive=false;
+  clearTourTarget();
+  document.getElementById('startLearningBtn').classList.remove('active');
+  const bar = document.getElementById('tourBar');
+  bar.classList.remove('show');
+}
+window.exitGuided = exitGuided;
+window.startGuided = startGuided;
+
+function renderGuidedBar(){
+  const bar = document.getElementById('tourBar');
+  bar.classList.add('show');
+  if(guidedStep>=GUIDED_STEPS.length){
+    bar.innerHTML = '<div class="tour-top"><div class="tour-instruction tour-done-msg">Tutorial selesai! Kamu sudah menemukan semua komponen inti.</div>'+
+      '<button class="btn" onclick="startGuided()">Ulangi</button></div>'+
+      '<div class="tour-track"><div class="tour-fill" style="width:100%"></div></div>';
+    return;
+  }
+  const step = GUIDED_STEPS[guidedStep];
+  const pct = Math.round((guidedStep/GUIDED_STEPS.length)*100);
+  let dots='';
+  GUIDED_STEPS.forEach(function(s,i){
+    dots += '<div class="tour-dot '+(i<guidedStep?'done':(i===guidedStep?'current':''))+'"></div>';
+  });
+  bar.innerHTML = '<div class="tour-top"><div class="tour-instruction">Langkah '+(guidedStep+1)+' dari '+GUIDED_STEPS.length+': <span class="accent">'+step.label+'</span></div>'+
+    '<div class="tour-count"><a href="#" onclick="exitGuided();return false;">selesai / keluar</a></div></div>'+
+    '<div class="tour-track"><div class="tour-fill" style="width:'+pct+'%"></div></div>'+
+    '<div class="tour-dots">'+dots+'</div>';
+}
+
+function showTourToast(msg, type){
+  const t = document.getElementById('tourToast');
+  t.textContent = msg;
+  t.className = 'tour-toast show' + (type==='error' ? ' error' : '');
+  clearTimeout(window._tourToastTimer);
+  window._tourToastTimer = setTimeout(function(){ t.classList.remove('show'); }, type==='error' ? 2200 : 1400);
+}
+
+function checkGuidedProgress(key){
+  if(!guidedActive) return;
+  const step = GUIDED_STEPS[guidedStep];
+  if(!step) return;
+  if(step.keys.indexOf(key)!==-1){
+    showTourToast('Bagus! 🎉');
+    guidedStep++;
+    updateTourTarget();
+    renderGuidedBar();
+  }
+}
+
+document.getElementById('startLearningBtn').addEventListener('click', function(){
+  if(guidedActive) exitGuided(); else startGuided();
+});
+
+/* ============================================================
+   PC ASSEMBLY SIMULATOR — real drag & drop
+   ============================================================ */
+const ASSEMBLY_PARTS_KEYS = ['cpu','cpu_cooler','ram1','motherboard','ssd','gpu','psu'];
+let assemblyActive = false;
+let assemblyPlaced = new Set();
+let dragKey = null;
+let dragGhostEl = null;
+
+function updateAssemblyHighlights(on){
+  ASSEMBLY_PARTS_KEYS.forEach(function(key){
+    const g = document.getElementById('ghost-'+key);
+    if(g) g.classList.toggle('assembly-highlight', on && !assemblyPlaced.has(key));
+  });
+}
+
+function startAssembly(){
+  if(tutorialActive) exitTutorial();
+  if(guidedActive) exitGuided();
+  assemblyActive = true;
+  assemblyPlaced = new Set();
+  ASSEMBLY_PARTS_KEYS.forEach(function(key){
+    state[key] = true;
+    const el = document.getElementById(key);
+    if(el){ el.classList.remove('pulled'); el.classList.add('assembly-pending'); }
+    const ghost = document.getElementById('ghost-'+key);
+    if(ghost) ghost.classList.remove('active');
+  });
+  renderSpec();
+  document.getElementById('assemblyBtn').classList.add('active');
+  updateAssemblyHighlights(true);
+  renderAssemblyTray();
+}
+
+function exitAssembly(){
+  assemblyActive = false;
+  document.getElementById('assemblyBtn').classList.remove('active');
+  updateAssemblyHighlights(false);
+  ASSEMBLY_PARTS_KEYS.forEach(function(key){
+    if(assemblyPlaced.has(key)) return;
+    const el = document.getElementById(key);
+    if(el) el.classList.remove('assembly-pending');
+    state[key] = false;
+    applyState(key);
+  });
+  renderFreeTray();
+}
+window.exitAssembly = exitAssembly;
+
+function renderAssemblyTray(){
+  const remaining = ASSEMBLY_PARTS_KEYS.filter(function(k){ return !assemblyPlaced.has(k); });
+  let html = '<div class="tut-head"><h3>PC Assembly Simulator</h3><span class="tut-score">'+assemblyPlaced.size+'/'+ASSEMBLY_PARTS_KEYS.length+'</span></div>';
+  html += '<p class="assembly-hint">Seret (drag) tiap komponen dari sini, lalu lepaskan tepat di atas slot berwarna oranye yang berkedip di dalam casing.</p>';
+  html += '<div class="tray-grid">';
+  remaining.forEach(function(key){
+    const p = PARTS_BY_KEY[key];
+    html += '<div class="tray-card assembly-card" id="assembly-card-'+key+'" data-key="'+key+'">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
+        '<span class="lbl">'+p.name+'</span></div>';
+  });
+  html += '</div>';
+  if(remaining.length===0){
+    html += '<div class="tut-feedback ok" style="margin-top:16px;">Semua komponen berhasil dipasang! PC siap dinyalakan.</div>'+
+      '<button class="btn primary assembly-complete-btn" onclick="runPOST()">&#9211; Power On</button>';
+  }
+  html += '<button class="tut-exit" onclick="exitAssembly()">&larr; Keluar dari Assembly Simulator</button>';
+  tray.innerHTML = html;
+  remaining.forEach(function(key){
+    const card = document.getElementById('assembly-card-'+key);
+    if(card) card.addEventListener('pointerdown', function(e){ onAssemblyDragStart(e, key); });
+  });
+}
+
+function positionGhostEl(x,y){
+  if(dragGhostEl){ dragGhostEl.style.left = x+'px'; dragGhostEl.style.top = y+'px'; }
+}
+
+function onAssemblyDragStart(e, key){
+  if(!assemblyActive) return;
+  e.preventDefault();
+  dragKey = key;
+  const p = PARTS_BY_KEY[key];
+  dragGhostEl = document.createElement('div');
+  dragGhostEl.className = 'assembly-ghost-drag';
+  dragGhostEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg><span>'+p.name+'</span>';
+  document.body.appendChild(dragGhostEl);
+  positionGhostEl(e.clientX, e.clientY);
+  const card = document.getElementById('assembly-card-'+key);
+  if(card) card.style.opacity = '.35';
+  window.addEventListener('pointermove', onAssemblyDragMove);
+  window.addEventListener('pointerup', onAssemblyDragEnd);
+}
+
+function onAssemblyDragMove(e){
+  if(!dragKey) return;
+  positionGhostEl(e.clientX, e.clientY);
+}
+
+function onAssemblyDragEnd(e){
+  if(!dragKey) return;
+  const key = dragKey;
+  const dropX = e.clientX, dropY = e.clientY;
+  if(dragGhostEl){ dragGhostEl.remove(); dragGhostEl = null; }
+  const card = document.getElementById('assembly-card-'+key);
+  if(card) card.style.opacity = '';
+  window.removeEventListener('pointermove', onAssemblyDragMove);
+  window.removeEventListener('pointerup', onAssemblyDragEnd);
+
+  let hit = false;
+  const targetGhost = document.getElementById('ghost-'+key);
+  if(targetGhost){
+    const rect = targetGhost.getBoundingClientRect();
+    const pad = 26;
+    hit = dropX >= rect.left-pad && dropX <= rect.right+pad && dropY >= rect.top-pad && dropY <= rect.bottom+pad;
+  }
+  dragKey = null;
+  if(hit){
+    placeAssemblyPart(key);
+  } else {
+    showTourToast('Komponen tidak dapat dipasang di posisi tersebut.', 'error');
+  }
+}
+
+function placeAssemblyPart(key){
+  const el = document.getElementById(key);
+  if(el){
+    el.classList.remove('assembly-pending');
+    el.classList.add('snap-in');
+    setTimeout(function(){ el.classList.remove('snap-in'); }, 520);
+  }
+  state[key] = false;
+  applyState(key);
+  assemblyPlaced.add(key);
+  showTourToast('Terpasang! ✓');
+  updateAssemblyHighlights(true);
+  renderAssemblyTray();
+}
+
+document.getElementById('assemblyBtn').addEventListener('click', function(){
+  if(assemblyActive) exitAssembly(); else startAssembly();
 });
 
 /* ============================================================
