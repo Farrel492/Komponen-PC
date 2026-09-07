@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PC Master Builder — Simulator & Ensiklopedia Perakitan Komputer</title>
+<title>PC Master Builder Studio — Simulator, Ensiklopedia & Diagnostic Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -39,6 +39,11 @@
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
   --text-faint: #334155;
+
+  /* ARGB Lighting Dynamic Tokens */
+  --argb-primary: #00f2fe;
+  --argb-secondary: #8b5cf6;
+  --argb-glow: rgba(0, 242, 254, 0.5);
   
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -70,7 +75,7 @@ body {
 }
 
 .app-container {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
 }
 
@@ -129,7 +134,7 @@ p.app-subtitle {
   color: var(--text-secondary);
   font-size: 14.5px;
   line-height: 1.6;
-  max-width: 720px;
+  max-width: 760px;
   margin-top: 4px;
 }
 
@@ -183,7 +188,7 @@ p.app-subtitle {
 .toolbar-left, .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .btn-action {
@@ -191,7 +196,7 @@ p.app-subtitle {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.03em;
-  padding: 9px 16px;
+  padding: 9px 14px;
   border-radius: var(--radius-md);
   border: 1px solid var(--panel-border);
   background: var(--panel);
@@ -199,7 +204,7 @@ p.app-subtitle {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 .btn-action:hover {
@@ -223,34 +228,27 @@ p.app-subtitle {
   color: #d8b4fe;
   box-shadow: 0 0 14px var(--violet-glow);
 }
-.toggle-switch-btn {
+.select-action {
   font-family: var(--font-mono);
-  font-size: 11.5px;
-  padding: 7px 12px;
-  background: var(--panel-elevated);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--panel-border);
-  border-radius: 20px;
-  color: var(--text-muted);
+  background: var(--panel-elevated);
+  color: var(--cyan);
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: 0.2s;
-}
-.toggle-switch-btn.active {
-  color: var(--emerald);
-  border-color: var(--emerald);
-  background: rgba(16, 185, 129, 0.1);
+  outline: none;
 }
 
 /* ==================== CONSOLE / MONITOR & TELEMETRY SECTION ==================== */
 .system-console-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 1.4fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(340px, 1.4fr) minmax(320px, 1fr);
   gap: 20px;
   margin-bottom: 24px;
 }
-@media (max-width: 960px) {
+@media (max-width: 980px) {
   .system-console-grid { grid-template-columns: 1fr; }
 }
 
@@ -277,10 +275,10 @@ p.app-subtitle {
 .monitor-screen {
   width: 100%;
   height: 100%;
-  padding: 16px;
+  padding: 14px;
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.55;
   overflow-y: auto;
   color: var(--cyan);
   transition: background 0.3s;
@@ -293,9 +291,10 @@ p.app-subtitle {
   background: #020305;
 }
 .monitor-screen.bios-mode {
-  background: #000084;
+  background: #000066;
   color: #ffffff;
   font-family: var(--font-mono);
+  padding: 10px;
 }
 .monitor-screen.desktop-mode {
   background: radial-gradient(circle at 80% 20%, #1e1b4b, #09090b 80%);
@@ -331,14 +330,14 @@ p.app-subtitle {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
 }
 .power-switch-btn {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 16px 20px;
+  letter-spacing: 0.06em;
+  padding: 14px 18px;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--panel-border);
   background: var(--panel-elevated);
@@ -347,7 +346,7 @@ p.app-subtitle {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   transition: all 0.3s ease;
 }
 .power-switch-btn:hover {
@@ -374,27 +373,30 @@ p.app-subtitle {
 
 .quick-specs-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  font-size: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  font-size: 11.5px;
+}
+@media (max-width: 640px) {
+  .quick-specs-grid { grid-template-columns: 1fr 1fr; }
 }
 .spec-box {
   background: var(--panel-elevated);
   border: 1px solid var(--panel-border);
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: var(--radius-md);
 }
 .spec-box .label {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 9.5px;
   margin-bottom: 2px;
   text-transform: uppercase;
 }
 .spec-box .value {
   color: var(--text-primary);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 /* ==================== WORKSPACE (CASE CANVAS & TRAY) ==================== */
@@ -415,7 +417,7 @@ p.app-subtitle {
   position: relative;
   padding: 30px 10px 20px;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
-  overflow: visible;
+  overflow: hidden;
 }
 .canvas-scaler {
   position: relative;
@@ -423,10 +425,10 @@ p.app-subtitle {
   height: 940px;
   margin: 0 auto;
   transform-origin: top center;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* ==================== DETAILED PC HARDWARE VISUAL LAYERS ==================== */
-/* Case Frame & Shroud */
 .case-chassis {
   position: absolute;
   inset: 20px;
@@ -593,8 +595,9 @@ p.app-subtitle {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 9px;
-  color: var(--cyan);
+  color: var(--argb-primary);
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  transition: color 0.4s;
 }
 .io-shield-block {
   position: absolute;
@@ -725,9 +728,10 @@ p.app-subtitle {
   position: absolute;
   inset: 6px;
   border-radius: 50%;
-  border: 2px solid var(--cyan);
-  box-shadow: 0 0 12px var(--cyan-glow);
-  opacity: 0.6;
+  border: 2px solid var(--argb-primary);
+  box-shadow: 0 0 12px var(--argb-glow);
+  opacity: 0.8;
+  transition: all 0.4s;
 }
 
 /* RAM Modules */
@@ -747,8 +751,9 @@ p.app-subtitle {
   right: 0;
   height: 16%;
   border-radius: 3px 3px 0 0;
-  background: linear-gradient(90deg, #00f2fe, #8b5cf6, #ec4899);
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+  background: linear-gradient(90deg, var(--argb-primary), var(--argb-secondary));
+  box-shadow: 0 0 10px var(--argb-glow);
+  transition: all 0.4s;
 }
 .ram-gold-pins {
   position: absolute;
@@ -815,9 +820,11 @@ p.app-subtitle {
   top: 0;
   left: 5%;
   right: 5%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+  height: 3.5px;
+  background: linear-gradient(90deg, transparent, var(--argb-primary), var(--argb-secondary), transparent);
   border-radius: 2px;
+  box-shadow: 0 0 8px var(--argb-glow);
+  transition: all 0.4s;
 }
 .gpu-fan-unit {
   width: 30%;
@@ -899,9 +906,10 @@ p.app-subtitle {
   position: absolute;
   inset: 5px;
   border-radius: 50%;
-  border: 1.5px solid var(--cyan);
-  box-shadow: 0 0 10px var(--cyan-glow);
-  opacity: 0.5;
+  border: 1.5px solid var(--argb-primary);
+  box-shadow: 0 0 10px var(--argb-glow);
+  opacity: 0.7;
+  transition: all 0.4s;
 }
 
 /* Storage Drives (2.5" SSD & 3.5" HDD) */
@@ -1010,18 +1018,13 @@ p.app-subtitle {
 }
 .cable-path-braided {
   fill: none;
-  stroke: var(--cyan);
+  stroke: var(--argb-primary);
   stroke-width: 2.2;
   stroke-dasharray: 2 6;
   opacity: 0.7;
 }
-.cable-group:hover .cable-path-main {
-  stroke: #1f2736;
-}
-.cable-group:hover .cable-path-braided {
-  opacity: 1;
-  stroke: #fff;
-}
+.cable-group:hover .cable-path-main { stroke: #1f2736; }
+.cable-group:hover .cable-path-braided { opacity: 1; stroke: #fff; }
 
 /* ==================== TRAY / COMPONENT SELECTOR PANEL ==================== */
 .side-panel-container {
@@ -1201,7 +1204,7 @@ p.app-subtitle {
   line-height: 1.4;
 }
 
-/* ==================== INFO & HARDWARE ENCYCLOPEDIA MODAL/VIEW ==================== */
+/* ==================== INFO & HARDWARE ENCYCLOPEDIA ==================== */
 .component-detail-box {
   margin-top: 24px;
   background: var(--panel);
@@ -1251,14 +1254,6 @@ p.app-subtitle {
 }
 
 /* ==================== TROUBLESHOOTING & QUIZ LAB ==================== */
-.quiz-lab-container {
-  display: none;
-  background: var(--panel);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  margin-top: 20px;
-}
 .quiz-scenario-card {
   background: var(--panel-elevated);
   border: 1px solid var(--panel-border);
@@ -1324,7 +1319,25 @@ p.app-subtitle {
   color: #fecdd3;
 }
 
-/* ==================== FOOTER ==================== */
+/* BIOS Screen Styling */
+.bios-menu-bar {
+  display: flex;
+  gap: 12px;
+  background: #0000aa;
+  padding: 4px 8px;
+  border-bottom: 2px solid #ffffff;
+  margin-bottom: 8px;
+}
+.bios-tab-item {
+  cursor: pointer;
+  padding: 2px 8px;
+}
+.bios-tab-item.active {
+  background: #ffffff;
+  color: #000084;
+  font-weight: 700;
+}
+
 footer {
   margin-top: 40px;
   text-align: center;
@@ -1341,9 +1354,9 @@ footer {
   <header>
     <div class="header-top">
       <div>
-        <div class="brand-badge">Simulasi Interaktif & Ensiklopedia Hardware</div>
+        <div class="brand-badge">Simulasi Interaktif & Master Hardware Lab</div>
         <h1 class="app-title">PC Master Builder Studio</h1>
-        <p class="app-subtitle">Visualisasi mendalam cara merakit komputer, mengenali komponen, jalur kelistrikan, sirkulasi udara (airflow), diagnostik POST, serta pengujian BIOS & OS.</p>
+        <p class="app-subtitle">Visualisasi mendalam cara merakit komputer, mengenali komponen, jalur kelistrikan, sirkulasi udara (airflow), diagnostik POST, pengujian BIOS UEFI, serta kalkulator FPS & Bottleneck.</p>
       </div>
 
       <!-- MAIN MODE NAVIGATION TABS -->
@@ -1366,13 +1379,31 @@ footer {
     <!-- ACTION TOOLBAR -->
     <div class="action-toolbar">
       <div class="toolbar-left">
-        <button class="btn-action primary" id="btnExplodeAll">⛶ Bongkar Semua Komponen</button>
-        <button class="btn-action" id="btnAssembleAll">⤓ Pasang Semua Lengkap</button>
-        <button class="btn-action" id="btnToggleAirflow">💨 Simulasi Airflow: OFF</button>
-        <button class="btn-action" id="btnToggleGlass">🪟 Panel Tempered Glass: BUKA</button>
+        <button class="btn-action primary" id="btnExplodeAll">⛶ Bongkar Semua</button>
+        <button class="btn-action" id="btnAssembleAll">⤓ Pasang Lengkap</button>
+        
+        <!-- ARGB Selector -->
+        <select class="select-action" id="argbPresetSelect" title="Pilih Mode ARGB Lighting">
+          <option value="cyberpunk">🩵 ARGB: Cyberpunk Neon</option>
+          <option value="rainbow">🌈 ARGB: Rainbow Spectrum</option>
+          <option value="fire">🔥 ARGB: Fire Inferno</option>
+          <option value="emerald">💚 ARGB: Razer Emerald</option>
+          <option value="stealth">🖤 ARGB: Stealth Blackout</option>
+        </select>
+
+        <button class="btn-action" id="btnToggleAirflow">💨 Airflow: OFF</button>
+        <button class="btn-action" id="btnToggleGlass">🪟 Tempered Glass: BUKA</button>
       </div>
+
       <div class="toolbar-right">
-        <button class="toggle-switch-btn active" id="btnSoundToggle">🔊 Audio SFX: ON</button>
+        <!-- Zoom Camera Inspect Buttons -->
+        <button class="btn-action" id="btnZoomFull">🔍 100%</button>
+        <button class="btn-action" id="btnZoomCpu">🎯 CPU</button>
+        <button class="btn-action" id="btnZoomRam">🎯 RAM/M.2</button>
+        <button class="btn-action" id="btnZoomGpu">🎯 GPU</button>
+        <button class="btn-action active-toggle" id="btnOpenBios">💻 Enter BIOS</button>
+
+        <button class="btn-action" id="btnSoundToggle">🔊 SFX: ON</button>
         <button class="btn-action" id="btnResetAll">🔄 Reset Awal</button>
       </div>
     </div>
@@ -1407,21 +1438,29 @@ footer {
           <div class="value" id="specWattage">0 W</div>
         </div>
         <div class="spec-box">
-          <div class="label">Rekomendasi PSU</div>
-          <div class="value" id="specPSU">750 W (80+ Gold)</div>
+          <div class="label">Estimasi Harga</div>
+          <div class="value" id="specPrice" style="color:var(--emerald);">Rp 0</div>
         </div>
         <div class="spec-box">
           <div class="label">Status Memory</div>
           <div class="value" id="specRAM">Dual-Channel (32GB)</div>
         </div>
         <div class="spec-box">
-          <div class="label">Status Suhu CPU</div>
+          <div class="label">Estimasi FPS Cyberpunk</div>
+          <div class="value" id="specFPS" style="color:var(--cyan);">N/A</div>
+        </div>
+        <div class="spec-box">
+          <div class="label">Indeks Bottleneck</div>
+          <div class="value" id="specBottleneck">0.5% (Perfect)</div>
+        </div>
+        <div class="spec-box">
+          <div class="label">Suhu CPU</div>
           <div class="value" id="specTemp">38°C (Idle)</div>
         </div>
       </div>
 
-      <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);line-height:1.5;">
-        💡 <b>Tips Cepat:</b> Klik langsung pada komponen di dalam Casing atau di daftar samping untuk mencopot/memasangnya.
+      <div style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);line-height:1.4;">
+        💡 <b>Master Tip:</b> Klik tombol <b>Enter BIOS</b> di atas untuk menyalakan profile XMP 6000MHz & mengatur Fan Curve!
       </div>
     </div>
   </section>
@@ -1461,10 +1500,8 @@ footer {
       </div>
     </div>
 
-    <!-- Side Panel (Free Tray / Guided Stepper / Encyclopedia / Quiz) -->
-    <aside class="side-panel-container" id="sidePanel">
-      <!-- Dynamic Content Rendered by JavaScript -->
-    </aside>
+    <!-- Side Panel -->
+    <aside class="side-panel-container" id="sidePanel"></aside>
   </main>
 
   <!-- COMPONENT DETAIL ENCYCLOPEDIA BOX -->
@@ -1491,12 +1528,14 @@ footer {
 
 <script>
 /* ============================================================
-   1. SOUND FX ENGINE (WEB AUDIO API SYNTHESIZER)
+   1. SOUND FX & AMBIENT NOISE ENGINE (WEB AUDIO API)
    ============================================================ */
 class SoundEngine {
   constructor() {
     this.ctx = null;
     this.enabled = true;
+    this.fanNode = null;
+    this.fanGain = null;
   }
   init() {
     if (!this.ctx) {
@@ -1551,34 +1590,70 @@ class SoundEngine {
       }
     } catch(e) {}
   }
+  startFanHum() {
+    if (!this.enabled || this.fanNode) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const bufferSize = this.ctx.sampleRate * 2;
+      const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      this.fanNode = this.ctx.createBufferSource();
+      this.fanNode.buffer = noiseBuffer;
+      this.fanNode.loop = true;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 180;
+
+      this.fanGain = this.ctx.createGain();
+      this.fanGain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+
+      this.fanNode.connect(filter);
+      filter.connect(this.fanGain);
+      this.fanGain.connect(this.ctx.destination);
+      this.fanNode.start();
+    } catch(e) {}
+  }
+  stopFanHum() {
+    if (this.fanNode) {
+      try { this.fanNode.stop(); } catch(e) {}
+      this.fanNode = null;
+    }
+  }
 }
 const SFX = new SoundEngine();
 
 /* ============================================================
-   2. HARDWARE COMPONENT DATABASE & SPECS
+   2. HARDWARE COMPONENT DATABASE & PRICE SPECS
    ============================================================ */
 const HARDWARE_PARTS = [
   {
     key: 'motherboard',
-    name: 'Motherboard (ATX Pro Gaming)',
+    name: 'Motherboard (ATX Pro Gaming Z790)',
     type: 'board',
     cat: 'core',
     watt: 35,
+    price: 4500000,
     x: 95, y: 110, w: 420, h: 580,
     ex: -75, ey: 40, er: -2, es: 1.0, z: 2,
-    fungsi: 'Motherboard adalah papan sirkuit utama (PCB) tempat seluruh komponen PC saling terpasang dan berkomunikasi, mulai dari CPU, RAM, Storage, Kartu Grafis hingga konektor I/O eksternal.',
-    cara: 'Menggunakan jalur konduktif tembaga multi-layer untuk menyalurkan arus listrik stabil dan data berkecepatan tinggi antar chipset, VRM, bus PCIe, dan slot memori.'
+    fungsi: 'Motherboard adalah papan sirkuit utama tempat seluruh komponen PC saling terpasang dan berkomunikasi.',
+    cara: 'Menggunakan jalur konduktif tembaga multi-layer untuk menyalurkan listrik dan data berkecepatan tinggi.'
   },
   {
     key: 'cpu',
-    name: 'Processor (CPU 8-Core/16-Thread)',
+    name: 'Processor (Ryzen 7 7800X3D)',
     type: 'cpu',
     cat: 'core',
     watt: 105,
+    price: 6400000,
     x: 230, y: 195, w: 72, h: 72,
     ex: -70, ey: -80, er: 0, es: 1.6, z: 6,
-    fungsi: 'CPU bertindak sebagai otak utama komputer yang mengeksekusi milyaran instruksi logika, kalkulasi matematika, serta mengkoordinasikan tugas sistem operasi dan aplikasi.',
-    cara: 'Membaca data dari memori RAM, memprosesnya dalam rangkaian register & core mikroarsitektur melalui instruksi clock speed, lalu mengembalikan hasilnya secara simultan.'
+    fungsi: 'CPU bertindak sebagai otak utama komputer yang mengeksekusi instruksi program dan kalkulasi matematika.',
+    cara: 'Membaca instruksi dari RAM, memprosesnya dalam clock speed tinggi, lalu mengembalikan hasilnya.'
   },
   {
     key: 'thermal_paste',
@@ -1586,10 +1661,11 @@ const HARDWARE_PARTS = [
     type: 'paste',
     cat: 'cooling',
     watt: 0,
+    price: 150000,
     x: 230, y: 195, w: 72, h: 72,
     ex: -70, ey: -80, er: 0, es: 1.6, z: 7,
-    fungsi: 'Pasta termal mengisi celah mikro (pori-pori udara mikroskopis) di antara permukaan atas CPU (IHS) dan dasar pendingin (cooler base plate) agar konduksi panas optimal.',
-    cara: 'Pasta berbahan partikel mikro seng oksida / perak mengalirkan panas secara langsung ke heatsink tanpa ada udara yang menjadi insulator panas.'
+    fungsi: 'Mengisi celah mikroskopis di antara permukaan atas CPU dan dasar pendingin agar konduksi panas optimal.',
+    cara: 'Pasta berbahan partikel mikro seng oksida/perak mengalirkan panas langsung ke heatsink.'
   },
   {
     key: 'cpu_cooler',
@@ -1597,10 +1673,11 @@ const HARDWARE_PARTS = [
     type: 'cooler',
     cat: 'cooling',
     watt: 8,
+    price: 850000,
     x: 200, y: 160, w: 135, h: 160,
     ex: 180, ey: -90, er: 6, es: 1.05, z: 12,
-    fungsi: 'Mencegah overheating pada prosesor saat beban komputasi tinggi, menjaga suhu operasi di bawah 80°C agar tidak terjadi thermal throttling atau restart mendadak.',
-    cara: 'Pipa tembaga (heatpipes) berisi cairan fluida menyerap panas dari CPU, menguap ke sirip aluminium, dan dihembuskan keluar oleh kipas berkecepatan tinggi.'
+    fungsi: 'Menjaga suhu prosesor di bawah 80°C agar tidak terjadi thermal throttling saat beban tinggi.',
+    cara: 'Heatpipe tembaga menyerap panas CPU dan dihembuskan keluar oleh kipas berkecepatan tinggi.'
   },
   {
     key: 'ram1',
@@ -1608,10 +1685,11 @@ const HARDWARE_PARTS = [
     type: 'ram',
     cat: 'core',
     watt: 6,
+    price: 1200000,
     x: 365, y: 180, w: 22, h: 185,
     ex: 45, ey: -110, er: -4, es: 1.15, z: 8,
-    fungsi: 'Menyimpan data dan program yang sedang aktif dijalankan secara temporer (volatil) dengan akses kecepatan sangat tinggi dalam hitungan nanodetik.',
-    cara: 'Dipasang pada slot prioritas ke-2 (A2) untuk mengaktifkan konfigurasi Dual-Channel bersama keping kedua agar bandwidth transfer data ke CPU berlipat ganda.'
+    fungsi: 'Menyimpan data program yang sedang aktif dijalankan secara temporer dengan akses nanodetik.',
+    cara: 'Dipasang pada slot prioritas ke-2 (A2) untuk mengaktifkan Dual-Channel bersama keping kedua.'
   },
   {
     key: 'ram2',
@@ -1619,10 +1697,11 @@ const HARDWARE_PARTS = [
     type: 'ram',
     cat: 'core',
     watt: 6,
+    price: 1200000,
     x: 415, y: 180, w: 22, h: 185,
     ex: 105, ey: -90, er: 4, es: 1.15, z: 8,
-    fungsi: 'Keping RAM kedua untuk melengkapi kapasitas total menjadi 32GB serta memaksimalkan performa gaming dan multitasking berat tanpa lag.',
-    cara: 'Bekerja secara paralel bersama Slot A2 melalui dua bus memori independen 64-bit/32-bit (Dual Channel Architecture).'
+    fungsi: 'Melengkapi kapasitas RAM menjadi 32GB serta memaksimalkan bandwidth memori.',
+    cara: 'Bekerja secara paralel bersama Slot A2 melalui dua bus memori independen 64-bit.'
   },
   {
     key: 'm2_ssd',
@@ -1630,32 +1709,35 @@ const HARDWARE_PARTS = [
     type: 'm2',
     cat: 'storage',
     watt: 7,
+    price: 1450000,
     x: 235, y: 440, w: 110, h: 32,
     ex: -80, ey: 60, er: -2, es: 1.3, z: 6,
-    fungsi: 'Penyimpanan utama berkecepatan tinggi (hingga 7000 MB/s) untuk sistem operasi Windows/Linux, software rendering, dan game AAA.',
-    cara: 'Terhubung langsung ke jalur PCIe 4.0 x4 CPU tanpa perantara kabel SATA, menghasilkan waktu boot sistem hanya dalam hitungan detik.'
+    fungsi: 'Penyimpanan utama super cepat (7000 MB/s) untuk sistem operasi dan game AAA.',
+    cara: 'Terhubung langsung ke jalur PCIe 4.0 x4 CPU tanpa perantara kabel SATA.'
   },
   {
     key: 'gpu',
-    name: 'Kartu Grafis (GPU RTX Gaming)',
+    name: 'Kartu Grafis (RTX 4070 Ti 12GB)',
     type: 'gpu',
     cat: 'core',
     watt: 220,
+    price: 14200000,
     x: 120, y: 495, w: 320, h: 105,
     ex: -110, ey: 65, er: -3, es: 1.02, z: 9,
-    fungsi: 'Memproses rendering visual 3D, resolusi grafis tinggi, ray tracing realistis, video editing 4K, dan komputasi kecerdasan buatan (AI).',
-    cara: 'Memiliki ribuan CUDA/Stream cores dan VRAM dedicated (12GB) yang bekerja secara paralel untuk menghitung jutaan poligon frame per detik.'
+    fungsi: 'Memproses rendering 3D, ray tracing, video 4K, dan komputasi AI.',
+    cara: 'Memiliki ribuan CUDA cores dan VRAM dedicated yang menghitung jutaan poligon frame.'
   },
   {
     key: 'psu',
-    name: 'Power Supply (PSU 750W 80+ Gold)',
+    name: 'Power Supply (750W 80+ Gold)',
     type: 'psu',
     cat: 'power',
     watt: 0,
+    price: 1650000,
     x: 95, y: 775, w: 280, h: 105,
     ex: 50, ey: 110, er: 0, es: 1.0, z: 5,
-    fungsi: 'Mengonversi arus listrik bolak-balik (AC) 220V dari stopkontak dinding menjadi tegangan searah (DC) stabil: +12V, +5V, dan +3.3V.',
-    cara: 'Dilengkapi sertifikasi 80+ Gold dengan efisiensi daya di atas 90%, filter ripple kapasitor kelas industri jepang, dan proteksi lonjakan arus (OVP, OCP, SCP).'
+    fungsi: 'Mengonversi arus AC 220V menjadi DC +12V, +5V, +3.3V yang stabil.',
+    cara: 'Dilengkapi efisiensi daya di atas 90% dan proteksi lonjakan arus.'
   },
   {
     key: 'sata_ssd',
@@ -1663,10 +1745,11 @@ const HARDWARE_PARTS = [
     type: 'ssd',
     cat: 'storage',
     watt: 4,
+    price: 650000,
     x: 545, y: 380, w: 130, h: 55,
     ex: 110, ey: 20, er: 0, es: 1.15, z: 6,
-    fungsi: 'Drive penyimpanan sekunder untuk aplikasi umum dan dokumen kerja dengan ketahanan getaran tanpa piringan mekanik.',
-    cara: 'Menggunakan memori Flash NAND dan protokol antarmuka SATA 6 Gbps dengan kecepatan transfer hingga 550 MB/s.'
+    fungsi: 'Drive penyimpanan sekunder untuk aplikasi umum dan dokumen kerja.',
+    cara: 'Menggunakan memori Flash NAND dan protokol antarmuka SATA 6 Gbps.'
   },
   {
     key: 'hdd_35',
@@ -1674,47 +1757,50 @@ const HARDWARE_PARTS = [
     type: 'hdd',
     cat: 'storage',
     watt: 8,
+    price: 850000,
     x: 535, y: 240, w: 155, h: 95,
     ex: 115, ey: -35, er: 0, es: 1.05, z: 6,
-    fungsi: 'Penyimpanan berkapasitas besar dan ekonomis untuk arsip file multimedia, backup data penting, dan instalasi game berukuran masif.',
-    cara: 'Piringan magnetik (platter) berputar pada 7200 RPM dan dibaca oleh actuator arm magnetik elektromagnetis presisi tinggi.'
+    fungsi: 'Penyimpanan berkapasitas besar ekonomis untuk arsip file multimedia.',
+    cara: 'Piringan magnetik berputar pada 7200 RPM yang dibaca oleh actuator arm.'
   },
   {
     key: 'fan_front1',
-    name: 'Kipas Depan 1 (Intake Udara Dingin)',
+    name: 'Kipas Depan 1 (Intake)',
     type: 'fan',
     cat: 'cooling',
     watt: 3,
+    price: 180000,
     x: 48, y: 170, w: 85, h: 85,
     ex: -80, ey: -20, er: -8, es: 1.05, z: 10,
-    fungsi: 'Menyedot udara segar dan dingin dari luar casing masuk ke bagian dalam komponen.',
-    cara: 'Bilah kipas aerodinamis mendorong volume aliran udara (CFM tinggi) melewati filter debu depan.'
+    fungsi: 'Menyedot udara dingin dari luar casing masuk ke bagian dalam komponen.',
+    cara: 'Bilah kipas aerodinamis mendorong aliran udara melewati filter debu.'
   },
   {
     key: 'fan_front2',
-    name: 'Kipas Depan 2 (Intake Udara Dingin)',
+    name: 'Kipas Depan 2 (Intake)',
     type: 'fan',
     cat: 'cooling',
     watt: 3,
+    price: 180000,
     x: 48, y: 285, w: 85, h: 85,
     ex: -80, ey: 20, er: -8, es: 1.05, z: 10,
-    fungsi: 'Memberikan pasokan udara dingin ke area kartu grafis GPU dan motherboard bagian tengah.',
-    cara: 'Berputar sinkron menciptakan tekanan udara positif di dalam casing agar debu tidak mudah masuk dari celah tanpa filter.'
+    fungsi: 'Memberikan pasokan udara dingin ke area GPU dan motherboard.',
+    cara: 'Berputar sinkron menciptakan tekanan udara positif di dalam casing.'
   },
   {
     key: 'fan_rear',
-    name: 'Kipas Belakang (Exhaust Udara Panas)',
+    name: 'Kipas Belakang (Exhaust)',
     type: 'fan',
     cat: 'cooling',
     watt: 3,
+    price: 180000,
     x: 620, y: 130, w: 80, h: 80,
     ex: 85, ey: -45, er: 10, es: 1.05, z: 10,
-    fungsi: 'Membuang akumulasi udara panas hasil pembuangan CPU cooler dan GPU langsung ke luar casing.',
-    cara: 'Dipasang sejajar dengan aliran udara CPU Cooler di bagian belakang atas casing (jalur pembuangan termal alami).'
+    fungsi: 'Membuang akumulasi udara panas keluar dari casing.',
+    cara: 'Dipasang sejajar dengan aliran pembuangan termal CPU Cooler.'
   }
 ];
 
-/* Cable Data */
 const CABLE_PARTS = [
   {
     key: 'cable_24pin',
@@ -1724,8 +1810,8 @@ const CABLE_PARTS = [
     ax: 260, ay: 700, ex: 140, ey: -70, er: 0,
     d: 'M 210 775 C 320 620, 460 380, 495 240',
     plug: [484, 222, 24, 20],
-    fungsi: 'Kabel utama penyuplai daya dari PSU ke seluruh rangkaian motherboard, chipset, dan slot PCIe onboard.',
-    cara: 'Membawa 24 pin kombinasi voltase +12V, +5V, +3.3V, Ground, dan kabel sinyal Power-Good (PS-ON).'
+    fungsi: 'Kabel utama penyuplai daya dari PSU ke motherboard.',
+    cara: 'Membawa 24 pin kombinasi voltase +12V, +5V, +3.3V, dan sinyal PS-ON.'
   },
   {
     key: 'cable_eps_cpu',
@@ -1735,8 +1821,8 @@ const CABLE_PARTS = [
     ax: 340, ay: 640, ex: 80, ey: -110, er: 0,
     d: 'M 310 775 C 390 520, 430 200, 440 120',
     plug: [428, 108, 26, 18],
-    fungsi: 'Kabel daya dedicated khusus untuk menyuplai arus besar ke sirkuit VRM prosesor CPU.',
-    cara: 'Menghantarkan daya +12V murni berarus tinggi agar CPU dapat bekerja stabil saat boost clock tanpa drop tegangan.'
+    fungsi: 'Kabel daya dedicated khusus untuk VRM prosesor CPU.',
+    cara: 'Menghantarkan daya +12V murni berarus tinggi agar CPU boost clock stabil.'
   },
   {
     key: 'cable_pcie_gpu',
@@ -1746,8 +1832,8 @@ const CABLE_PARTS = [
     ax: 270, ay: 720, ex: -50, ey: 70, er: 0,
     d: 'M 240 775 C 290 700, 320 640, 350 590',
     plug: [338, 580, 26, 16],
-    fungsi: 'Menyuplai daya ekstra ke kartu grafis gaming (hingga 150W-300W tambahan).',
-    cara: 'Mengalirkan daya 12V langsung dari rail PSU ke konektor power GPU di bagian samping.'
+    fungsi: 'Menyuplai daya ekstra ke kartu grafis gaming.',
+    cara: 'Mengalirkan daya 12V langsung dari rail PSU ke konektor GPU.'
   },
   {
     key: 'cable_sata_data_power',
@@ -1757,8 +1843,8 @@ const CABLE_PARTS = [
     ax: 460, ay: 530, ex: 120, ey: 50, er: 0,
     d: 'M 170 775 C 380 820, 580 490, 600 280',
     plug: [590, 270, 22, 16],
-    fungsi: 'Menghubungkan Hardisk/SSD SATA ke motherboard dan menyuplai listrik penggerak motor disk.',
-    cara: 'Meneruskan sinyal data digital SATA 3.0 dan daya 5V/12V DC ke controller storage.'
+    fungsi: 'Menghubungkan Hardisk/SSD SATA ke motherboard & PSU.',
+    cara: 'Meneruskan sinyal data digital SATA 3.0 dan daya 5V/12V DC.'
   },
   {
     key: 'cable_front_panel',
@@ -1768,8 +1854,8 @@ const CABLE_PARTS = [
     ax: 110, ay: 530, ex: -70, ey: -50, er: 0,
     d: 'M 140 670 C 110 520, 90 280, 90 140',
     plug: [80, 130, 20, 14],
-    fungsi: 'Menghubungkan tombol power casing, tombol reset, dan lampu LED indikator ke motherboard.',
-    cara: 'Ketika tombol power casing ditekan, dua pin dihubungkan sesaat (grounding) untuk mengirim sinyal boot ke IC Super I/O.'
+    fungsi: 'Menghubungkan tombol power casing ke motherboard.',
+    cara: 'Menghubungkan dua pin sesaat untuk menyalakan sirkuit boot.'
   }
 ];
 
@@ -1779,7 +1865,7 @@ const ALL_COMPONENTS = [...HARDWARE_PARTS, ...CABLE_PARTS];
    3. APP STATE MANAGEMENT
    ============================================================ */
 const state = {
-  currentMode: 'sandbox', // sandbox | guide | encyclopedia | troubleshoot
+  currentMode: 'sandbox',
   installed: {},
   thermalPasteApplied: false,
   glassInstalled: true,
@@ -1788,10 +1874,18 @@ const state = {
   powerState: 'off', // off | booting | bios | desktop | failed
   activeGuideStep: 0,
   guideScore: 0,
-  selectedComponentKey: 'motherboard'
+  selectedComponentKey: 'motherboard',
+  
+  // Advanced Masterpiece State
+  biosTab: 'main', // main | oc | fan | boot
+  xmpEnabled: false,
+  fanProfile: 'standard', // silent | standard | performance
+  bootDevice: 'nvme', // nvme | sata | usb
+  argbPreset: 'cyberpunk',
+  zoomLevel: 1.0,
+  zoomFocus: 'center'
 };
 
-// Initialize all parts as installed by default
 ALL_COMPONENTS.forEach(p => { state.installed[p.key] = true; });
 state.thermalPasteApplied = true;
 
@@ -1813,9 +1907,7 @@ function renderComponentVisual(p) {
           <div class="pch-chipset-shield" style="left:260px;top:410px;width:110px;height:85px;">
             <span>STRIX Z790</span>
           </div>
-          <!-- PCIe Shield -->
           <div style="position:absolute;left:40px;top:385px;width:240px;height:14px;background:#384252;border:1px solid #64748b;border-radius:2px;"></div>
-          <!-- Audio Capacitors -->
           <div style="position:absolute;left:25px;top:510px;display:flex;gap:4px;">
             <div style="width:10px;height:10px;border-radius:50%;background:#fbbf24;border:1px solid #000;"></div>
             <div style="width:10px;height:10px;border-radius:50%;background:#fbbf24;border:1px solid #000;"></div>
@@ -1895,7 +1987,6 @@ function renderComponentVisual(p) {
 
 function buildCaseDOM() {
   HARDWARE_PARTS.forEach(p => {
-    // Ghost slot outline
     const ghost = document.createElement('div');
     ghost.className = 'ghost-slot';
     ghost.id = `ghost-${p.key}`;
@@ -1905,7 +1996,6 @@ function buildCaseDOM() {
     ghost.style.height = `${p.h}px`;
     caseCanvas.appendChild(ghost);
 
-    // Actual Part Slot
     const slot = document.createElement('div');
     slot.className = 'part-slot';
     slot.id = p.key;
@@ -1933,20 +2023,18 @@ function buildCaseDOM() {
     caseCanvas.appendChild(slot);
   });
 
-  // Render Cable SVGs
   let svgHTML = '';
   CABLE_PARTS.forEach(c => {
     svgHTML += `
       <g class="cable-group" id="${c.key}" data-key="${c.key}" style="--ex:${c.ex}px;--ey:${c.ey}px;--er:${c.er}deg;">
         <path class="cable-path-main" d="${c.d}" />
         <path class="cable-path-braided" d="${c.d}" />
-        <rect x="${c.plug[0]}" y="${c.plug[1]}" width="${c.plug[2]}" height="${c.plug[3]}" rx="3" fill="#0f172a" stroke="#00f2fe" stroke-width="1.5" />
+        <rect x="${c.plug[0]}" y="${c.plug[1]}" width="${c.plug[2]}" height="${c.plug[3]}" rx="3" fill="#0f172a" stroke="var(--argb-primary)" stroke-width="1.5" />
       </g>
     `;
   });
   cableSvgCanvas.innerHTML = svgHTML;
 
-  // Add click events to cables
   CABLE_PARTS.forEach(c => {
     const el = document.getElementById(c.key);
     if (el) {
@@ -1982,18 +2070,12 @@ function syncVisualStates() {
     const ghost = document.getElementById(`ghost-${p.key}`);
     const isInstalled = state.installed[p.key];
 
-    if (el) {
-      el.classList.toggle('pulled', !isInstalled);
-    }
-    if (ghost) {
-      ghost.classList.toggle('active-guide', !isInstalled && state.currentMode === 'guide');
-    }
+    if (el) el.classList.toggle('pulled', !isInstalled);
+    if (ghost) ghost.classList.toggle('active-guide', !isInstalled && state.currentMode === 'guide');
   });
 
   const pasteBlob = document.getElementById('pasteBlobVisual');
-  if (pasteBlob) {
-    pasteBlob.classList.toggle('applied', state.thermalPasteApplied);
-  }
+  if (pasteBlob) pasteBlob.classList.toggle('applied', state.thermalPasteApplied);
 }
 
 function updateComponentDetails(key) {
@@ -2008,25 +2090,103 @@ function updateComponentDetails(key) {
 
 function updateTelemetry() {
   let totalW = 0;
+  let totalPrice = 0;
   HARDWARE_PARTS.forEach(p => {
-    if (state.installed[p.key]) totalW += p.watt;
+    if (state.installed[p.key]) {
+      totalW += p.watt;
+      totalPrice += (p.price || 0);
+    }
   });
 
   document.getElementById('specWattage').innerText = `${totalW} W`;
+  document.getElementById('specPrice').innerText = `Rp ${totalPrice.toLocaleString('id-ID')}`;
   
   const ram1 = state.installed['ram1'];
   const ram2 = state.installed['ram2'];
+  const ramFreq = state.xmpEnabled ? '6000MHz (XMP)' : '4800MHz';
+
   if (ram1 && ram2) {
-    document.getElementById('specRAM').innerText = 'Dual-Channel (32GB)';
+    document.getElementById('specRAM').innerText = `Dual-Chan 32GB (${ramFreq})`;
   } else if (ram1 || ram2) {
-    document.getElementById('specRAM').innerText = 'Single-Channel (16GB)';
+    document.getElementById('specRAM').innerText = `Single 16GB (${ramFreq})`;
   } else {
     document.getElementById('specRAM').innerText = 'No RAM Detected';
+  }
+
+  // FPS & Bottleneck Calculation
+  const hasGpu = state.installed['gpu'];
+  const hasCpu = state.installed['cpu'];
+
+  if (hasGpu && hasCpu) {
+    let baseFPS = state.xmpEnabled ? 115 : 102;
+    document.getElementById('specFPS').innerText = `${baseFPS} FPS High`;
+    document.getElementById('specBottleneck').innerText = '0.5% (Perfect)';
+    document.getElementById('specBottleneck').style.color = 'var(--emerald)';
+  } else if (hasCpu && !hasGpu) {
+    document.getElementById('specFPS').innerText = '24 FPS (Onboard)';
+    document.getElementById('specBottleneck').innerText = '92% GPU Bottleneck';
+    document.getElementById('specBottleneck').style.color = 'var(--rose)';
+  } else {
+    document.getElementById('specFPS').innerText = 'N/A';
+    document.getElementById('specBottleneck').innerText = 'System Halt';
+    document.getElementById('specBottleneck').style.color = 'var(--rose)';
   }
 }
 
 /* ============================================================
-   6. SIDE PANEL VIEWS (SANDBOX, GUIDE, ENCYCLOPEDIA, QUIZ)
+   6. ARGB LIGHTING PRESETS & ZOOM INSPECTION
+   ============================================================ */
+function setARGBPreset(preset) {
+  state.argbPreset = preset;
+  const root = document.documentElement;
+
+  if (preset === 'cyberpunk') {
+    root.style.setProperty('--argb-primary', '#00f2fe');
+    root.style.setProperty('--argb-secondary', '#8b5cf6');
+    root.style.setProperty('--argb-glow', 'rgba(0, 242, 254, 0.5)');
+  } else if (preset === 'rainbow') {
+    root.style.setProperty('--argb-primary', '#ec4899');
+    root.style.setProperty('--argb-secondary', '#3b82f6');
+    root.style.setProperty('--argb-glow', 'rgba(236, 72, 153, 0.5)');
+  } else if (preset === 'fire') {
+    root.style.setProperty('--argb-primary', '#f59e0b');
+    root.style.setProperty('--argb-secondary', '#ef4444');
+    root.style.setProperty('--argb-glow', 'rgba(245, 158, 11, 0.6)');
+  } else if (preset === 'emerald') {
+    root.style.setProperty('--argb-primary', '#10b981');
+    root.style.setProperty('--argb-secondary', '#059669');
+    root.style.setProperty('--argb-glow', 'rgba(16, 185, 129, 0.5)');
+  } else if (preset === 'stealth') {
+    root.style.setProperty('--argb-primary', 'transparent');
+    root.style.setProperty('--argb-secondary', 'transparent');
+    root.style.setProperty('--argb-glow', 'transparent');
+  }
+}
+
+function setZoomTarget(target) {
+  state.zoomFocus = target;
+  const scaler = document.getElementById('caseCanvas');
+  const container = document.querySelector('.case-view-container');
+  const availableWidth = container.clientWidth - 20;
+  const baseScale = Math.min(1, availableWidth / 740);
+
+  if (target === 'full') {
+    scaler.style.transformOrigin = 'top center';
+    scaler.style.transform = `scale(${baseScale})`;
+  } else if (target === 'cpu') {
+    scaler.style.transformOrigin = '260px 230px';
+    scaler.style.transform = `scale(${baseScale * 1.6})`;
+  } else if (target === 'ram') {
+    scaler.style.transformOrigin = '380px 280px';
+    scaler.style.transform = `scale(${baseScale * 1.6})`;
+  } else if (target === 'gpu') {
+    scaler.style.transformOrigin = '280px 540px';
+    scaler.style.transform = `scale(${baseScale * 1.5})`;
+  }
+}
+
+/* ============================================================
+   7. SIDE PANEL VIEWS (SANDBOX, GUIDE, ENCYCLOPEDIA, QUIZ)
    ============================================================ */
 const sidePanel = document.getElementById('sidePanel');
 
@@ -2264,7 +2424,7 @@ function renderEncyclopediaPanel() {
         <div style="font-size:20px;">📘</div>
         <div>
           <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">${p.name}</div>
-          <div style="font-size:11px;color:var(--text-muted);">${p.cat.toUpperCase()} • ${p.watt ? p.watt + 'W' : 'Passive'}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${p.cat.toUpperCase()} • ${p.watt ? p.watt + 'W' : 'Passive'} • ${p.price ? 'Rp ' + p.price.toLocaleString('id-ID') : '-'}</div>
         </div>
       </div>
     `;
@@ -2369,7 +2529,7 @@ function checkQuizAnswer(qIdx, oIdx) {
 }
 
 /* ============================================================
-   7. MONITOR, POST DIAGNOSTIC, & BIOS SYSTEM
+   8. MONITOR, POST DIAGNOSTIC, INTERACTIVE BIOS & OS
    ============================================================ */
 let postTimer = null;
 let desktopInterval = null;
@@ -2384,6 +2544,7 @@ function togglePower() {
 
 function shutdownPC() {
   SFX.play('click');
+  SFX.stopFanHum();
   state.powerState = 'off';
   clearInterval(desktopInterval);
   clearTimeout(postTimer);
@@ -2406,6 +2567,7 @@ function shutdownPC() {
 
 function startBootPOST() {
   SFX.play('click');
+  SFX.startFanHum();
   state.powerState = 'booting';
   document.body.classList.add('system-on');
 
@@ -2416,7 +2578,10 @@ function startBootPOST() {
   const screen = document.getElementById('monitorScreen');
   screen.className = 'monitor-screen';
   screen.innerHTML = `
-    <div style="color:var(--cyan);font-weight:700;">>>> AMI UEFI BIOS v2.40 <<<</div>
+    <div style="color:var(--cyan);font-weight:700;display:flex;justify-content:space-between;">
+      <span>>>> AMI UEFI BIOS v2.40 <<<</span>
+      <button style="background:var(--cyan);color:#000;font-family:var(--font-mono);font-size:9.5px;font-weight:700;border:none;padding:2px 8px;border-radius:3px;cursor:pointer;" onclick="openBiosScreen()">[DEL] MASUK BIOS</button>
+    </div>
     <div style="color:var(--text-muted);margin:4px 0 12px;">Checking Hardware Subsystems...</div>
     <div id="postLogList"></div>
   `;
@@ -2434,6 +2599,7 @@ function startBootPOST() {
   let hasFailed = false;
 
   function runNextCheck() {
+    if (state.powerState !== 'booting') return;
     if (stepIdx >= logs.length) {
       if (!hasFailed) {
         SFX.play('beep');
@@ -2484,7 +2650,110 @@ function startBootPOST() {
   postTimer = setTimeout(runNextCheck, 400);
 }
 
+/* INTERACTIVE UEFI BIOS UTILITY SCREEN */
+function openBiosScreen() {
+  SFX.play('beep');
+  clearTimeout(postTimer);
+  clearInterval(desktopInterval);
+  state.powerState = 'bios';
+
+  const screen = document.getElementById('monitorScreen');
+  screen.className = 'monitor-screen bios-mode';
+  renderBiosScreen();
+}
+
+function renderBiosScreen() {
+  const screen = document.getElementById('monitorScreen');
+  let mainContent = '';
+
+  if (state.biosTab === 'main') {
+    mainContent = `
+      <div style="line-height:1.7;">
+        <div>BIOS Vendor: American Megatrends Inc.</div>
+        <div>BIOS Version: 2.40 (UEFI x64)</div>
+        <div>Processor: AMD Ryzen 7 7800X3D 8-Core Processor</div>
+        <div>Total Memory: ${state.installed['ram1'] && state.installed['ram2'] ? '32768 MB (32GB Dual Channel)' : '16384 MB (16GB)'}</div>
+        <div>Current DRAM Speed: <b>${state.xmpEnabled ? '6000 MHz (XMP Profile 1 Active)' : '4800 MHz (Standard JEDEC)'}</b></div>
+        <div>System Date & Time: 2026-09-07 23:05:00</div>
+      </div>
+    `;
+  } else if (state.biosTab === 'oc') {
+    mainContent = `
+      <div>
+        <div style="margin-bottom:8px;color:#ffff00;">--- OVERCLOCKING & MEMORY TUNING ---</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;background:#0000aa;padding:6px;">
+          <span>EXPO / XMP 3.0 Profile 1 (6000MHz CL30):</span>
+          <button style="background:${state.xmpEnabled ? '#00ff00' : '#ff0000'};color:#000;font-weight:700;border:none;padding:4px 10px;cursor:pointer;" onclick="toggleXmpSetting()">
+            ${state.xmpEnabled ? '[ ENABLED ]' : '[ DISABLED ]'}
+          </button>
+        </div>
+        <div style="font-size:11px;color:#cccccc;">
+          * Mengaktifkan XMP/EXPO akan meningkatkan bandwidth memori DDR5 menjadi 6000MHz CL30 untuk performa gaming maksimal.
+        </div>
+      </div>
+    `;
+  } else if (state.biosTab === 'fan') {
+    mainContent = `
+      <div>
+        <div style="margin-bottom:8px;color:#ffff00;">--- SMART FAN CONTROL PROFILE ---</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button style="background:${state.fanProfile === 'silent' ? '#ffffff' : '#0000aa'};color:${state.fanProfile === 'silent' ? '#000' : '#fff'};border:1px solid #fff;padding:4px 8px;cursor:pointer;" onclick="setFanProfileSetting('silent')">Silent (800 RPM)</button>
+          <button style="background:${state.fanProfile === 'standard' ? '#ffffff' : '#0000aa'};color:${state.fanProfile === 'standard' ? '#000' : '#fff'};border:1px solid #fff;padding:4px 8px;cursor:pointer;" onclick="setFanProfileSetting('standard')">Standard (1200 RPM)</button>
+          <button style="background:${state.fanProfile === 'performance' ? '#ffffff' : '#0000aa'};color:${state.fanProfile === 'performance' ? '#000' : '#fff'};border:1px solid #fff;padding:4px 8px;cursor:pointer;" onclick="setFanProfileSetting('performance')">Full Speed (2000 RPM)</button>
+        </div>
+        <div>Current Fan Mode: <b style="color:#00ff00;">${state.fanProfile.toUpperCase()}</b></div>
+      </div>
+    `;
+  } else if (state.biosTab === 'boot') {
+    mainContent = `
+      <div>
+        <div style="margin-bottom:8px;color:#ffff00;">--- BOOT PRIORITY ORDER ---</div>
+        <div style="margin-bottom:6px;">Boot Option #1: <b>SSD M.2 NVMe Gen4 1TB</b></div>
+        <div style="margin-bottom:6px;">Boot Option #2: SATA SSD 500GB</div>
+        <div style="margin-bottom:6px;">Boot Option #3: UEFI USB Installer</div>
+      </div>
+    `;
+  }
+
+  screen.innerHTML = `
+    <div style="text-align:center;font-weight:700;background:#0000aa;padding:2px;margin-bottom:6px;border:1px solid #fff;">
+      UEFI BIOS UTILITY — Z790 PRO GAMING
+    </div>
+    <div class="bios-menu-bar">
+      <span class="bios-tab-item ${state.biosTab === 'main' ? 'active' : ''}" onclick="switchBiosTab('main')">[ Main ]</span>
+      <span class="bios-tab-item ${state.biosTab === 'oc' ? 'active' : ''}" onclick="switchBiosTab('oc')">[ OC / DRAM ]</span>
+      <span class="bios-tab-item ${state.biosTab === 'fan' ? 'active' : ''}" onclick="switchBiosTab('fan')">[ Smart Fan ]</span>
+      <span class="bios-tab-item ${state.biosTab === 'boot' ? 'active' : ''}" onclick="switchBiosTab('boot')">[ Boot Menu ]</span>
+    </div>
+    <div style="height:110px;">${mainContent}</div>
+    <div style="margin-top:8px;display:flex;justify-content:space-between;border-top:1px solid #fff;padding-top:6px;">
+      <span>[F10] Save & Exit</span>
+      <button style="background:#00ff00;color:#000;font-weight:700;border:none;padding:3px 10px;cursor:pointer;" onclick="loadDesktopOS()">SAVE & BOOT OS</button>
+    </div>
+  `;
+}
+
+function switchBiosTab(tab) {
+  SFX.play('click');
+  state.biosTab = tab;
+  renderBiosScreen();
+}
+
+function toggleXmpSetting() {
+  SFX.play('snap');
+  state.xmpEnabled = !state.xmpEnabled;
+  renderBiosScreen();
+  updateTelemetry();
+}
+
+function setFanProfileSetting(profile) {
+  SFX.play('click');
+  state.fanProfile = profile;
+  renderBiosScreen();
+}
+
 function loadDesktopOS() {
+  SFX.play('beep');
   state.powerState = 'desktop';
   const screen = document.getElementById('monitorScreen');
   screen.className = 'monitor-screen desktop-mode';
@@ -2492,36 +2761,36 @@ function loadDesktopOS() {
   function updateDesktopMetrics() {
     if (state.powerState !== 'desktop') return;
     const cpuLoad = Math.floor(18 + Math.random() * 25);
-    const cpuTemp = Math.floor(40 + Math.random() * 12);
+    const cpuTemp = state.fanProfile === 'performance' ? 34 : (state.fanProfile === 'silent' ? 48 : 40);
     const ramPct = Math.floor(32 + Math.random() * 10);
-    const gpuTemp = Math.floor(45 + Math.random() * 15);
+    const gpuTemp = Math.floor(45 + Math.random() * 12);
 
     screen.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:6px;margin-bottom:8px;">
         <span style="font-weight:700;color:var(--cyan);font-size:11px;">SYSTEM MONITOR DASHBOARD</span>
-        <span style="font-size:10px;color:var(--emerald);">● ONLINE (Windows 11 Pro)</span>
+        <button style="background:var(--panel-elevated);color:var(--cyan);border:1px solid var(--panel-border);font-family:var(--font-mono);font-size:9.5px;padding:2px 6px;border-radius:4px;cursor:pointer;" onclick="openBiosScreen()">[DEL] BIOS</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
         <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
           <div style="color:var(--text-muted);">CPU Utilization</div>
-          <div style="font-weight:700;color:var(--cyan);font-size:13px;">${cpuLoad}% <span style="font-size:10px;color:var(--amber);">(${cpuTemp}°C)</span></div>
+          <div style="font-weight:700;color:var(--cyan);font-size:12.5px;">${cpuLoad}% <span style="font-size:10px;color:var(--amber);">(${cpuTemp}°C)</span></div>
         </div>
         <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
-          <div style="color:var(--text-muted);">RAM Usage</div>
-          <div style="font-weight:700;color:var(--violet);font-size:13px;">${ramPct}% (10.2 / 32 GB)</div>
+          <div style="color:var(--text-muted);">RAM Speed</div>
+          <div style="font-weight:700;color:var(--violet);font-size:12.5px;">${state.xmpEnabled ? '6000 MHz (XMP)' : '4800 MHz'}</div>
         </div>
         <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
           <div style="color:var(--text-muted);">GPU Temperature</div>
-          <div style="font-weight:700;color:var(--emerald);font-size:13px;">${gpuTemp}°C <span style="font-size:10px;color:var(--text-muted);">(1450 RPM)</span></div>
+          <div style="font-weight:700;color:var(--emerald);font-size:12.5px;">${gpuTemp}°C <span style="font-size:10px;color:var(--text-muted);">(1450 RPM)</span></div>
         </div>
         <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
           <div style="color:var(--text-muted);">NVMe Storage Health</div>
-          <div style="font-weight:700;color:var(--text-primary);font-size:13px;">100% Good <span style="font-size:10px;color:var(--cyan);">(38°C)</span></div>
+          <div style="font-weight:700;color:var(--text-primary);font-size:12.5px;">100% Good <span style="font-size:10px;color:var(--cyan);">(38°C)</span></div>
         </div>
       </div>
-      <div style="margin-top:8px;font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;">
-        <span>Fan Profile: Balanced (PWM)</span>
-        <span>Network: 2.5Gbps LAN Active</span>
+      <div style="margin-top:6px;font-size:9.5px;color:var(--text-muted);display:flex;justify-content:space-between;">
+        <span>Fan Curve: ${state.fanProfile.toUpperCase()}</span>
+        <span>2.5Gbps LAN Online</span>
       </div>
     `;
   }
@@ -2532,7 +2801,7 @@ function loadDesktopOS() {
 }
 
 /* ============================================================
-   8. TOOLBAR ACTIONS & CANVAS SCALING
+   9. TOOLBAR ACTIONS & EVENTS
    ============================================================ */
 document.getElementById('powerButton').addEventListener('click', togglePower);
 
@@ -2555,12 +2824,17 @@ document.getElementById('btnAssembleAll').addEventListener('click', () => {
   updateTelemetry();
 });
 
+document.getElementById('argbPresetSelect').addEventListener('change', function() {
+  SFX.play('click');
+  setARGBPreset(this.value);
+});
+
 document.getElementById('btnToggleAirflow').addEventListener('click', function() {
   SFX.play('click');
   state.airflowActive = !state.airflowActive;
   const layer = document.getElementById('airflowLayer');
   layer.classList.toggle('active', state.airflowActive);
-  this.innerText = `💨 Simulasi Airflow: ${state.airflowActive ? 'ON' : 'OFF'}`;
+  this.innerText = `💨 Airflow: ${state.airflowActive ? 'ON' : 'OFF'}`;
   this.classList.toggle('active-toggle', state.airflowActive);
 });
 
@@ -2569,13 +2843,20 @@ document.getElementById('btnToggleGlass').addEventListener('click', function() {
   state.glassInstalled = !state.glassInstalled;
   const glass = document.getElementById('caseGlass');
   glass.classList.toggle('removed', !state.glassInstalled);
-  this.innerText = `🪟 Panel Tempered Glass: ${state.glassInstalled ? 'BUKA' : 'PASANG'}`;
+  this.innerText = `🪟 Tempered Glass: ${state.glassInstalled ? 'BUKA' : 'PASANG'}`;
 });
+
+document.getElementById('btnZoomFull').addEventListener('click', () => setZoomTarget('full'));
+document.getElementById('btnZoomCpu').addEventListener('click', () => setZoomTarget('cpu'));
+document.getElementById('btnZoomRam').addEventListener('click', () => setZoomTarget('ram'));
+document.getElementById('btnZoomGpu').addEventListener('click', () => setZoomTarget('gpu'));
+document.getElementById('btnOpenBios').addEventListener('click', openBiosScreen);
 
 document.getElementById('btnSoundToggle').addEventListener('click', function() {
   state.soundEnabled = !state.soundEnabled;
   SFX.enabled = state.soundEnabled;
-  this.innerText = `🔊 Audio SFX: ${state.soundEnabled ? 'ON' : 'OFF'}`;
+  if (!state.soundEnabled) SFX.stopFanHum();
+  this.innerText = `🔊 SFX: ${state.soundEnabled ? 'ON' : 'OFF'}`;
   this.classList.toggle('active', state.soundEnabled);
 });
 
@@ -2585,6 +2866,8 @@ document.getElementById('btnResetAll').addEventListener('click', () => {
   state.thermalPasteApplied = true;
   state.activeGuideStep = 0;
   state.guideScore = 0;
+  state.xmpEnabled = false;
+  setZoomTarget('full');
   syncVisualStates();
   renderSidePanel();
   updateTelemetry();
@@ -2600,7 +2883,6 @@ document.querySelectorAll('.nav-tab-btn').forEach(btn => {
     state.currentMode = this.dataset.mode;
 
     if (state.currentMode === 'guide') {
-      // Unmount components for guided assembly
       ALL_COMPONENTS.forEach(p => { state.installed[p.key] = false; });
       state.thermalPasteApplied = false;
       state.activeGuideStep = 0;
@@ -2615,6 +2897,7 @@ document.querySelectorAll('.nav-tab-btn').forEach(btn => {
 
 // Responsive Canvas Auto-Scale
 function resizeCanvas() {
+  if (state.zoomFocus !== 'full') return;
   const container = document.querySelector('.case-view-container');
   if (!container) return;
   const availableWidth = container.clientWidth - 20;
@@ -2625,9 +2908,10 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 
 /* ============================================================
-   9. INITIALIZATION
+   10. INITIALIZATION
    ============================================================ */
 buildCaseDOM();
+setARGBPreset('cyberpunk');
 syncVisualStates();
 renderSidePanel();
 updateTelemetry();
