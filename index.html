@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PC Master Builder Studio — Simulator, Ensiklopedia & Diagnostic Lab</title>
+<title>PC Master Builder Studio — Hardware Intelligence & Assembly Simulator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -79,7 +79,7 @@ body {
   margin: 0 auto;
 }
 
-/* ==================== HEADER & TOP NAV ==================== */
+/* ==================== TOP NAVIGATION BAR ==================== */
 header {
   margin-bottom: 24px;
 }
@@ -92,50 +92,34 @@ header {
   padding-bottom: 20px;
   border-bottom: 1px solid var(--panel-border);
 }
-.brand-badge {
-  display: inline-flex;
+.brand-logo-wrap {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  background: var(--cyan-soft);
-  padding: 4px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 242, 254, 0.25);
-  margin-bottom: 8px;
+  gap: 12px;
 }
-.brand-badge::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan);
-  animation: pulseDot 2s infinite ease-in-out;
-}
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
+.brand-logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  color: #000;
+  box-shadow: 0 0 20px var(--cyan-glow);
 }
 
 h1.app-title {
   font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 42px);
+  font-size: clamp(24px, 3.5vw, 36px);
   font-weight: 700;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
-p.app-subtitle {
-  color: var(--text-secondary);
-  font-size: 14.5px;
-  line-height: 1.6;
-  max-width: 760px;
-  margin-top: 4px;
 }
 
 .nav-tabs {
@@ -174,6 +158,156 @@ p.app-subtitle {
 }
 .nav-tab-btn.active .tab-icon {
   color: var(--cyan);
+}
+
+/* ==================== HERO SECTION (LANDING OVERVIEW) ==================== */
+.hero-section {
+  background: linear-gradient(145deg, rgba(22, 27, 38, 0.8), rgba(12, 14, 20, 0.95));
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 242, 254, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  margin-bottom: 16px;
+}
+.hero-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+.hero-headline {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4.5vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  max-width: 840px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero-subheadline {
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.hero-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 36px;
+}
+.btn-hero-primary {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--cyan);
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 24px rgba(2, 132, 199, 0.4);
+  transition: all 0.25s ease;
+}
+.btn-hero-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px var(--cyan-glow);
+}
+.btn-hero-secondary {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+}
+.btn-hero-secondary:hover {
+  border-color: var(--cyan);
+  background: var(--panel-elevated);
+}
+
+.hero-features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  border-top: 1px solid var(--panel-border);
+  padding-top: 28px;
+}
+.feature-card {
+  background: rgba(17, 20, 28, 0.7);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all 0.25s ease;
+}
+.feature-card:hover {
+  border-color: var(--panel-border-glow);
+  transform: translateY(-3px);
+  background: var(--panel-elevated);
+}
+.feature-card-icon {
+  font-size: 26px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.feature-card h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+.feature-card p {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
 }
 
 /* ==================== CONTROL ACTION TOOLBAR ==================== */
@@ -218,10 +352,6 @@ p.app-subtitle {
   color: #fff;
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
 }
-.btn-action.primary:hover {
-  background: linear-gradient(135deg, #0369a1, #0284c7);
-  box-shadow: 0 0 18px var(--cyan-glow);
-}
 .btn-action.active-toggle {
   background: var(--violet-soft);
   border-color: var(--violet);
@@ -241,7 +371,85 @@ p.app-subtitle {
   outline: none;
 }
 
-/* ==================== CONSOLE / MONITOR & TELEMETRY SECTION ==================== */
+/* ==================== IQON TELEMETRY DASHBOARD (IMAGE 1 & 4 REF) ==================== */
+.iqon-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.iqon-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 20px 28px;
+}
+.iqon-welcome h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+}
+.iqon-welcome p {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin-top: 2px;
+}
+
+.iqon-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.iqon-card {
+  background: linear-gradient(160deg, #151922, #0d0f15);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 22px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.iqon-card-info h4 {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.iqon-card-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.iqon-card-info p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.radial-gauge-svg {
+  width: 90px;
+  height: 90px;
+}
+.gauge-bg {
+  fill: none;
+  stroke: #1e2634;
+  stroke-width: 8;
+}
+.gauge-val {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+/* ==================== CONSOLE / MONITOR & WORKSPACE ==================== */
 .system-console-grid {
   display: grid;
   grid-template-columns: minmax(340px, 1.4fr) minmax(320px, 1fr);
@@ -428,7 +636,7 @@ p.app-subtitle {
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* ==================== DETAILED PC HARDWARE VISUAL LAYERS ==================== */
+/* ==================== HARDWARE VISUAL LAYERS ==================== */
 .case-chassis {
   position: absolute;
   inset: 20px;
@@ -501,9 +709,7 @@ p.app-subtitle {
   transition: transform 0.55s cubic-bezier(0.34, 1.45, 0.44, 1), filter 0.3s, opacity 0.3s;
   transform: translate(0, 0) scale(1) rotate(0deg);
 }
-.part-slot:hover {
-  z-index: 140 !important;
-}
+.part-slot:hover { z-index: 140 !important; }
 .part-slot.pulled {
   z-index: 130 !important;
   transform: translate(var(--ex, 0px), var(--ey, 0px)) scale(var(--es, 1.08)) rotate(var(--er, 0deg));
@@ -552,7 +758,6 @@ p.app-subtitle {
 }
 
 /* ==================== COMPONENT GRAPHICS (CSS/SVG ART) ==================== */
-/* Motherboard */
 .mobo-pcb {
   width: 100%;
   height: 100%;
@@ -611,22 +816,6 @@ p.app-subtitle {
   background-image: repeating-linear-gradient(0deg, #374151 0 3px, #111827 3px 14px);
 }
 
-/* CPU & Socket */
-.cpu-socket-frame {
-  position: absolute;
-  border: 1.5px solid #475569;
-  border-radius: 6px;
-  background: #0f131a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cpu-socket-frame::after {
-  content: '';
-  width: 80%;
-  height: 80%;
-  background: repeating-linear-gradient(45deg, #242c38 0 1px, #131720 1px 3px);
-}
 .cpu-chip {
   width: 100%;
   height: 100%;
@@ -675,7 +864,6 @@ p.app-subtitle {
   transform: scale(1);
 }
 
-/* CPU Coolers (Air / AIO) */
 .cooler-air-tower {
   width: 100%;
   height: 100%;
@@ -710,12 +898,8 @@ p.app-subtitle {
       #334155 240deg 270deg, #1e293b 270deg 300deg, #334155 300deg 330deg, #1e293b 330deg 360deg);
   animation: spinCentered 2.5s linear infinite;
 }
-.system-on .cooler-fan-rotator {
-  animation-duration: 0.6s !important;
-}
-.system-on .gpu-fan-unit, .system-on .case-fan-blades {
-  animation-duration: 0.5s !important;
-}
+.system-on .cooler-fan-rotator { animation-duration: 0.6s !important; }
+.system-on .gpu-fan-unit, .system-on .case-fan-blades { animation-duration: 0.5s !important; }
 @keyframes spinCentered {
   from { transform: translate(-50%, -50%) rotate(0deg); }
   to { transform: translate(-50%, -50%) rotate(360deg); }
@@ -734,7 +918,6 @@ p.app-subtitle {
   transition: all 0.4s;
 }
 
-/* RAM Modules */
 .ram-stick {
   width: 100%;
   height: 100%;
@@ -764,7 +947,6 @@ p.app-subtitle {
   background-image: repeating-linear-gradient(90deg, #fbbf24 0 2px, #0f172a 2px 4px);
 }
 
-/* M.2 NVMe SSD */
 .m2-nvme-card {
   width: 100%;
   height: 100%;
@@ -801,7 +983,6 @@ p.app-subtitle {
   box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
 
-/* Graphics Card (GPU / VGA) */
 .gpu-card {
   width: 100%;
   height: 100%;
@@ -846,7 +1027,6 @@ p.app-subtitle {
   border-radius: 0 0 3px 3px;
 }
 
-/* Power Supply (PSU) */
 .psu-unit {
   width: 100%;
   height: 100%;
@@ -879,7 +1059,6 @@ p.app-subtitle {
   line-height: 1.3;
 }
 
-/* Case Fans (Intake / Exhaust) */
 .case-fan-frame {
   width: 100%;
   height: 100%;
@@ -912,7 +1091,6 @@ p.app-subtitle {
   transition: all 0.4s;
 }
 
-/* Storage Drives (2.5" SSD & 3.5" HDD) */
 .sata-ssd-25 {
   width: 100%;
   height: 100%;
@@ -968,9 +1146,7 @@ p.app-subtitle {
   opacity: 0;
   transition: opacity 0.4s ease;
 }
-.airflow-layer.active {
-  opacity: 1;
-}
+.airflow-layer.active { opacity: 1; }
 .airflow-stream-cold {
   position: absolute;
   height: 16px;
@@ -1006,9 +1182,7 @@ p.app-subtitle {
   pointer-events: auto;
   transition: transform 0.55s cubic-bezier(0.34, 1.45, 0.44, 1), opacity 0.3s;
 }
-.cable-group.pulled {
-  transform: translate(var(--ex, 0px), var(--ey, 0px)) rotate(var(--er, 0deg));
-}
+.cable-group.pulled { transform: translate(var(--ex, 0px), var(--ey, 0px)) rotate(var(--er, 0deg)); }
 .cable-path-main {
   fill: none;
   stroke: #0f131a;
@@ -1026,7 +1200,7 @@ p.app-subtitle {
 .cable-group:hover .cable-path-main { stroke: #1f2736; }
 .cable-group:hover .cable-path-braided { opacity: 1; stroke: #fff; }
 
-/* ==================== TRAY / COMPONENT SELECTOR PANEL ==================== */
+/* ==================== TRAY / SIDE PANEL CONTAINER ==================== */
 .side-panel-container {
   background: var(--panel);
   border: 1px solid var(--panel-border);
@@ -1124,12 +1298,36 @@ p.app-subtitle {
   color: var(--text-primary);
 }
 
-/* ==================== GUIDED ASSEMBLY STEPPER ==================== */
-.guide-stepper-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+/* Real-time Compatibility Checklist (Reflect Image 2) */
+.compatibility-box {
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-top: 14px;
 }
+.compatibility-box h4 {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.compat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.compat-item.ok { color: var(--emerald); }
+.compat-item.warn { color: var(--amber); }
+
+/* ==================== GUIDED ASSEMBLY STEPPER ==================== */
 .guide-header {
   display: flex;
   justify-content: space-between;
@@ -1154,9 +1352,6 @@ p.app-subtitle {
   background: rgba(0, 242, 254, 0.06);
   box-shadow: 0 4px 20px -5px var(--cyan-glow);
 }
-.guide-step-card.completed-step {
-  opacity: 0.6;
-}
 .guide-step-num {
   width: 26px;
   height: 26px;
@@ -1177,11 +1372,6 @@ p.app-subtitle {
   border-color: var(--cyan);
   color: #000;
   box-shadow: 0 0 10px var(--cyan-glow);
-}
-.guide-step-card.completed-step .guide-step-num {
-  background: var(--emerald);
-  border-color: var(--emerald);
-  color: #000;
 }
 .guide-step-content h4 {
   font-size: 13.5px;
@@ -1236,9 +1426,7 @@ p.app-subtitle {
   grid-template-columns: 1fr 1fr;
   gap: 24px;
 }
-@media (max-width: 768px) {
-  .detail-columns-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 768px) { .detail-columns-grid { grid-template-columns: 1fr; } }
 .detail-col h4 {
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -1253,7 +1441,7 @@ p.app-subtitle {
   line-height: 1.7;
 }
 
-/* ==================== TROUBLESHOOTING & QUIZ LAB ==================== */
+/* ==================== TROUBLESHOOTING LAB ==================== */
 .quiz-scenario-card {
   background: var(--panel-elevated);
   border: 1px solid var(--panel-border);
@@ -1328,15 +1516,8 @@ p.app-subtitle {
   border-bottom: 2px solid #ffffff;
   margin-bottom: 8px;
 }
-.bios-tab-item {
-  cursor: pointer;
-  padding: 2px 8px;
-}
-.bios-tab-item.active {
-  background: #ffffff;
-  color: #000084;
-  font-weight: 700;
-}
+.bios-tab-item { cursor: pointer; padding: 2px 8px; }
+.bios-tab-item.active { background: #ffffff; color: #000084; font-weight: 700; }
 
 footer {
   margin-top: 40px;
@@ -1345,72 +1526,453 @@ footer {
   font-size: 12px;
   color: var(--text-muted);
 }
+
+/* ==================== ENTRY ANIMATIONS ==================== */
+
+/* === LOADING SPLASH SCREEN === */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #02030a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+}
+#splash-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: splashLogoIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.splash-cpu-icon {
+  position: relative;
+  width: 96px;
+  height: 96px;
+}
+.splash-cpu-body {
+  position: absolute;
+  inset: 16px;
+  background: linear-gradient(135deg, #1a2235, #0d1117);
+  border: 2px solid var(--cyan-dim);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--cyan);
+  box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 20px rgba(0,242,254,0.1);
+  z-index: 2;
+  animation: cpuPulse 2s ease-in-out infinite;
+}
+.splash-cpu-pins {
+  position: absolute;
+  inset: 0;
+}
+.splash-cpu-pin {
+  position: absolute;
+  background: var(--cyan-dim);
+  border-radius: 1px;
+}
+/* Top pins */
+.splash-cpu-pin:nth-child(1)  { top: 8px; left: 22px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(2)  { top: 8px; left: 34px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(3)  { top: 8px; left: 46px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(4)  { top: 8px; left: 58px; width: 6px; height: 10px; }
+/* Bottom pins */
+.splash-cpu-pin:nth-child(5)  { bottom: 8px; left: 22px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(6)  { bottom: 8px; left: 34px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(7)  { bottom: 8px; left: 46px; width: 6px; height: 10px; }
+.splash-cpu-pin:nth-child(8)  { bottom: 8px; left: 58px; width: 6px; height: 10px; }
+/* Left pins */
+.splash-cpu-pin:nth-child(9)  { left: 8px; top: 22px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(10) { left: 8px; top: 34px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(11) { left: 8px; top: 46px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(12) { left: 8px; top: 58px; width: 10px; height: 6px; }
+/* Right pins */
+.splash-cpu-pin:nth-child(13) { right: 8px; top: 22px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(14) { right: 8px; top: 34px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(15) { right: 8px; top: 46px; width: 10px; height: 6px; }
+.splash-cpu-pin:nth-child(16) { right: 8px; top: 58px; width: 10px; height: 6px; }
+
+/* Rotating border ring */
+.splash-cpu-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--cyan);
+  border-right-color: var(--violet);
+  animation: spinRing 1.4s linear infinite;
+}
+
+.splash-title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #ffffff 0%, var(--cyan) 50%, var(--violet) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerText 2s linear infinite;
+}
+.splash-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: -12px;
+}
+
+/* Progress bar + status */
+.splash-progress-wrap {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: splashFadeIn 0.6s 0.3s ease both;
+}
+.splash-progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.splash-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--cyan-glow);
+  transition: width 0.15s ease;
+}
+.splash-status-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+.splash-status-text::before {
+  content: '> ';
+  color: var(--violet);
+}
+
+/* Scanline overlay on splash */
+#splash-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+  pointer-events: none;
+  animation: scanMove 6s linear infinite;
+}
+
+/* === ELEMENT ENTRY REVEAL ANIMATIONS === */
+
+/* Initial hidden state — applied by JS before reveal */
+.will-animate {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.will-animate.anim-left {
+  transform: translateX(-24px);
+}
+.will-animate.anim-scale {
+  transform: scale(0.94);
+}
+
+/* Revealed state */
+.will-animate.revealed {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: opacity 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* === KEYFRAMES === */
+@keyframes cpuPulse {
+  0%, 100% { box-shadow: 0 0 30px var(--cyan-glow), inset 0 0 20px rgba(0,242,254,0.1); }
+  50%       { box-shadow: 0 0 55px var(--cyan-glow), inset 0 0 35px rgba(0,242,254,0.2); }
+}
+@keyframes spinRing {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmerText {
+  to { background-position: 200% center; }
+}
+@keyframes splashLogoIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes splashFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanMove {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100px; }
+}
+
+/* Floating particles behind splash */
+.splash-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.splash-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--cyan);
+  opacity: 0;
+  animation: particleFloat var(--dur, 4s) var(--delay, 0s) linear infinite;
+}
+@keyframes particleFloat {
+  0%   { opacity: 0; transform: translateY(100vh) scale(0.5); }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-20px) scale(1.5); }
+}
 </style>
 </head>
-<body>
+<body class="loading">
 
-<div class="app-container">
-  <!-- HEADER -->
-  <header>
-    <div class="header-top">
-      <div>
-        <div class="brand-badge">Simulasi Interaktif & Master Hardware Lab</div>
-        <h1 class="app-title">PC Master Builder Studio</h1>
-        <p class="app-subtitle">Visualisasi mendalam cara merakit komputer, mengenali komponen, jalur kelistrikan, sirkulasi udara (airflow), diagnostik POST, pengujian BIOS UEFI, serta kalkulator FPS & Bottleneck.</p>
-      </div>
+<!-- ============ SPLASH / BOOT SCREEN ============ -->
+<div id="splash-screen">
+  <!-- Floating particles -->
+  <div class="splash-particles" id="splashParticles"></div>
 
-      <!-- MAIN MODE NAVIGATION TABS -->
-      <div class="nav-tabs" id="modeTabs">
-        <button class="nav-tab-btn active" data-mode="sandbox">
-          <span class="tab-icon">🎮</span> Rakit Bebas & Exploded View
-        </button>
-        <button class="nav-tab-btn" data-mode="guide">
-          <span class="tab-icon">🛠️</span> Panduan Merakit (Step-by-Step)
-        </button>
-        <button class="nav-tab-btn" data-mode="encyclopedia">
-          <span class="tab-icon">📚</span> Ensiklopedia Komponen
-        </button>
-        <button class="nav-tab-btn" data-mode="troubleshoot">
-          <span class="tab-icon">💡</span> Kuis & Troubleshooting
-        </button>
+  <!-- Logo group -->
+  <div class="splash-logo-wrap">
+    <div class="splash-cpu-icon">
+      <div class="splash-cpu-ring"></div>
+      <div class="splash-cpu-body">MB</div>
+      <div class="splash-cpu-pins">
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
+        <div class="splash-cpu-pin"></div><div class="splash-cpu-pin"></div>
       </div>
     </div>
+    <div>
+      <div class="splash-title">PC Master Builder Studio</div>
+      <div class="splash-subtitle">Hardware Intelligence &amp; Assembly Simulator</div>
+    </div>
+  </div>
 
-    <!-- ACTION TOOLBAR -->
-    <div class="action-toolbar">
-      <div class="toolbar-left">
-        <button class="btn-action primary" id="btnExplodeAll">⛶ Bongkar Semua</button>
-        <button class="btn-action" id="btnAssembleAll">⤓ Pasang Lengkap</button>
-        
-        <!-- ARGB Selector -->
-        <select class="select-action" id="argbPresetSelect" title="Pilih Mode ARGB Lighting">
-          <option value="cyberpunk">🩵 ARGB: Cyberpunk Neon</option>
-          <option value="rainbow">🌈 ARGB: Rainbow Spectrum</option>
-          <option value="fire">🔥 ARGB: Fire Inferno</option>
-          <option value="emerald">💚 ARGB: Razer Emerald</option>
-          <option value="stealth">🖤 ARGB: Stealth Blackout</option>
-        </select>
+  <!-- Progress bar -->
+  <div class="splash-progress-wrap">
+    <div class="splash-progress-track">
+      <div class="splash-progress-bar" id="splashBar"></div>
+    </div>
+    <div class="splash-status-text" id="splashStatus">Initializing hardware layer...</div>
+  </div>
+</div>
 
-        <button class="btn-action" id="btnToggleAirflow">💨 Airflow: OFF</button>
-        <button class="btn-action" id="btnToggleGlass">🪟 Tempered Glass: BUKA</button>
+<div class="app-container">
+  <!-- TOP NAVIGATION BAR -->
+  <header>
+    <div class="header-top">
+      <div class="brand-logo-wrap">
+        <div class="brand-logo-icon">MB</div>
+        <div>
+          <h1 class="app-title">PC Master Builder Studio</h1>
+        </div>
       </div>
 
-      <div class="toolbar-right">
-        <!-- Zoom Camera Inspect Buttons -->
-        <button class="btn-action" id="btnZoomFull">🔍 100%</button>
-        <button class="btn-action" id="btnZoomCpu">🎯 CPU</button>
-        <button class="btn-action" id="btnZoomRam">🎯 RAM/M.2</button>
-        <button class="btn-action" id="btnZoomGpu">🎯 GPU</button>
-        <button class="btn-action active-toggle" id="btnOpenBios">💻 Enter BIOS</button>
-
-        <button class="btn-action" id="btnSoundToggle">🔊 SFX: ON</button>
-        <button class="btn-action" id="btnResetAll">🔄 Reset Awal</button>
+      <!-- MAIN NAVIGATION TABS -->
+      <div class="nav-tabs" id="modeTabs">
+        <button class="nav-tab-btn active" data-tab="home">
+          <span class="tab-icon">🏠</span> Beranda (Overview)
+        </button>
+        <button class="nav-tab-btn" data-tab="sandbox">
+          <span class="tab-icon">🛠️</span> Workbench Perakitan
+        </button>
+        <button class="nav-tab-btn" data-tab="telemetry">
+          <span class="tab-icon">📊</span> IQON Telemetry
+        </button>
+        <button class="nav-tab-btn" data-tab="encyclopedia">
+          <span class="tab-icon">📚</span> Ensiklopedia Hardware
+        </button>
+        <button class="nav-tab-btn" data-tab="troubleshoot">
+          <span class="tab-icon">💡</span> Diagnostics & Kuis
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- MONITOR & TELEMETRY SECTION -->
-  <section class="system-console-grid">
+  <!-- 1. HERO SECTION (HERO OVERVIEW CONCEPT) -->
+  <section class="hero-section" id="heroSection">
+    <div class="hero-badge">⚡ ULTIMATE PC HARDWARE PLATFORM</div>
+    <h2 class="hero-headline">PC Master Builder & Hardware Intelligence Studio</h2>
+    <p class="hero-subheadline">Platform interaktif untuk mensimulasikan perakitan PC 3D, mempelajari anatomi komponen komputasi modern, menganalisis telemetri suhu real-time, dan menguji kompatibilitas daya & bottleneck.</p>
+    
+    <div class="hero-actions-row">
+      <button class="btn-hero-primary" onclick="switchMainTab('sandbox')">
+        🚀 Mulai Rakit PC Interaktif
+      </button>
+      <button class="btn-hero-secondary" onclick="switchMainTab('telemetry')">
+        📊 Buka IQON Telemetry Dashboard
+      </button>
+      <button class="btn-hero-secondary" onclick="switchMainTab('encyclopedia')">
+        📚 Jelajahi Ensiklopedia Hardware
+      </button>
+    </div>
+
+    <!-- 4 HERO FEATURE CARDS -->
+    <div class="hero-features-grid">
+      <div class="feature-card" onclick="switchMainTab('sandbox')" style="cursor:pointer;">
+        <span class="feature-card-icon">🛠️</span>
+        <h4>Simulator Perakitan 3D</h4>
+        <p>Bongkar pasang komponen PC secara interaktif dengan visualisasi sirkulasi udara (airflow) dan kabel vector presisi.</p>
+      </div>
+      <div class="feature-card" onclick="switchMainTab('telemetry')" style="cursor:pointer;">
+        <span class="feature-card-icon">📊</span>
+        <h4>IQON Telemetry Dashboard</h4>
+        <p>Dashboard telemetri suhu CPU/GPU, penggunaan RAM, dan status kesehatan hardware dengan indikator radial gauge.</p>
+      </div>
+      <div class="feature-card" onclick="switchMainTab('sandbox')" style="cursor:pointer;">
+        <span class="feature-card-icon">✅</span>
+        <h4>Compatibility Checker</h4>
+        <p>Pengecekan keselarasan soket CPU, bandwidth memori Dual Channel, dan kecukupan daya PSU secara otomatis.</p>
+      </div>
+      <div class="feature-card" onclick="switchMainTab('encyclopedia')" style="cursor:pointer;">
+        <span class="feature-card-icon">📚</span>
+        <h4>Ensiklopedia Hardware</h4>
+        <p>Pelajari fungsi, prinsip fisika/elektronika, dan tips memilih hardware untuk mencegah bottleneck komputasi.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. IQON TELEMETRY DASHBOARD (REFLECT IMAGE 1 & 4) -->
+  <section class="iqon-dashboard-container" id="iqonDashboard" style="display:none;">
+    <div class="iqon-header-bar">
+      <div class="iqon-welcome">
+        <h2>Welcome back, Technician!</h2>
+        <p>How's your PC running today? Real-time hardware telemetry and diagnostic sensors.</p>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--emerald);background:rgba(16,185,129,0.1);padding:6px 16px;border-radius:20px;border:1px solid var(--emerald);" id="iqonSystemStatus">
+        ● System Health: OPTIMAL
+      </div>
+    </div>
+
+    <!-- 4 IQON RADIAL GAUGES CARDS -->
+    <div class="iqon-grid-cards">
+      <div class="iqon-card">
+        <div class="iqon-card-info">
+          <h4>Processor</h4>
+          <h3>Ryzen 7 7800X3D</h3>
+          <p id="iqonCpuSub">42°C • 24% Utilization</p>
+        </div>
+        <svg class="radial-gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="38"/>
+          <circle class="gauge-val" id="gaugeCpuArc" cx="50" cy="50" r="38" stroke-dasharray="238" stroke-dashoffset="140"/>
+          <text x="50" y="55" text-anchor="middle" fill="#fff" font-family="var(--font-mono)" font-size="12" font-weight="bold" id="gaugeCpuTxt">42°C</text>
+        </svg>
+      </div>
+
+      <div class="iqon-card">
+        <div class="iqon-card-info">
+          <h4>Memory RAM</h4>
+          <h3>DDR5 32GB (6000MHz)</h3>
+          <p id="iqonRamSub">38% Utilized • Dual Channel</p>
+        </div>
+        <svg class="radial-gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="38"/>
+          <circle class="gauge-val" id="gaugeRamArc" cx="50" cy="50" r="38" stroke-dasharray="238" stroke-dashoffset="148" stroke="var(--violet)"/>
+          <text x="50" y="55" text-anchor="middle" fill="#fff" font-family="var(--font-mono)" font-size="12" font-weight="bold" id="gaugeRamTxt">38%</text>
+        </svg>
+      </div>
+
+      <div class="iqon-card">
+        <div class="iqon-card-info">
+          <h4>Video Card</h4>
+          <h3>RTX 4070 Ti 12GB</h3>
+          <p id="iqonGpuSub">48°C • 1450 RPM Fan</p>
+        </div>
+        <svg class="radial-gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="38"/>
+          <circle class="gauge-val" id="gaugeGpuArc" cx="50" cy="50" r="38" stroke-dasharray="238" stroke-dashoffset="125" stroke="var(--amber)"/>
+          <text x="50" y="55" text-anchor="middle" fill="#fff" font-family="var(--font-mono)" font-size="12" font-weight="bold" id="gaugeGpuTxt">48°C</text>
+        </svg>
+      </div>
+
+      <div class="iqon-card">
+        <div class="iqon-card-info">
+          <h4>Primary Storage</h4>
+          <h3>NVMe Gen4 1TB</h3>
+          <p>100% Good • 38°C Health</p>
+        </div>
+        <svg class="radial-gauge-svg" viewBox="0 0 100 100">
+          <circle class="gauge-bg" cx="50" cy="50" r="38"/>
+          <circle class="gauge-val" cx="50" cy="50" r="38" stroke-dasharray="238" stroke-dashoffset="0" stroke="var(--emerald)"/>
+          <text x="50" y="55" text-anchor="middle" fill="#fff" font-family="var(--font-mono)" font-size="12" font-weight="bold">100%</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTION TOOLBAR -->
+  <div class="action-toolbar" id="workbenchToolbar">
+    <div class="toolbar-left">
+      <button class="btn-action primary" id="btnExplodeAll">⛶ Bongkar Semua</button>
+      <button class="btn-action" id="btnAssembleAll">⤓ Pasang Lengkap</button>
+      
+      <select class="select-action" id="argbPresetSelect" title="Pilih Mode ARGB Lighting">
+        <option value="cyberpunk">🩵 ARGB: Cyberpunk Neon</option>
+        <option value="rainbow">🌈 ARGB: Rainbow Spectrum</option>
+        <option value="fire">🔥 ARGB: Fire Inferno</option>
+        <option value="emerald">💚 ARGB: Razer Emerald</option>
+        <option value="stealth">🖤 ARGB: Stealth Blackout</option>
+      </select>
+
+      <button class="btn-action" id="btnToggleAirflow">💨 Airflow: OFF</button>
+      <button class="btn-action" id="btnToggleGlass">🪟 Tempered Glass: BUKA</button>
+    </div>
+
+    <div class="toolbar-right">
+      <button class="btn-action" id="btnZoomFull">🔍 100%</button>
+      <button class="btn-action" id="btnZoomCpu">🎯 CPU</button>
+      <button class="btn-action" id="btnZoomRam">🎯 RAM/M.2</button>
+      <button class="btn-action" id="btnZoomGpu">🎯 GPU</button>
+      <button class="btn-action active-toggle" id="btnOpenBios">💻 Enter BIOS</button>
+
+      <button class="btn-action" id="btnSoundToggle">🔊 SFX: ON</button>
+      <button class="btn-action" id="btnResetAll">🔄 Reset Awal</button>
+    </div>
+  </div>
+
+  <!-- CONSOLE / MONITOR & TELEMETRY SECTION -->
+  <section class="system-console-grid" id="consoleSection">
     <!-- Interactive Monitor Frame -->
     <div class="monitor-chassis">
       <div class="monitor-bezel">
@@ -1446,11 +2008,11 @@ footer {
           <div class="value" id="specRAM">Dual-Channel (32GB)</div>
         </div>
         <div class="spec-box">
-          <div class="label">Estimasi FPS Cyberpunk</div>
+          <div class="label">FPS Cyberpunk</div>
           <div class="value" id="specFPS" style="color:var(--cyan);">N/A</div>
         </div>
         <div class="spec-box">
-          <div class="label">Indeks Bottleneck</div>
+          <div class="label">Bottleneck Index</div>
           <div class="value" id="specBottleneck">0.5% (Perfect)</div>
         </div>
         <div class="spec-box">
@@ -1470,32 +2032,25 @@ footer {
     <!-- Case Canvas Wrapper -->
     <div class="case-view-container">
       <div class="canvas-scaler" id="caseCanvas">
-        <!-- Case Chassis -->
         <div class="case-chassis"></div>
         <div class="case-glass-reflection" id="caseGlass"></div>
 
-        <!-- PSU Shroud Basement -->
         <div class="psu-shroud">
           <div class="psu-shroud-cutout">PSU CHAMBER</div>
         </div>
 
-        <!-- Cable Grommets -->
         <div class="grommet" style="left:510px;top:180px;width:26px;height:90px;"></div>
         <div class="grommet" style="left:510px;top:400px;width:26px;height:90px;"></div>
         <div class="grommet" style="left:260px;top:730px;width:90px;height:24px;"></div>
 
-        <!-- Airflow Simulation Overlays -->
         <div class="airflow-layer" id="airflowLayer">
-          <!-- Cold Air Streams (Front Intake) -->
           <div class="airflow-stream-cold" style="left:120px;top:240px;width:240px;"></div>
           <div class="airflow-stream-cold" style="left:120px;top:380px;width:260px;"></div>
           <div class="airflow-stream-cold" style="left:120px;top:520px;width:240px;"></div>
-          <!-- Hot Air Streams (Rear & Top Exhaust) -->
           <div class="airflow-stream-hot" style="left:480px;top:190px;width:180px;"></div>
           <div class="airflow-stream-hot" style="left:380px;top:100px;width:140px;transform:rotate(-45deg);"></div>
         </div>
 
-        <!-- SVG Cables Layer -->
         <svg class="cable-svg-canvas" id="cableSvgCanvas" viewBox="0 0 740 940"></svg>
       </div>
     </div>
@@ -1528,7 +2083,7 @@ footer {
 
 <script>
 /* ============================================================
-   1. SOUND FX & AMBIENT NOISE ENGINE (WEB AUDIO API)
+   1. SOUND FX ENGINE (WEB AUDIO API)
    ============================================================ */
 class SoundEngine {
   constructor() {
@@ -1865,7 +2420,8 @@ const ALL_COMPONENTS = [...HARDWARE_PARTS, ...CABLE_PARTS];
    3. APP STATE MANAGEMENT
    ============================================================ */
 const state = {
-  currentMode: 'sandbox',
+  currentTab: 'home', // home | sandbox | telemetry | encyclopedia | troubleshoot
+  currentMode: 'sandbox', // sandbox | guide
   installed: {},
   thermalPasteApplied: false,
   glassInstalled: true,
@@ -2113,7 +2669,6 @@ function updateTelemetry() {
     document.getElementById('specRAM').innerText = 'No RAM Detected';
   }
 
-  // FPS & Bottleneck Calculation
   const hasGpu = state.installed['gpu'];
   const hasCpu = state.installed['cpu'];
 
@@ -2130,6 +2685,35 @@ function updateTelemetry() {
     document.getElementById('specFPS').innerText = 'N/A';
     document.getElementById('specBottleneck').innerText = 'System Halt';
     document.getElementById('specBottleneck').style.color = 'var(--rose)';
+  }
+
+  // Update IQON Radial Telemetry Gauges (Image 1 & 4 Ref)
+  const cpuArc = document.getElementById('gaugeCpuArc');
+  const ramArc = document.getElementById('gaugeRamArc');
+  const gpuArc = document.getElementById('gaugeGpuArc');
+  
+  if (cpuArc) {
+    const cpuTemp = hasCpu ? (state.powerState === 'desktop' ? 42 : 38) : 0;
+    const cpuOffset = 238 - (238 * (cpuTemp / 100));
+    cpuArc.style.strokeDashoffset = cpuOffset;
+    document.getElementById('gaugeCpuTxt').innerText = `${cpuTemp}°C`;
+    document.getElementById('iqonCpuSub').innerText = `${cpuTemp}°C • ${hasCpu ? '24% Utilization' : 'Offline'}`;
+  }
+
+  if (ramArc) {
+    const ramPct = (ram1 && ram2) ? 38 : ((ram1 || ram2) ? 76 : 0);
+    const ramOffset = 238 - (238 * (ramPct / 100));
+    ramArc.style.strokeDashoffset = ramOffset;
+    document.getElementById('gaugeRamTxt').innerText = `${ramPct}%`;
+    document.getElementById('iqonRamSub').innerText = `${ramPct}% Utilized • ${ram1 && ram2 ? 'Dual Channel' : (ram1 || ram2 ? 'Single Channel' : 'No RAM')}`;
+  }
+
+  if (gpuArc) {
+    const gpuTemp = hasGpu ? 48 : 0;
+    const gpuOffset = 238 - (238 * (gpuTemp / 100));
+    gpuArc.style.strokeDashoffset = gpuOffset;
+    document.getElementById('gaugeGpuTxt').innerText = `${gpuTemp}°C`;
+    document.getElementById('iqonGpuSub').innerText = `${gpuTemp}°C • ${hasGpu ? '1450 RPM Fan' : 'No Discrete GPU'}`;
   }
 }
 
@@ -2186,19 +2770,76 @@ function setZoomTarget(target) {
 }
 
 /* ============================================================
-   7. SIDE PANEL VIEWS (SANDBOX, GUIDE, ENCYCLOPEDIA, QUIZ)
+   7. MAIN TAB NAVIGATION & SIDE PANEL VIEWS
    ============================================================ */
+function switchMainTab(tab) {
+  SFX.play('click');
+  state.currentTab = tab;
+
+  // Update Top Nav Tab Buttons
+  document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+
+  const heroSec = document.getElementById('heroSection');
+  const iqonSec = document.getElementById('iqonDashboard');
+  const consoleSec = document.getElementById('consoleSection');
+  const workspaceSec = document.getElementById('mainWorkspace');
+  const detailSec = document.getElementById('componentDetailBox');
+  const toolbar = document.getElementById('workbenchToolbar');
+
+  if (tab === 'home') {
+    heroSec.style.display = 'block';
+    iqonSec.style.display = 'none';
+    consoleSec.style.display = 'grid';
+    workspaceSec.style.display = 'grid';
+    detailSec.style.display = 'block';
+    toolbar.style.display = 'flex';
+  } else if (tab === 'telemetry') {
+    heroSec.style.display = 'none';
+    iqonSec.style.display = 'flex';
+    consoleSec.style.display = 'grid';
+    workspaceSec.style.display = 'none';
+    detailSec.style.display = 'none';
+    toolbar.style.display = 'none';
+  } else {
+    heroSec.style.display = 'none';
+    iqonSec.style.display = 'none';
+    consoleSec.style.display = 'grid';
+    workspaceSec.style.display = 'grid';
+    detailSec.style.display = 'block';
+    toolbar.style.display = 'flex';
+
+    if (tab === 'guide' || tab === 'sandbox') {
+      state.currentMode = tab;
+      if (tab === 'guide') {
+        ALL_COMPONENTS.forEach(p => { state.installed[p.key] = false; });
+        state.thermalPasteApplied = false;
+        state.activeGuideStep = 0;
+        state.guideScore = 0;
+        syncVisualStates();
+        updateTelemetry();
+      }
+    }
+  }
+
+  renderSidePanel();
+  setTimeout(resizeCanvas, 50);
+}
+
 const sidePanel = document.getElementById('sidePanel');
 
 function renderSidePanel() {
-  if (state.currentMode === 'sandbox') {
-    renderSandboxTray();
-  } else if (state.currentMode === 'guide') {
-    renderGuidePanel();
-  } else if (state.currentMode === 'encyclopedia') {
+  if (state.currentTab === 'telemetry') return;
+
+  if (state.currentTab === 'encyclopedia') {
     renderEncyclopediaPanel();
-  } else if (state.currentMode === 'troubleshoot') {
+  } else if (state.currentTab === 'troubleshoot') {
     renderQuizPanel();
+  } else if (state.currentMode === 'guide' && state.currentTab !== 'home') {
+    renderGuidePanel();
+  } else {
+    renderSandboxTray();
   }
 }
 
@@ -2224,7 +2865,7 @@ function renderSandboxTray() {
 
   html += `
     </div>
-    <div class="section-title-wrap" style="margin-top:20px;">
+    <div class="section-title-wrap" style="margin-top:16px;">
       <h3>Kabel & Konektor Daya</h3>
       <span class="section-count-badge">${CABLE_PARTS.length} Kabel</span>
     </div>
@@ -2242,7 +2883,32 @@ function renderSandboxTray() {
     `;
   });
 
-  html += `</div>`;
+  // REAL-TIME COMPATIBILITY CHECKLIST (IMAGE 2 REF)
+  const isMobo = state.installed['motherboard'];
+  const isCpu = state.installed['cpu'];
+  const isRam1 = state.installed['ram1'];
+  const isRam2 = state.installed['ram2'];
+  const isPsu = state.installed['psu'];
+  const isGpu = state.installed['gpu'];
+
+  html += `
+    <div class="compatibility-box">
+      <h4>✅ Real-time Compatibility Checklist</h4>
+      <div class="compat-item ${isMobo && isCpu ? 'ok' : 'warn'}">
+        <span>${isMobo && isCpu ? '✔' : '✖'}</span> Soket CPU & Motherboard (AM5 / LGA1700)
+      </div>
+      <div class="compat-item ${isRam1 && isRam2 ? 'ok' : 'warn'}">
+        <span>${isRam1 && isRam2 ? '✔' : '✖'}</span> DDR5 Memory Dual Channel Supported
+      </div>
+      <div class="compat-item ${isPsu ? 'ok' : 'warn'}">
+        <span>${isPsu ? '✔' : '✖'}</span> PSU Power Reserve (>35% Overhead)
+      </div>
+      <div class="compat-item ${isGpu ? 'ok' : 'warn'}">
+        <span>${isGpu ? '✔' : '✖'}</span> PCIe 4.0 x16 High Speed Bus Fit
+      </div>
+    </div>
+  `;
+
   sidePanel.innerHTML = html;
 }
 
@@ -2674,7 +3340,7 @@ function renderBiosScreen() {
         <div>Processor: AMD Ryzen 7 7800X3D 8-Core Processor</div>
         <div>Total Memory: ${state.installed['ram1'] && state.installed['ram2'] ? '32768 MB (32GB Dual Channel)' : '16384 MB (16GB)'}</div>
         <div>Current DRAM Speed: <b>${state.xmpEnabled ? '6000 MHz (XMP Profile 1 Active)' : '4800 MHz (Standard JEDEC)'}</b></div>
-        <div>System Date & Time: 2026-09-07 23:05:00</div>
+        <div>System Date & Time: 2026-09-08 00:05:00</div>
       </div>
     `;
   } else if (state.biosTab === 'oc') {
@@ -2801,7 +3467,7 @@ function loadDesktopOS() {
 }
 
 /* ============================================================
-   9. TOOLBAR ACTIONS & EVENTS
+   9. TOOLBAR ACTIONS & TOP TAB NAVIGATION
    ============================================================ */
 document.getElementById('powerButton').addEventListener('click', togglePower);
 
@@ -2874,24 +3540,10 @@ document.getElementById('btnResetAll').addEventListener('click', () => {
   if (state.powerState !== 'off') shutdownPC();
 });
 
-// Mode Switching Navigation
+// Top Navigation Bar Tabs Listener
 document.querySelectorAll('.nav-tab-btn').forEach(btn => {
   btn.addEventListener('click', function() {
-    SFX.play('click');
-    document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    state.currentMode = this.dataset.mode;
-
-    if (state.currentMode === 'guide') {
-      ALL_COMPONENTS.forEach(p => { state.installed[p.key] = false; });
-      state.thermalPasteApplied = false;
-      state.activeGuideStep = 0;
-      state.guideScore = 0;
-      syncVisualStates();
-      updateTelemetry();
-    }
-
-    renderSidePanel();
+    switchMainTab(this.dataset.tab);
   });
 });
 
@@ -2913,10 +3565,88 @@ window.addEventListener('resize', resizeCanvas);
 buildCaseDOM();
 setARGBPreset('cyberpunk');
 syncVisualStates();
-renderSidePanel();
+switchMainTab('home');
 updateTelemetry();
 updateComponentDetails('motherboard');
 setTimeout(resizeCanvas, 50);
+
+/* ============================================================
+   11. ENTRY ANIMATION SYSTEM
+   ============================================================ */
+(function initEntryAnimation() {
+  const splash   = document.getElementById('splash-screen');
+  const bar      = document.getElementById('splashBar');
+  const status   = document.getElementById('splashStatus');
+  const particles= document.getElementById('splashParticles');
+
+  // --- Spawn floating particles ---
+  const COLORS = ['#00f2fe','#8b5cf6','#10b981','#f59e0b'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'splash-particle';
+    p.style.setProperty('--dur',   (3 + Math.random() * 5).toFixed(1) + 's');
+    p.style.setProperty('--delay', (Math.random() * 5).toFixed(1) + 's');
+    p.style.left    = (Math.random() * 100) + '%';
+    p.style.background = COLORS[Math.floor(Math.random() * COLORS.length)];
+    p.style.width   = (1 + Math.random() * 3).toFixed(1) + 'px';
+    p.style.height  = p.style.width;
+    particles.appendChild(p);
+  }
+
+  // --- Boot sequence steps ---
+  const bootSteps = [
+    { pct: 12, msg: 'Initializing hardware layer...' },
+    { pct: 26, msg: 'Loading component database...' },
+    { pct: 41, msg: 'Calibrating telemetry sensors...' },
+    { pct: 58, msg: 'Building case DOM...' },
+    { pct: 72, msg: 'Setting up ARGB lighting engine...' },
+    { pct: 85, msg: 'Running POST self-test...' },
+    { pct: 95, msg: 'Mounting assembly workspace...' },
+    { pct: 100, msg: 'System ready.' },
+  ];
+
+  let stepIndex = 0;
+  function nextStep() {
+    if (stepIndex >= bootSteps.length) {
+      // Dismiss splash & reveal page
+      setTimeout(revealPage, 200);
+      return;
+    }
+    const step = bootSteps[stepIndex++];
+    bar.style.width    = step.pct + '%';
+    status.textContent = step.msg;
+    const delay = stepIndex < bootSteps.length ? 280 + Math.random() * 200 : 360;
+    setTimeout(nextStep, delay);
+  }
+  setTimeout(nextStep, 400);
+
+  // --- Page reveal after splash ---
+  function revealPage() {
+    splash.classList.add('hidden');
+    document.body.classList.remove('loading');
+
+    // Mark animatable sections with will-animate
+    const staggerGroups = [
+      { sel: 'header',                         cls: 'anim-left', delay: 0   },
+      { sel: '.hero-section',                  cls: 'anim-scale', delay: 80  },
+      { sel: '.hero-badge',                    cls: '',           delay: 160 },
+      { sel: '.hero-headline',                 cls: '',           delay: 220 },
+      { sel: '.hero-subheadline',              cls: '',           delay: 280 },
+      { sel: '.hero-actions-row',              cls: '',           delay: 340 },
+      { sel: '.hero-features-grid .feature-card', cls: '',        delay: 400 }, // staggered below
+      { sel: '.iqon-dashboard-container',      cls: '',           delay: 460 },
+    ];
+
+    staggerGroups.forEach(({ sel, cls, delay }) => {
+      const els = document.querySelectorAll(sel);
+      els.forEach((el, i) => {
+        el.classList.add('will-animate');
+        if (cls) el.classList.add(cls);
+        setTimeout(() => el.classList.add('revealed'), delay + i * 60);
+      });
+    });
+  }
+})();
 </script>
 </body>
 </html>
