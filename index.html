@@ -3,1284 +3,2628 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bongkar Pasang PC — Simulator Rakit Komputer</title>
+<title>PC Master Builder — Simulator & Ensiklopedia Perakitan Komputer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07080a; --bg-2:#0c0e12;
-  --panel:#12151a; --panel-2:#171b21; --panel-3:#1c212a;
-  --stroke:#262b33; --stroke-soft:#1b1f26;
-  --case-1:#2c3037; --case-2:#15171c;
-  --pcb-1:#14171c; --pcb-2:#090a0c; --pcb-trace:rgba(96,224,206,.11); --pcb-pad:#1e232b;
-  --teal:#4fd8c4; --teal-dim:#2a7c70; --teal-glow:rgba(79,216,196,.5); --teal-soft:rgba(79,216,196,.12);
-  --copper:#d99a63; --copper-dim:#8a5a34;
-  --violet:#8b7cf6;
-  --gold:#e0b84a;
-  --danger:#ef6a5a;
-  --text-hi:#f2f5f8; --text-mid:#a7b0bd; --text-low:#6b7280; --text-faint:#3d434d;
-  --r-card:16px;
-  font-family:'Inter',system-ui,sans-serif;
+:root {
+  --bg-main: #06070a;
+  --bg-surface: #0c0e14;
+  --panel: #11141c;
+  --panel-elevated: #161b26;
+  --panel-border: #1f2738;
+  --panel-border-glow: #2d3852;
+  
+  --cyan: #00f2fe;
+  --cyan-dim: #02949c;
+  --cyan-glow: rgba(0, 242, 254, 0.4);
+  --cyan-soft: rgba(0, 242, 254, 0.1);
+  
+  --violet: #8b5cf6;
+  --violet-glow: rgba(139, 92, 246, 0.4);
+  --violet-soft: rgba(139, 92, 246, 0.12);
+  
+  --amber: #f59e0b;
+  --amber-dim: #b45309;
+  --amber-glow: rgba(245, 158, 11, 0.4);
+  
+  --emerald: #10b981;
+  --emerald-glow: rgba(16, 185, 129, 0.4);
+  
+  --rose: #f43f5e;
+  --rose-glow: rgba(244, 63, 94, 0.4);
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-faint: #334155;
+  
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--text-hi);}
-body{
-  min-height:100vh;
-  background:
-    radial-gradient(ellipse 900px 500px at 15% -5%, rgba(79,216,196,.09), transparent 55%),
-    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(139,124,246,.07), transparent 50%),
-    var(--bg);
-  padding:28px 16px 70px;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
-.wrap{max-width:1240px;margin:0 auto;}
 
-.eyebrow{font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin:0 0 8px;display:flex;align-items:center;gap:8px;}
-.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 10px var(--teal-glow);}
-h1{font-size:clamp(26px,3.6vw,40px);font-weight:800;margin:0 0 8px;letter-spacing:-.015em;}
-.sub{color:var(--text-mid);font-size:15px;line-height:1.65;max-width:680px;margin:0;}
-
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 6px;align-items:center;}
-.btn{font-family:'Space Mono',monospace;font-size:12.5px;letter-spacing:.02em;background:var(--panel);color:var(--text-hi);border:1px solid var(--stroke);border-radius:10px;padding:11px 18px;cursor:pointer;transition:.2s;}
-.btn:hover{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft);}
-.btn.primary{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
-.btn.primary:hover{box-shadow:0 0 0 3px rgba(79,216,196,.22);}
-.btn.tutorial-toggle-btn.active{border-color:var(--violet);color:#d9d3ff;box-shadow:0 0 0 3px rgba(139,124,246,.18);}
-.btn.guided-toggle-btn.active{border-color:var(--gold);color:#fff3d0;box-shadow:0 0 0 3px rgba(224,184,74,.18);}
-.btn.assembly-toggle-btn.active{border-color:var(--copper);color:#ffe3c7;box-shadow:0 0 0 3px rgba(217,154,99,.2);}
-.legend{display:flex;gap:16px;flex-wrap:wrap;margin:14px 2px 22px;font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
-.legend span{display:inline-flex;align-items:center;gap:7px;}
-.legend i{width:13px;height:13px;border-radius:4px;display:inline-block;}
-.legend .i-removable{background:var(--panel-3);border:1.5px solid var(--teal-dim);}
-.legend .i-fixed{background:transparent;border:1.5px dashed var(--text-faint);}
-
-/* ---------- guided tour bar ---------- */
-.tour-bar{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:16px 20px;margin:0 0 20px;display:none;}
-.tour-bar.show{display:block;animation:tourIn .35s ease;}
-@keyframes tourIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
-.tour-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
-.tour-instruction{font-size:14px;font-weight:700;color:var(--text-hi);}
-.tour-instruction .accent{color:var(--gold);}
-.tour-count{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-low);}
-.tour-count a{color:var(--text-low);}
-.tour-track{height:8px;border-radius:5px;background:#1a1d22;overflow:hidden;border:1px solid var(--stroke-soft);}
-.tour-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--teal));transition:width .55s cubic-bezier(.34,1.4,.44,1);width:0%;}
-.tour-dots{display:flex;gap:6px;margin-top:10px;}
-.tour-dot{width:9px;height:9px;border-radius:50%;background:#262b33;transition:.3s;}
-.tour-dot.done{background:var(--teal);}
-.tour-dot.current{background:var(--gold);box-shadow:0 0 0 4px rgba(224,184,74,.25);}
-.tour-done-msg{color:var(--teal);}
-.tour-toast{position:fixed;left:50%;top:24px;transform:translateX(-50%) translateY(-16px);background:var(--panel-3);border:1px solid var(--teal);color:var(--teal);
-  font-family:'Space Mono',monospace;font-size:13px;font-weight:700;padding:12px 22px;border-radius:30px;opacity:0;pointer-events:none;
-  box-shadow:0 10px 30px -8px rgba(0,0,0,.6);z-index:999;transition:opacity .3s, transform .3s;}
-.tour-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.tour-toast.error{border-color:var(--danger);color:var(--danger);}
-
-.tour-target{animation:tourPulse 1.4s ease-in-out infinite;}
-@keyframes tourPulse{
-  0%,100%{ filter:drop-shadow(0 0 0 rgba(224,184,74,0)); }
-  50%{ filter:drop-shadow(0 0 18px rgba(224,184,74,.9)); }
+body {
+  background: 
+    radial-gradient(ellipse 900px 500px at 10% -5%, rgba(0, 242, 254, 0.08), transparent 60%),
+    radial-gradient(ellipse 800px 500px at 90% 15%, rgba(139, 92, 246, 0.08), transparent 60%),
+    radial-gradient(circle 600px at 50% 80%, rgba(16, 185, 129, 0.04), transparent 70%),
+    var(--bg-main);
+  padding: 24px 16px 80px;
 }
-.tray-card.tour-target{border-color:var(--gold);}
 
-/* ---------- assembly simulator (drag & drop) ---------- */
-.ghost.assembly-highlight{border-color:var(--copper);animation:assemblyGlow 1.6s ease-in-out infinite;}
-@keyframes assemblyGlow{0%,100%{box-shadow:0 0 0 rgba(217,154,99,0);}50%{box-shadow:0 0 18px rgba(217,154,99,.55), inset 0 0 14px rgba(217,154,99,.1);}}
-.part-slot.assembly-pending{opacity:0;pointer-events:none;}
-.part-slot.snap-in{animation:snapIn .5s cubic-bezier(.34,1.56,.64,1);}
-@keyframes snapIn{0%{transform:scale(1.5);filter:brightness(1.9) drop-shadow(0 0 26px var(--copper));}55%{transform:scale(.93);}100%{transform:scale(1);}}
-.tray-card.assembly-card{cursor:grab;touch-action:none;user-select:none;}
-.tray-card.assembly-card:active{cursor:grabbing;}
-.assembly-ghost-drag{position:fixed;z-index:9999;pointer-events:none;background:var(--panel-3);border:2px solid var(--copper);border-radius:12px;
-  padding:9px 14px;display:flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:12px;color:var(--text-hi);
-  box-shadow:0 14px 32px -8px rgba(0,0,0,.6);transform:translate(-50%,-50%);}
-.assembly-ghost-drag svg{width:20px;height:20px;color:var(--copper);flex-shrink:0;}
-.assembly-hint{font-size:12.5px;color:var(--text-mid);line-height:1.6;margin:0 0 14px;}
-.assembly-complete-btn{width:100%;margin-top:10px;}
-
-/* ---------- console (monitor + power + spec) ---------- */
-.console-section{display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 26px;align-items:stretch;}
-.monitor-wrap{flex:1 1 460px;min-width:280px;display:flex;flex-direction:column;align-items:center;}
-.monitor-frame{width:100%;max-width:600px;background:linear-gradient(160deg,#2a2e35,#141619);border-radius:14px;padding:14px;box-shadow:0 24px 50px -20px rgba(0,0,0,.6);border:1px solid #383d45;}
-.monitor-glass{width:100%;aspect-ratio:16/9;background:#020304;border-radius:6px;border:2px solid #000;overflow:hidden;position:relative;padding:16px;font-family:'Space Mono',monospace;font-size:12.5px;line-height:1.75;color:var(--teal);box-shadow:inset 0 0 40px rgba(0,0,0,.8);}
-.monitor-glass.off{color:#333;background:#020304;}
-.monitor-glass.failed{color:var(--danger);}
-@keyframes screenWake{0%{filter:brightness(0);}20%{filter:brightness(2.6);}45%{filter:brightness(.5);}100%{filter:brightness(1);}}
-.monitor-glass.waking{animation:screenWake .65s ease-out;}
-.monitor-stand{width:110px;height:16px;background:linear-gradient(160deg,#2a2e35,#16181c);margin:10px auto 0;border-radius:0 0 4px 4px;}
-.monitor-stand::after{content:'';display:block;width:170px;height:6px;background:#1a1c20;border-radius:3px;margin:6px auto 0;}
-
-.bios-splash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;animation:biosIn .4s ease;}
-.bios-splash.fade-out{animation:biosOut .3s ease forwards;}
-@keyframes biosIn{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
-@keyframes biosOut{to{opacity:0;transform:scale(1.05);}}
-.bios-logo{font-size:32px;filter:drop-shadow(0 0 12px var(--teal-glow));}
-.bios-brand{font-size:12.5px;letter-spacing:.14em;color:var(--text-hi);}
-.bios-ver{font-size:10px;color:var(--text-low);letter-spacing:.05em;}
-
-.post-header{font-size:12.5px;letter-spacing:.1em;color:var(--text-hi);margin-bottom:12px;}
-.post-line{display:flex;align-items:baseline;gap:6px;margin-bottom:7px;opacity:0;animation:lineIn .3s forwards;}
-@keyframes lineIn{from{opacity:0;transform:translateX(-4px);}to{opacity:1;transform:translateX(0);}}
-.post-line .plabel{white-space:nowrap;color:var(--text-mid);}
-.post-line .pdots{flex:1;border-bottom:2px dotted #2a2f37;height:0;margin-bottom:4px;}
-.post-line .pstatus{white-space:nowrap;font-weight:700;}
-.post-line .pstatus.ok{color:var(--teal);}
-.post-line .pstatus.fail{color:var(--danger);}
-.post-line .pstatus.warn{color:var(--copper);}
-
-.mon-fail-block{margin-top:10px;padding:10px 12px;border:1px dashed var(--danger);border-radius:6px;background:rgba(239,106,90,.06);}
-.dash-title{color:var(--text-hi);font-size:12px;margin-bottom:10px;letter-spacing:.08em;}
-.dash-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:10.5px;}
-.dash-row .lbl{width:120px;color:var(--text-mid);flex-shrink:0;}
-.bar{flex:1;height:8px;background:#111;border-radius:4px;overflow:hidden;border:1px solid #1e2024;}
-.bar-fill{height:100%;background:linear-gradient(90deg,var(--teal-dim),var(--teal));transition:width .8s ease;}
-.dash-row .val{width:64px;text-align:right;color:var(--text-hi);flex-shrink:0;}
-.mon-card h4{margin:0 0 6px;color:var(--text-hi);font-size:13px;}
-.mon-card p{margin:0;color:var(--text-mid);font-size:11px;line-height:1.65;}
-
-.console-controls{flex:1 1 260px;min-width:240px;display:flex;flex-direction:column;gap:14px;}
-.power-btn{display:flex;align-items:center;gap:10px;justify-content:center;font-family:'Space Mono',monospace;font-size:14px;font-weight:700;letter-spacing:.05em;
-  padding:16px;border-radius:12px;border:1px solid var(--stroke);background:var(--panel);color:var(--text-hi);cursor:pointer;transition:.2s;}
-.power-btn:hover{border-color:var(--teal);}
-.power-btn.is-on{background:linear-gradient(180deg,#1c463d,#0f2c26);border-color:#2f6a5c;color:#c7f7ec;}
-.power-dot{width:11px;height:11px;border-radius:50%;background:#3a3f46;transition:.3s;}
-.power-btn.is-on .power-dot{background:var(--teal);box-shadow:0 0 10px var(--teal-glow);}
-
-.spec-card{background:var(--panel);border:1px solid var(--stroke);border-radius:14px;padding:16px 18px;}
-.spec-card h3{margin:0 0 12px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--copper);font-family:'Space Mono',monospace;}
-.spec-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--stroke-soft);color:var(--text-mid);}
-.spec-row:last-child{border-bottom:none;}
-.spec-row b{color:var(--text-hi);font-weight:700;}
-
-/* ---------- workspace: case column + tray column ---------- */
-.workspace{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap;}
-.case-col{flex:1 1 620px;min-width:300px;}
-.tray-col{flex:1 1 380px;min-width:300px;}
-
-.case-canvas-wrapper{
-  position:relative;width:100%;border-radius:22px;overflow:visible;
-  background:linear-gradient(180deg,#0e1013,#08090b);
-  border:1px solid var(--stroke-soft);
-  padding:36px 0 0;
-  box-shadow:0 40px 80px -30px rgba(0,0,0,.6);
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
-.case-canvas{position:relative;width:720px;height:890px;transform-origin:top left;margin:0 auto;}
 
-.case-shell{position:absolute;border-radius:16px;
-  background:linear-gradient(145deg,var(--case-1),var(--case-2));
-  border:1px solid #3a3f47;
-  box-shadow:inset 0 0 70px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.04);
+/* ==================== HEADER & TOP NAV ==================== */
+header {
+  margin-bottom: 24px;
 }
-.case-shell::before{content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
-  background:repeating-linear-gradient(102deg, rgba(255,255,255,.018) 0 2px, transparent 2px 6px);}
-.case-shell::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;border-radius:16px 16px 0 0;
-  background:linear-gradient(90deg,transparent,var(--teal) 20%,var(--teal) 80%,transparent);opacity:.55;}
-.screw{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#8a8f97,#2a2d32 72%);box-shadow:inset 0 0 2px #000;}
-.case-tag{position:absolute;left:22px;bottom:16px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;color:#4b5058;text-transform:uppercase;}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.brand-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: var(--cyan-soft);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  margin-bottom: 8px;
+}
+.brand-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
 
-.ghost{position:absolute;border:1.5px dashed #363c45;border-radius:7px;opacity:.5;transition:.4s;pointer-events:none;}
-.ghost.active{border-color:var(--teal);opacity:1;box-shadow:0 0 20px rgba(79,216,196,.3), inset 0 0 20px rgba(79,216,196,.06);}
-.ghost-label{position:absolute;font-family:'Space Mono',monospace;font-size:9px;color:#4b515b;letter-spacing:.07em;text-transform:uppercase;pointer-events:none;}
+h1.app-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+p.app-subtitle {
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.6;
+  max-width: 720px;
+  margin-top: 4px;
+}
 
-.part-slot{position:absolute;cursor:grab;transform-origin:center center;
-  transition:transform .62s cubic-bezier(.32,1.4,.44,1), filter .3s, opacity .3s;
-  transform:translate(0,0) scale(1) rotate(0deg);}
-.part-slot:active{cursor:grabbing;}
-.part-slot.pulled{z-index:120;filter:drop-shadow(0 18px 26px rgba(0,0,0,.55)) drop-shadow(0 0 18px var(--teal-glow));}
-.part-slot.pulled{transform:translate(var(--ex),var(--ey)) scale(var(--es,1.1)) rotate(var(--er,0deg));}
-.part-visual{width:100%;height:100%;transition:transform .25s ease;position:relative;}
-.part-slot:hover .part-visual{transform:translateY(-3px) scale(1.02);}
-.part-tag{position:absolute;top:-23px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:10px;color:var(--teal);
-  background:rgba(8,10,12,.9);padding:3px 8px;border-radius:6px;white-space:nowrap;opacity:0;transition:.22s;border:1px solid rgba(79,216,196,.35);pointer-events:none;}
-.part-slot.pulled .part-tag,.part-slot:hover .part-tag{opacity:1;top:-27px;}
+.nav-tabs {
+  display: flex;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 5px;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.nav-tab-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nav-tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+.nav-tab-btn.active {
+  color: var(--text-primary);
+  background: var(--panel-elevated);
+  border-color: var(--cyan-dim);
+  box-shadow: 0 4px 16px -4px rgba(0, 242, 254, 0.25);
+}
+.nav-tab-btn.active .tab-icon {
+  color: var(--cyan);
+}
 
-.sheen{position:relative;overflow:hidden;}
-.sheen::after{content:'';position:absolute;top:-40%;left:-25%;width:55%;height:180%;pointer-events:none;
-  background:linear-gradient(78deg, transparent 32%, rgba(255,255,255,.09) 48%, rgba(255,255,255,.02) 56%, transparent 68%);}
+/* ==================== CONTROL ACTION TOOLBAR ==================== */
+.action-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 18px 0 20px;
+}
+.toolbar-left, .toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn-action {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-action:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-soft);
+  transform: translateY(-1px);
+}
+.btn-action.primary {
+  background: linear-gradient(135deg, #0284c7, #0369a1);
+  border-color: var(--cyan);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+.btn-action.primary:hover {
+  background: linear-gradient(135deg, #0369a1, #0284c7);
+  box-shadow: 0 0 18px var(--cyan-glow);
+}
+.btn-action.active-toggle {
+  background: var(--violet-soft);
+  border-color: var(--violet);
+  color: #d8b4fe;
+  box-shadow: 0 0 14px var(--violet-glow);
+}
+.toggle-switch-btn {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 7px 12px;
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+.toggle-switch-btn.active {
+  color: var(--emerald);
+  border-color: var(--emerald);
+  background: rgba(16, 185, 129, 0.1);
+}
 
-.hotspot{position:absolute;cursor:help;border-radius:6px;border:1.5px dashed #454c57;background:rgba(255,255,255,.02);transition:.25s;}
-.hotspot:hover{border-color:var(--copper);background:rgba(217,154,99,.08);}
-.hotspot-badge{position:absolute;top:-8px;right:-8px;width:17px;height:17px;border-radius:50%;background:var(--panel);border:1.5px solid var(--copper);
-  color:var(--copper);font-family:'Space Mono',monospace;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-.hotspot .ping{position:absolute;inset:-6px;border-radius:9px;border:2px solid var(--copper);opacity:0;pointer-events:none;}
-.hotspot.pinged .ping{animation:pingPulse .65s ease-out;}
-@keyframes pingPulse{0%{opacity:.85;transform:scale(.92);}100%{opacity:0;transform:scale(1.3);}}
+/* ==================== CONSOLE / MONITOR & TELEMETRY SECTION ==================== */
+.system-console-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.4fr) minmax(280px, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (max-width: 960px) {
+  .system-console-grid { grid-template-columns: 1fr; }
+}
 
-.v-board{width:100%;height:100%;border-radius:9px;position:relative;overflow:hidden;
-  background:linear-gradient(160deg,var(--pcb-1),var(--pcb-2));
-  border:1.5px solid #05070a;
-  box-shadow:inset 0 0 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.03);}
-.v-board::before{content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(90deg, var(--pcb-trace) 0 1.4px, transparent 1.4px 24px),
-             repeating-linear-gradient(0deg, var(--pcb-trace) 0 1.4px, transparent 1.4px 24px);}
-.v-pad{position:absolute;background:var(--pcb-pad);border-radius:2px;border:1px solid #000;}
-.v-io{position:absolute;left:5px;top:5px;width:24px;height:120px;background:#08090b;border-radius:3px;
-  background-image:repeating-linear-gradient(0deg,#2f353e 0 3px,#08090b 3px 13px);}
-.v-screwhole{position:absolute;width:8px;height:8px;border-radius:50%;background:#06070a;border:1px solid #2b3038;}
+.monitor-chassis {
+  background: linear-gradient(160deg, #1e2430, #0d1017);
+  border: 1px solid #2b3547;
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+}
+.monitor-bezel {
+  background: #050608;
+  border: 2px solid #000;
+  border-radius: var(--radius-md);
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+}
+.monitor-screen {
+  width: 100%;
+  height: 100%;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  overflow-y: auto;
+  color: var(--cyan);
+  transition: background 0.3s;
+}
+.monitor-screen.off {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  background: #020305;
+}
+.monitor-screen.bios-mode {
+  background: #000084;
+  color: #ffffff;
+  font-family: var(--font-mono);
+}
+.monitor-screen.desktop-mode {
+  background: radial-gradient(circle at 80% 20%, #1e1b4b, #09090b 80%);
+  color: var(--text-primary);
+  padding: 12px;
+}
 
-.v-cpu{width:100%;height:100%;border-radius:4px;position:relative;
-  background:linear-gradient(135deg,#eef1f4,#aab1ba 60%,#8b929c);border:1px solid #4c515a;box-shadow:0 5px 12px rgba(0,0,0,.45);}
-.v-cpu::after{content:'';position:absolute;top:5px;left:5px;width:7px;height:7px;background:var(--gold);border-radius:1px;transform:rotate(45deg);}
-.v-cpu .lbl{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;color:#5a5f66;letter-spacing:.04em;}
-.has-paste::before{content:'';position:absolute;left:22%;top:22%;width:56%;height:56%;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#aaa,#6b6b6b 60%,#4a4a4a);opacity:.92;z-index:2;}
+.monitor-stand-base {
+  width: 90px;
+  height: 12px;
+  background: #181d26;
+  margin: 6px auto 0;
+  border-radius: 0 0 4px 4px;
+  position: relative;
+}
+.monitor-stand-base::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 5px;
+  background: #252c3a;
+  border-radius: 4px;
+}
 
-.v-cooler{width:100%;height:100%;border-radius:9px;position:relative;background:linear-gradient(180deg,#363b42,#16181c);border:1px solid #050506;box-shadow:0 12px 20px rgba(0,0,0,.5);}
-.v-heatpipe{position:absolute;width:5px;top:8px;bottom:8px;border-radius:3px;background:linear-gradient(90deg,#a85c2c,#f0b487 45%,#a85c2c);}
-.v-fan{position:absolute;left:50%;top:50%;width:80%;height:80%;border-radius:50%;transform:translate(-50%,-50%);border:2px solid #050506;
-  background:radial-gradient(circle at 50% 50%, #1a1c1f 0 15%, transparent 16%),
-    conic-gradient(from 0deg,#3d434b 0deg 24deg,#17191d 24deg 46deg,#3d434b 46deg 70deg,#17191d 70deg 92deg,
-      #3d434b 92deg 116deg,#17191d 116deg 138deg,#3d434b 138deg 162deg,#17191d 162deg 184deg,
-      #3d434b 184deg 208deg,#17191d 208deg 230deg,#3d434b 230deg 254deg,#17191d 254deg 276deg,
-      #3d434b 276deg 300deg,#17191d 300deg 322deg,#3d434b 322deg 346deg,#17191d 346deg 360deg);
-  animation:spin 2.4s linear infinite;}
-.v-fan::after{content:'';position:absolute;inset:38%;border-radius:50%;background:radial-gradient(circle,#2c2f34,#0d0e10);border:1px solid #000;}
-.v-ring{position:absolute;left:50%;top:50%;width:84%;height:84%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px solid var(--teal);opacity:.4;}
-.part-slot:hover .v-fan,.part-slot.pulled .v-fan{animation-duration:.6s;}
-@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg);}}
+.telemetry-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+.power-switch-btn {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--panel-border);
+  background: var(--panel-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+.power-switch-btn:hover {
+  border-color: var(--cyan);
+  color: var(--text-primary);
+}
+.power-switch-btn.is-active {
+  background: linear-gradient(135deg, #065f46, #047857);
+  border-color: var(--emerald);
+  color: #ecfdf5;
+  box-shadow: 0 0 25px var(--emerald-glow);
+}
+.power-led-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #334155;
+  transition: 0.3s;
+}
+.power-switch-btn.is-active .power-led-indicator {
+  background: #34d399;
+  box-shadow: 0 0 10px #34d399;
+}
 
-.v-ram{width:100%;height:100%;border-radius:3px;position:relative;background:linear-gradient(180deg,#1b1e23,#0c0d10);border:1px solid #000;box-shadow:0 7px 14px rgba(0,0,0,.4);}
-.v-ram-top{position:absolute;top:0;left:0;right:0;height:16%;border-radius:3px 3px 0 0;background:linear-gradient(180deg,var(--teal),var(--teal-dim));box-shadow:0 0 10px var(--teal-glow);}
-.v-ram-pins{position:absolute;bottom:0;left:2px;right:2px;height:12px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 1.4px,#1b1e23 1.4px 3px);}
+.quick-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 12px;
+}
+.spec-box {
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+}
+.spec-box .label {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+.spec-box .value {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 13px;
+}
 
-.v-cmos{width:100%;height:100%;border-radius:50%;position:relative;background:radial-gradient(circle at 35% 30%,#e7e2d8,#8f8b7f 55%,#5c584e);border:1px solid #3a3733;box-shadow:0 4px 8px rgba(0,0,0,.4);}
-.v-cmos::after{content:'CR2032';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:5.6px;color:#4a473f;letter-spacing:.02em;}
+/* ==================== WORKSPACE (CASE CANVAS & TRAY) ==================== */
+.builder-workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.35fr) minmax(320px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 1080px) {
+  .builder-workspace { grid-template-columns: 1fr; }
+}
 
-.v-m2{width:100%;height:100%;position:relative;}
-.v-m2-board{position:absolute;left:0;right:14%;top:22%;bottom:22%;background:linear-gradient(160deg,#173a52,#0c2033);border-radius:2px;border:1px solid #000;}
-.v-m2-hs{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(160deg,#3a3f46,#1a1c20);border-radius:3px;border:1px solid #000;box-shadow:0 4px 8px rgba(0,0,0,.35);}
-.v-m2-hs::before{content:'';position:absolute;inset:3px;border-radius:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.05) 0 1px, transparent 1px 5px);}
+.case-view-container {
+  background: linear-gradient(180deg, #0d1017 0%, #07080c 100%);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  position: relative;
+  padding: 30px 10px 20px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
+  overflow: visible;
+}
+.canvas-scaler {
+  position: relative;
+  width: 740px;
+  height: 940px;
+  margin: 0 auto;
+  transform-origin: top center;
+}
 
-.v-hdd{width:100%;height:100%;border-radius:4px;position:relative;background:repeating-linear-gradient(102deg,#ced3da 0 2px,#9aa1ab 2px 4px);border:1px solid #4a4f57;box-shadow:0 9px 16px rgba(0,0,0,.45);}
-.v-hdd-sticker{position:absolute;left:9px;top:9px;right:9px;bottom:24px;background:linear-gradient(160deg,#1c3a63,#122540);border-radius:2px;color:#bcd7f7;font-family:'Space Mono',monospace;font-size:8.5px;padding:6px;line-height:1.5;}
-.v-hdd-conn{position:absolute;right:0;bottom:0;top:0;width:13px;background:#0c0d0f;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;padding:4px 3px;}
-.v-hdd-conn span{height:7px;background:var(--gold);border-radius:1px;}
+/* ==================== DETAILED PC HARDWARE VISUAL LAYERS ==================== */
+/* Case Frame & Shroud */
+.case-chassis {
+  position: absolute;
+  inset: 20px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #222730, #101217);
+  border: 2px solid #363e4d;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.6);
+}
+.case-glass-reflection {
+  position: absolute;
+  inset: 20px;
+  border-radius: 18px;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255,255,255,0.03) 0%, transparent 40%, rgba(255,255,255,0.015) 60%, transparent 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  z-index: 150;
+  transition: opacity 0.3s;
+}
+.case-glass-reflection.removed { opacity: 0; }
 
-.v-ssd{width:100%;height:100%;border-radius:4px;position:relative;background:linear-gradient(160deg,#1c1f25,#0d0f12);border:1px solid #000;box-shadow:0 6px 13px rgba(0,0,0,.35);}
-.v-ssd-strip{position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal),transparent 85%);border-radius:4px 4px 0 0;}
-.v-ssd-edge{position:absolute;left:8px;right:8px;bottom:-4px;height:7px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 3px,#0d0f12 3px 6px);}
+.psu-shroud {
+  position: absolute;
+  left: 36px;
+  bottom: 36px;
+  width: 668px;
+  height: 120px;
+  background: linear-gradient(180deg, #1c2027, #13151a);
+  border: 1.5px solid #2d3440;
+  border-radius: 10px;
+  z-index: 4;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+}
+.psu-shroud-cutout {
+  width: 140px;
+  height: 60px;
+  background: #08090c;
+  border: 1px solid #222833;
+  border-radius: 6px;
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.grommet {
+  position: absolute;
+  background: #090b0e;
+  border: 1.5px solid #1a1e27;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.grommet::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  background: repeating-linear-gradient(45deg, #141720 0 2px, #0b0d12 2px 5px);
+  border-radius: 8px;
+}
 
-.v-gpu{width:100%;height:100%;border-radius:7px;position:relative;background:linear-gradient(180deg,#2c3036,#131519);border:1px solid #000;box-shadow:0 14px 22px rgba(0,0,0,.5);}
-.v-gpu-strip{position:absolute;top:0;left:8%;right:8%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--violet),var(--teal),transparent);}
-.v-gpu-fan{position:absolute;top:18%;width:38%;aspect-ratio:1;border-radius:50%;border:2px solid #050506;
-  background:radial-gradient(circle,#1c1e21 0 22%,transparent 23%),repeating-conic-gradient(#3d434b 0deg 15deg,#17191d 15deg 30deg);
-  animation:spin 3.2s linear infinite;}
-.v-gpu-edge{position:absolute;bottom:-6px;left:8%;right:8%;height:9px;border-radius:0 0 3px 3px;background-image:repeating-linear-gradient(90deg,var(--gold) 0 4px,#131519 4px 8px);}
-.v-gpu-back{position:absolute;left:0;right:0;bottom:0;top:60%;background:repeating-linear-gradient(100deg,#2c3036 0 3px,#1c1f24 3px 6px);border-radius:0 0 7px 7px;opacity:.6;}
+/* Part Slot Drag/Click Mechanics */
+.part-slot {
+  position: absolute;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: transform 0.55s cubic-bezier(0.34, 1.45, 0.44, 1), filter 0.3s, opacity 0.3s;
+  transform: translate(0, 0) scale(1) rotate(0deg);
+}
+.part-slot:hover {
+  z-index: 140 !important;
+}
+.part-slot.pulled {
+  z-index: 130 !important;
+  transform: translate(var(--ex, 0px), var(--ey, 0px)) scale(var(--es, 1.08)) rotate(var(--er, 0deg));
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.7)) drop-shadow(0 0 16px var(--cyan-glow));
+}
+.part-tooltip-tag {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--cyan);
+  background: rgba(10, 14, 20, 0.95);
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid var(--cyan-dim);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: all 0.2s ease;
+}
+.part-slot:hover .part-tooltip-tag, .part-slot.pulled .part-tooltip-tag {
+  opacity: 1;
+  top: -32px;
+}
 
-.v-psu{width:100%;height:100%;border-radius:7px;position:relative;background:linear-gradient(160deg,#282c33,#111318);border:1px solid #000;box-shadow:0 14px 22px rgba(0,0,0,.45);}
-.v-psu-fan{position:absolute;left:6%;top:16%;width:44%;aspect-ratio:1;border-radius:50%;background:repeating-radial-gradient(circle,#0d0e10 0 3px,#2c2f34 3px 6px);border:2px solid #050506;}
-.v-psu-label{position:absolute;right:6%;top:18%;bottom:18%;width:42%;border-radius:3px;background:linear-gradient(160deg,#f1eee2,#dcd8c8);color:#141414;font-family:'Space Mono',monospace;font-size:8.5px;padding:7px;line-height:1.55;}
-.v-psu-ports{position:absolute;left:6%;bottom:9%;display:flex;gap:5px;}
-.v-psu-ports span{width:8px;height:8px;background:#000;border-radius:1px;display:block;}
+.ghost-slot {
+  position: absolute;
+  border: 2px dashed rgba(100, 116, 139, 0.35);
+  border-radius: 8px;
+  pointer-events: none;
+  transition: all 0.35s ease;
+}
+.ghost-slot.active-guide {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.05);
+  box-shadow: 0 0 20px var(--cyan-glow), inset 0 0 15px rgba(0, 242, 254, 0.1);
+  animation: ghostPulse 1.8s infinite ease-in-out;
+}
+@keyframes ghostPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.4; }
+}
 
-.v-casefan{width:100%;height:100%;border-radius:9px;position:relative;background:linear-gradient(160deg,#282c32,#131518);border:1px solid #000;box-shadow:0 8px 16px rgba(0,0,0,.4);}
-.v-casefan .v-fan{width:82%;height:82%;}
-.v-casefan .screw{opacity:.85;}
+/* ==================== COMPONENT GRAPHICS (CSS/SVG ART) ==================== */
+/* Motherboard */
+.mobo-pcb {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(155deg, #121620 0%, #090b10 100%);
+  border: 2px solid #1f2736;
+  border-radius: 12px;
+  position: relative;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+.pcb-trace-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(90deg, rgba(0, 242, 254, 0.04) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(0deg, rgba(0, 242, 254, 0.04) 0 1px, transparent 1px 28px);
+  pointer-events: none;
+}
+.vrm-heatsink {
+  position: absolute;
+  background: linear-gradient(145deg, #2a313d, #161a22);
+  border: 1px solid #3d4757;
+  border-radius: 4px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+.vrm-heatsink::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: repeating-linear-gradient(90deg, #11141a 0 3px, transparent 3px 8px);
+}
+.pch-chipset-shield {
+  position: absolute;
+  background: linear-gradient(135deg, #232a36, #12151c);
+  border: 1px solid #374254;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 9px;
+  color: var(--cyan);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+}
+.io-shield-block {
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  width: 28px;
+  height: 140px;
+  background: linear-gradient(180deg, #1c212a, #0e1117);
+  border-radius: 4px;
+  border: 1px solid #2e3745;
+  background-image: repeating-linear-gradient(0deg, #374151 0 3px, #111827 3px 14px);
+}
 
-.v-filter{width:100%;height:100%;border-radius:5px;position:relative;background:#0e1013;border:1px solid #2a2f37;overflow:hidden;box-shadow:0 6px 12px rgba(0,0,0,.35);}
-.v-filter::before{content:'';position:absolute;inset:0;background:
-  repeating-linear-gradient(45deg,#2a3038 0 1.6px,transparent 1.6px 7px),
-  repeating-linear-gradient(-45deg,#2a3038 0 1.6px,transparent 1.6px 7px);}
-.v-filter-frame{position:absolute;inset:0;border-radius:5px;border:3px solid #33383f;pointer-events:none;}
+/* CPU & Socket */
+.cpu-socket-frame {
+  position: absolute;
+  border: 1.5px solid #475569;
+  border-radius: 6px;
+  background: #0f131a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cpu-socket-frame::after {
+  content: '';
+  width: 80%;
+  height: 80%;
+  background: repeating-linear-gradient(45deg, #242c38 0 1px, #131720 1px 3px);
+}
+.cpu-chip {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #64748b 100%);
+  border: 1.5px solid #475569;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+}
+.cpu-golden-triangle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid #fbbf24;
+  border-right: 6px solid transparent;
+}
+.cpu-ihs-text {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #334155;
+  letter-spacing: 0.05em;
+  text-align: center;
+  line-height: 1.3;
+}
+.thermal-paste-blob {
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #94a3b8 0%, #475569 70%, #334155 100%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: scale(0.4);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  z-index: 5;
+}
+.thermal-paste-blob.applied {
+  opacity: 1;
+  transform: scale(1);
+}
 
-.cage{position:absolute;border:1.5px dashed #363c45;border-radius:7px;opacity:.4;pointer-events:none;}
+/* CPU Coolers (Air / AIO) */
+.cooler-air-tower {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #2d3440, #14171d);
+  border: 1.5px solid #475569;
+  position: relative;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+  overflow: hidden;
+}
+.cooler-copper-pipes {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  width: 6px;
+  background: linear-gradient(90deg, #b45309, #f59e0b 50%, #b45309);
+  border-radius: 3px;
+}
+.cooler-fan-rotator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 82%;
+  height: 82%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid #0f131a;
+  background: 
+    radial-gradient(circle at 50% 50%, #1a202c 0 20%, transparent 21%),
+    conic-gradient(from 0deg, #334155 0 30deg, #1e293b 30deg 60deg, #334155 60deg 90deg, #1e293b 90deg 120deg,
+      #334155 120deg 150deg, #1e293b 150deg 180deg, #334155 180deg 210deg, #1e293b 210deg 240deg,
+      #334155 240deg 270deg, #1e293b 270deg 300deg, #334155 300deg 330deg, #1e293b 330deg 360deg);
+  animation: fanSpin 2.5s linear infinite;
+}
+.system-on .cooler-fan-rotator, .system-on .case-fan-blades {
+  animation-duration: 0.6s !important;
+}
+@keyframes fanSpin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.cooler-rgb-ring {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 12px var(--cyan-glow);
+  opacity: 0.6;
+}
 
-.cable-svg{position:absolute;left:0;top:0;width:720px;height:890px;z-index:9;overflow:visible;}
-.cable-g{cursor:grab;transition:transform .62s cubic-bezier(.32,1.4,.44,1);}
-.cable-g:active{cursor:grabbing;}
-.cable-g.pulled{transform:translate(var(--ex),var(--ey)) rotate(var(--er,0deg));z-index:120;}
-.cable-installed{transition:opacity .3s ease;}
-.cable-g.pulled .cable-installed{opacity:0;}
-.cable-coiled{opacity:0;transition:opacity .3s ease .1s;}
-.cable-g.pulled .cable-coiled{opacity:1;}
-.cable-line{fill:none;stroke:#0c0d0f;stroke-width:8;stroke-linecap:round;}
-.cable-line.sata{stroke:#12211a;}
-.cable-core{fill:none;stroke-width:1.6;stroke-linecap:round;stroke-dasharray:1 8;opacity:.7;}
-.cable-plug{fill:#0a0b0d;stroke:#000;stroke-width:1;}
-.cable-tagbg{fill:rgba(8,10,12,.92);stroke:rgba(79,216,196,.35);stroke-width:1;opacity:0;transition:opacity .2s;}
-.cable-tagtxt{fill:var(--teal);font-family:'Space Mono',monospace;font-size:9px;opacity:0;transition:opacity .2s;}
-.cable-g.pulled .cable-tagtxt,.cable-g:hover .cable-tagtxt{opacity:1;}
-.cable-g.pulled .cable-tagbg,.cable-g:hover .cable-tagbg{opacity:1;}
+/* RAM Modules */
+.ram-stick {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #1e2430, #0a0c10);
+  border: 1px solid #2e3848;
+  position: relative;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+}
+.ram-rgb-diffuser {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 16%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #00f2fe, #8b5cf6, #ec4899);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+}
+.ram-gold-pins {
+  position: absolute;
+  bottom: 0;
+  left: 2px;
+  right: 2px;
+  height: 10px;
+  background-image: repeating-linear-gradient(90deg, #fbbf24 0 2px, #0f172a 2px 4px);
+}
 
-.tray-panel{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:18px 16px 20px;max-height:890px;overflow-y:auto;}
-.tray-panel::-webkit-scrollbar{width:8px;}
-.tray-panel::-webkit-scrollbar-thumb{background:#2a2f37;border-radius:8px;}
-.tray-panel::-webkit-scrollbar-track{background:transparent;}
-.tray-section{margin-bottom:20px;}
-.tray-section:last-of-type{margin-bottom:8px;}
-.tray-head{display:flex;align-items:baseline;justify-content:space-between;margin:2px 4px 10px;}
-.tray-head h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--copper);font-family:'Space Mono',monospace;font-weight:700;}
-.tray-head span{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--text-faint);}
-.tray-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px;}
-.tray-card{position:relative;background:var(--panel-2);border:1px solid var(--stroke);border-radius:11px;padding:10px 8px 9px;cursor:pointer;transition:.2s;text-align:center;}
-.tray-card:hover{border-color:var(--teal-dim);transform:translateY(-2px);}
-.tray-card.active{border-color:var(--teal);background:var(--panel-3);box-shadow:0 0 0 1px var(--teal) inset, 0 6px 16px -6px var(--teal-glow);}
-.tray-card svg{width:26px;height:26px;color:var(--text-mid);margin-bottom:6px;transition:.2s;}
-.tray-card.active svg{color:var(--teal);}
-.tray-card .lbl{display:block;font-size:10.5px;line-height:1.3;color:var(--text-mid);font-weight:600;}
-.tray-card.active .lbl{color:var(--text-hi);}
-.tray-card .dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--stroke);}
-.tray-card.active .dot{background:var(--teal);box-shadow:0 0 6px var(--teal-glow);}
+/* M.2 NVMe SSD */
+.m2-nvme-card {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #1e293b, #0f172a);
+  border: 1px solid #334155;
+  border-radius: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.m2-nand-chip {
+  width: 22px;
+  height: 18px;
+  background: #090d14;
+  border: 1px solid #1e2633;
+  border-radius: 2px;
+}
+.m2-armor-shield {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #334155, #1e293b);
+  border-radius: 3px;
+  border: 1px solid #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--cyan);
+  font-weight: 700;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+}
 
-.fixed-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
-.fixed-chip{font-family:'Space Mono',monospace;font-size:11.5px;color:var(--text-mid);background:transparent;border:1.5px dashed var(--stroke);border-radius:20px;padding:8px 13px;cursor:help;transition:.2s;}
-.fixed-chip:hover{color:var(--copper);border-color:var(--copper-dim);}
+/* Graphics Card (GPU / VGA) */
+.gpu-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #242a35, #12151b);
+  border: 1.5px solid #384252;
+  position: relative;
+  box-shadow: 0 16px 32px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 16px;
+}
+.gpu-backplate-strip {
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--violet), transparent);
+  border-radius: 2px;
+}
+.gpu-fan-unit {
+  width: 30%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid #0b0e14;
+  background: 
+    radial-gradient(circle at 50% 50%, #1e293b 0 24%, transparent 25%),
+    repeating-conic-gradient(#334155 0deg 18deg, #0f172a 18deg 36deg);
+  animation: fanSpin 3s linear infinite;
+}
+.gpu-pcie-pins {
+  position: absolute;
+  bottom: -6px;
+  left: 10%;
+  width: 65%;
+  height: 8px;
+  background-image: repeating-linear-gradient(90deg, #fbbf24 0 3px, #0f172a 3px 6px);
+  border-radius: 0 0 3px 3px;
+}
 
-/* tutorial / assembly panel (replaces tray content while active) */
-.tut-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.tut-head h3{margin:0;font-size:13px;color:var(--violet);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.08em;}
-.tut-score{font-family:'Space Mono',monospace;font-size:12px;color:var(--text-hi);background:var(--panel-3);padding:5px 11px;border-radius:20px;border:1px solid var(--stroke);}
-.tut-step{display:flex;gap:11px;align-items:flex-start;padding:10px 8px;border-radius:10px;margin-bottom:5px;transition:.2s;}
-.tut-step.current{background:rgba(139,124,246,.1);border:1px solid rgba(139,124,246,.35);}
-.tut-step.done{opacity:.5;}
-.tut-num{width:22px;height:22px;border-radius:50%;background:var(--panel-3);border:1px solid var(--stroke);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;flex-shrink:0;color:var(--text-mid);}
-.tut-step.done .tut-num{background:var(--teal-dim);border-color:var(--teal);color:#04211c;}
-.tut-step.current .tut-num{background:var(--violet);border-color:var(--violet);color:#fff;}
-.tut-step .txt{font-size:13px;color:var(--text-mid);padding-top:2px;}
-.tut-step.current .txt{color:var(--text-hi);font-weight:600;}
-.tut-action-btn{margin-top:8px;font-family:'Space Mono',monospace;font-size:11.5px;background:var(--violet);color:#fff;border:none;border-radius:8px;padding:7px 12px;cursor:pointer;display:inline-block;}
-.tut-feedback{margin-top:10px;padding:9px 12px;border-radius:8px;font-size:12px;font-family:'Space Mono',monospace;}
-.tut-feedback.warn{background:rgba(239,106,90,.1);color:var(--danger);border:1px solid rgba(239,106,90,.3);}
-.tut-feedback.ok{background:rgba(79,216,196,.1);color:var(--teal);border:1px solid rgba(79,216,196,.3);}
-.tut-exit{margin-top:14px;width:100%;font-family:'Space Mono',monospace;font-size:11.5px;background:transparent;border:1px dashed var(--stroke);color:var(--text-low);padding:9px;border-radius:8px;cursor:pointer;}
+/* Power Supply (PSU) */
+.psu-unit {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(160deg, #202630, #0d0f14);
+  border: 1.5px solid #333d4d;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+}
+.psu-fan-grill {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, #0c0e12 0 3px, #262d3a 3px 6px);
+  border: 2px solid #000;
+}
+.psu-badge-label {
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  color: #000;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 9px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 1.3;
+}
 
-.info{margin-top:22px;background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-card);padding:24px 26px;min-height:170px;}
-.info .empty{color:var(--text-low);font-size:14px;font-family:'Space Mono',monospace;}
-.info h2{margin:0 0 4px;font-size:22px;font-weight:800;}
-.info .kicker{font-family:'Space Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.info .kicker.fixed-kicker{color:var(--copper);}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px;}
-@media (max-width:640px){.info-grid{grid-template-columns:1fr;}}
-.info-grid h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--copper);font-family:'Space Mono',monospace;}
-.info-grid p{margin:0;font-size:14.5px;line-height:1.7;color:#dbe0e6;}
+/* Case Fans (Intake / Exhaust) */
+.case-fan-frame {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #252b36, #12141a);
+  border: 1.5px solid #384252;
+  position: relative;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.case-fan-blades {
+  width: 82%;
+  height: 82%;
+  border-radius: 50%;
+  border: 2px solid #090c10;
+  background: 
+    radial-gradient(circle at 50% 50%, #1e2430 0 20%, transparent 21%),
+    repeating-conic-gradient(#3a4556 0deg 24deg, #131720 24deg 48deg);
+  animation: fanSpin 2.8s linear infinite;
+}
+.case-fan-rgb-halo {
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-glow);
+  opacity: 0.5;
+}
 
-footer{margin-top:34px;color:var(--text-faint);font-size:12px;text-align:center;font-family:'Space Mono',monospace;}
+/* Storage Drives (2.5" SSD & 3.5" HDD) */
+.sata-ssd-25 {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(160deg, #1f2530, #0c0e12);
+  border: 1px solid #333d4d;
+  position: relative;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.5);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sata-ssd-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--cyan);
+}
+.sata-ssd-capacity {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+}
 
-@media (max-width:900px){
-  .case-canvas-wrapper{padding-top:28px;}
-  .tray-panel{max-height:none;}
+.hdd-35 {
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  background: repeating-linear-gradient(105deg, #cbd5e1 0 2px, #94a3b8 2px 4px);
+  border: 1.5px solid #475569;
+  position: relative;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  padding: 8px;
+}
+.hdd-label-sticker {
+  width: 100%;
+  height: 75%;
+  background: linear-gradient(160deg, #1e3a8a, #0f172a);
+  border-radius: 3px;
+  padding: 6px;
+  color: #bfdbfe;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+}
+
+/* ==================== AIRFLOW SIMULATION LAYER ==================== */
+.airflow-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 145;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.airflow-layer.active {
+  opacity: 1;
+}
+.airflow-stream-cold {
+  position: absolute;
+  height: 16px;
+  background: linear-gradient(90deg, rgba(0, 242, 254, 0.7), transparent);
+  border-radius: 8px;
+  animation: streamFlow 1.6s infinite linear;
+}
+.airflow-stream-hot {
+  position: absolute;
+  height: 16px;
+  background: linear-gradient(90deg, transparent, rgba(244, 63, 94, 0.7));
+  border-radius: 8px;
+  animation: streamFlow 1.6s infinite linear;
+}
+@keyframes streamFlow {
+  0% { transform: scaleX(0.4) translateX(-20px); opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { transform: scaleX(1) translateX(30px); opacity: 0; }
+}
+
+/* ==================== CABLES SVG SYSTEM ==================== */
+.cable-svg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 740px;
+  height: 940px;
+  z-index: 25;
+  pointer-events: none;
+  overflow: visible;
+}
+.cable-group {
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.55s cubic-bezier(0.34, 1.45, 0.44, 1), opacity 0.3s;
+}
+.cable-group.pulled {
+  transform: translate(var(--ex, 0px), var(--ey, 0px)) rotate(var(--er, 0deg));
+}
+.cable-path-main {
+  fill: none;
+  stroke: #0f131a;
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke 0.3s;
+}
+.cable-path-braided {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 2.2;
+  stroke-dasharray: 2 6;
+  opacity: 0.7;
+}
+.cable-group:hover .cable-path-main {
+  stroke: #1f2736;
+}
+.cable-group:hover .cable-path-braided {
+  opacity: 1;
+  stroke: #fff;
+}
+
+/* ==================== TRAY / COMPONENT SELECTOR PANEL ==================== */
+.side-panel-container {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  max-height: 940px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.side-panel-container::-webkit-scrollbar { width: 6px; }
+.side-panel-container::-webkit-scrollbar-thumb { background: var(--panel-border-glow); border-radius: 4px; }
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.section-title-wrap h3 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.section-count-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.components-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+  gap: 12px;
+}
+.component-card {
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 12px 8px 10px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+.component-card:hover {
+  border-color: var(--cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+.component-card.is-installed {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.06);
+}
+.component-card.is-pulled {
+  border-color: var(--amber);
+  background: rgba(245, 158, 11, 0.08);
+}
+.component-card .status-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 6px var(--emerald);
+}
+.component-card.is-pulled .status-dot {
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber);
+}
+.component-card-icon {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 6px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.component-card.is-installed .component-card-icon { color: var(--emerald); }
+.component-card.is-pulled .component-card-icon { color: var(--amber); }
+.component-card-name {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+/* ==================== GUIDED ASSEMBLY STEPPER ==================== */
+.guide-stepper-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+}
+.guide-step-card {
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.25s ease;
+}
+.guide-step-card.active-step {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.06);
+  box-shadow: 0 4px 20px -5px var(--cyan-glow);
+}
+.guide-step-card.completed-step {
+  opacity: 0.6;
+}
+.guide-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1.5px solid var(--panel-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+.guide-step-card.active-step .guide-step-num {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #000;
+  box-shadow: 0 0 10px var(--cyan-glow);
+}
+.guide-step-card.completed-step .guide-step-num {
+  background: var(--emerald);
+  border-color: var(--emerald);
+  color: #000;
+}
+.guide-step-content h4 {
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.guide-step-content p {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.guide-tip-box {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  font-size: 11.5px;
+  color: #fde68a;
+  line-height: 1.4;
+}
+
+/* ==================== INFO & HARDWARE ENCYCLOPEDIA MODAL/VIEW ==================== */
+.component-detail-box {
+  margin-top: 24px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 24px 28px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.detail-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.detail-columns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .detail-columns-grid { grid-template-columns: 1fr; }
+}
+.detail-col h4 {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+.detail-col p {
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+
+/* ==================== TROUBLESHOOTING & QUIZ LAB ==================== */
+.quiz-lab-container {
+  display: none;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  margin-top: 20px;
+}
+.quiz-scenario-card {
+  background: var(--panel-elevated);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 18px;
+}
+.quiz-scenario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.scenario-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: rgba(244, 63, 94, 0.15);
+  color: var(--rose);
+  border: 1px solid var(--rose);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.quiz-opt-btn {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.quiz-opt-btn:hover {
+  border-color: var(--cyan);
+  background: rgba(0, 242, 254, 0.05);
+}
+.quiz-feedback-box {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.6;
+  display: none;
+}
+.quiz-feedback-box.correct {
+  display: block;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--emerald);
+  color: #a7f3d0;
+}
+.quiz-feedback-box.wrong {
+  display: block;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid var(--rose);
+  color: #fecdd3;
+}
+
+/* ==================== FOOTER ==================== */
+footer {
+  margin-top: 40px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="tour-toast" id="tourToast"></div>
+
+<div class="app-container">
+  <!-- HEADER -->
   <header>
-    <p class="eyebrow">Simulator Perakitan · Hardware Explorer</p>
-    <h1>Bongkar Pasang PC</h1>
-    <p class="sub">Tarik komponen langsung dari casing, coba Start Learning untuk tur cepat, Mode Tutorial untuk merakit berskor, atau PC Assembly Simulator untuk drag-and-drop komponen ke posisi yang benar. Tekan Power On untuk melihat PC-mu menyala.</p>
+    <div class="header-top">
+      <div>
+        <div class="brand-badge">Simulasi Interaktif & Ensiklopedia Hardware</div>
+        <h1 class="app-title">PC Master Builder Studio</h1>
+        <p class="app-subtitle">Visualisasi mendalam cara merakit komputer, mengenali komponen, jalur kelistrikan, sirkulasi udara (airflow), diagnostik POST, serta pengujian BIOS & OS.</p>
+      </div>
+
+      <!-- MAIN MODE NAVIGATION TABS -->
+      <div class="nav-tabs" id="modeTabs">
+        <button class="nav-tab-btn active" data-mode="sandbox">
+          <span class="tab-icon">🎮</span> Rakit Bebas & Exploded View
+        </button>
+        <button class="nav-tab-btn" data-mode="guide">
+          <span class="tab-icon">🛠️</span> Panduan Merakit (Step-by-Step)
+        </button>
+        <button class="nav-tab-btn" data-mode="encyclopedia">
+          <span class="tab-icon">📚</span> Ensiklopedia Komponen
+        </button>
+        <button class="nav-tab-btn" data-mode="troubleshoot">
+          <span class="tab-icon">💡</span> Kuis & Troubleshooting
+        </button>
+      </div>
+    </div>
+
+    <!-- ACTION TOOLBAR -->
+    <div class="action-toolbar">
+      <div class="toolbar-left">
+        <button class="btn-action primary" id="btnExplodeAll">⛶ Bongkar Semua Komponen</button>
+        <button class="btn-action" id="btnAssembleAll">⤓ Pasang Semua Lengkap</button>
+        <button class="btn-action" id="btnToggleAirflow">💨 Simulasi Airflow: OFF</button>
+        <button class="btn-action" id="btnToggleGlass">🪟 Panel Tempered Glass: BUKA</button>
+      </div>
+      <div class="toolbar-right">
+        <button class="toggle-switch-btn active" id="btnSoundToggle">🔊 Audio SFX: ON</button>
+        <button class="btn-action" id="btnResetAll">🔄 Reset Awal</button>
+      </div>
+    </div>
   </header>
 
-  <div class="toolbar">
-    <button class="btn primary" id="explodeAll">⛶ Bongkar Semua</button>
-    <button class="btn" id="assembleAll">⤓ Pasang Semua</button>
-    <button class="btn guided-toggle-btn" id="startLearningBtn">▶ Start Learning</button>
-    <button class="btn tutorial-toggle-btn" id="tutorialBtn">🎓 Mode Tutorial</button>
-    <button class="btn assembly-toggle-btn" id="assemblyBtn">🔧 PC Assembly Simulator</button>
-  </div>
-  <div class="legend">
-    <span><i class="i-removable"></i> Bisa dilepas — klik untuk membongkar</span>
-    <span><i class="i-fixed"></i> Menyatu di board — klik untuk info</span>
-  </div>
-
-  <div class="tour-bar" id="tourBar"></div>
-
-  <div class="console-section">
-    <div class="monitor-wrap">
-      <div class="monitor-frame">
-        <div class="monitor-glass off" id="monitorGlass">
-          <div id="monitorContent"></div>
+  <!-- MONITOR & TELEMETRY SECTION -->
+  <section class="system-console-grid">
+    <!-- Interactive Monitor Frame -->
+    <div class="monitor-chassis">
+      <div class="monitor-bezel">
+        <div class="monitor-screen off" id="monitorScreen">
+          <div style="text-align:center;">
+            <div style="font-size:24px;margin-bottom:8px;opacity:0.4;">🖥️</div>
+            <div>NO SIGNAL</div>
+            <div style="font-size:10.5px;color:#475569;margin-top:4px;">Tekan tombol POWER ON untuk memulai POST Check</div>
+          </div>
         </div>
       </div>
-      <div class="monitor-stand"></div>
+      <div class="monitor-stand-base"></div>
     </div>
-    <div class="console-controls">
-      <button class="power-btn" id="powerBtn"><span class="power-dot"></span> POWER ON</button>
-      <div class="spec-card" id="specCard"></div>
-    </div>
-  </div>
 
-  <div class="workspace">
-    <div class="case-col">
-      <div class="case-canvas-wrapper">
-        <div class="case-canvas" id="caseCanvas"></div>
+    <!-- Telemetry & Power Controls -->
+    <div class="telemetry-card">
+      <button class="power-switch-btn" id="powerButton">
+        <span class="power-led-indicator"></span>
+        <span id="powerBtnText">POWER ON (NYALAKAN PC)</span>
+      </button>
+
+      <div class="quick-specs-grid">
+        <div class="spec-box">
+          <div class="label">Total Daya Rakitan</div>
+          <div class="value" id="specWattage">0 W</div>
+        </div>
+        <div class="spec-box">
+          <div class="label">Rekomendasi PSU</div>
+          <div class="value" id="specPSU">750 W (80+ Gold)</div>
+        </div>
+        <div class="spec-box">
+          <div class="label">Status Memory</div>
+          <div class="value" id="specRAM">Dual-Channel (32GB)</div>
+        </div>
+        <div class="spec-box">
+          <div class="label">Status Suhu CPU</div>
+          <div class="value" id="specTemp">38°C (Idle)</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);line-height:1.5;">
+        💡 <b>Tips Cepat:</b> Klik langsung pada komponen di dalam Casing atau di daftar samping untuk mencopot/memasangnya.
       </div>
     </div>
-    <div class="tray-col">
-      <div class="tray-panel" id="trayPanel"></div>
+  </section>
+
+  <!-- MAIN INTERACTIVE WORKSPACE -->
+  <main class="builder-workspace" id="mainWorkspace">
+    <!-- Case Canvas Wrapper -->
+    <div class="case-view-container">
+      <div class="canvas-scaler" id="caseCanvas">
+        <!-- Case Chassis -->
+        <div class="case-chassis"></div>
+        <div class="case-glass-reflection" id="caseGlass"></div>
+
+        <!-- PSU Shroud Basement -->
+        <div class="psu-shroud">
+          <div class="psu-shroud-cutout">PSU CHAMBER</div>
+        </div>
+
+        <!-- Cable Grommets -->
+        <div class="grommet" style="left:510px;top:180px;width:26px;height:90px;"></div>
+        <div class="grommet" style="left:510px;top:400px;width:26px;height:90px;"></div>
+        <div class="grommet" style="left:260px;top:730px;width:90px;height:24px;"></div>
+
+        <!-- Airflow Simulation Overlays -->
+        <div class="airflow-layer" id="airflowLayer">
+          <!-- Cold Air Streams (Front Intake) -->
+          <div class="airflow-stream-cold" style="left:120px;top:240px;width:240px;"></div>
+          <div class="airflow-stream-cold" style="left:120px;top:380px;width:260px;"></div>
+          <div class="airflow-stream-cold" style="left:120px;top:520px;width:240px;"></div>
+          <!-- Hot Air Streams (Rear & Top Exhaust) -->
+          <div class="airflow-stream-hot" style="left:480px;top:190px;width:180px;"></div>
+          <div class="airflow-stream-hot" style="left:380px;top:100px;width:140px;transform:rotate(-45deg);"></div>
+        </div>
+
+        <!-- SVG Cables Layer -->
+        <svg class="cable-svg-canvas" id="cableSvgCanvas" viewBox="0 0 740 940"></svg>
+      </div>
     </div>
-  </div>
 
-  <div class="info" id="info"><p class="empty">// Pilih komponen untuk melihat penjelasannya di sini</p></div>
+    <!-- Side Panel (Free Tray / Guided Stepper / Encyclopedia / Quiz) -->
+    <aside class="side-panel-container" id="sidePanel">
+      <!-- Dynamic Content Rendered by JavaScript -->
+    </aside>
+  </main>
 
-  <footer>Seret imajinasi Anda — komponen tidak akan benar-benar rusak. 🔧</footer>
+  <!-- COMPONENT DETAIL ENCYCLOPEDIA BOX -->
+  <section class="component-detail-box" id="componentDetailBox">
+    <div class="detail-kicker" id="detailKicker">PANDUAN HARDWARE KOMPUTER</div>
+    <h2 class="detail-title" id="detailTitle">Pilih Komponen untuk Mempelajarinya</h2>
+    <div class="detail-columns-grid">
+      <div class="detail-col">
+        <h4>Fungsi & Peran Utama</h4>
+        <p id="detailFungsi">Klik pada bagian komponen apa saja di dalam komputer atau di panel samping untuk melihat fungsi, spesifikasi, dan prinsip kerjanya secara rinci di sini.</p>
+      </div>
+      <div class="detail-col">
+        <h4>Cara Kerja & Tips Kompatibilitas</h4>
+        <p id="detailCara">Pelajari bagaimana komponen mentransfer daya dan data, mencegah bottleneck, memilih form-factor yang cocok, serta tips pemasangan yang aman agar komputer tidak rusak.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>PC Master Builder Studio — Didesain untuk Edukasi Teknik Komputer & Jaringan • Interaktif & Bebas Resiko</p>
+  </footer>
 </div>
 
 <script>
 /* ============================================================
-   CONFIG
+   1. SOUND FX ENGINE (WEB AUDIO API SYNTHESIZER)
    ============================================================ */
-const PARTS = [
-  { key:'motherboard', type:'board', cat:'brain', x:70,y:60,w:400,h:560, ex:-60,ey:35,er:-3,es:1.0, z:2,
-    name:'Motherboard',
-    fungsi:'Motherboard adalah papan sirkuit utama tempat semua komponen PC saling terhubung — CPU, RAM, penyimpanan, kartu grafis, hingga panel depan casing.',
-    cara:'Jalur tembaga (trace) di dalam PCB menyalurkan listrik dan data antar komponen melalui chipset, yang mengatur lalu lintas komunikasi agar CPU, RAM, dan perangkat lain bisa bekerja bersamaan tanpa bentrok.' },
-  { key:'cpu', type:'cpu', cat:'brain', x:190,y:100,w:64,h:64, ex:-55,ey:-65,er:0,es:1.7, z:4,
-    name:'Processor (CPU)',
-    fungsi:'CPU adalah otak komputer yang mengeksekusi instruksi program — melakukan perhitungan, pengambilan keputusan logika, dan mengoordinasikan kerja komponen lain.',
-    cara:'CPU membaca instruksi dari RAM, memprosesnya lewat miliaran transistor dalam siklus clock per detik, lalu mengirim hasilnya kembali. Karena bekerja sangat cepat, CPU menghasilkan panas dan butuh pendingin aktif.' },
-  { key:'cpu_cooler', type:'cooler', cat:'brain', x:170,y:72,w:110,h:150, ex:205,ey:-95,er:8,es:1.0, z:10,
-    name:'Kipas & Heatsink CPU',
-    fungsi:'Komponen ini menjaga suhu CPU tetap stabil dengan membuang panas yang dihasilkan saat prosesor bekerja, mencegah performa turun (thermal throttling) atau kerusakan.',
-    cara:'Heatpipe tembaga menyerap panas dari permukaan CPU lalu menyalurkannya ke sirip-sirip logam; kipas kemudian meniupkan udara melewati sirip tersebut untuk melepaskan panas ke udara sekitar.' },
-  { key:'ram1', type:'ram', cat:'brain', x:326,y:95,w:20,h:200, ex:35,ey:-120,er:-4,es:1.15, z:6,
-    name:'RAM — Slot A2',
-    fungsi:'RAM menyimpan data dan instruksi yang sedang aktif digunakan CPU, memungkinkan akses jauh lebih cepat dibanding penyimpanan permanen seperti HDD/SSD.',
-    cara:'Saat program dijalankan, datanya dipindah sementara dari penyimpanan ke RAM dan dibaca-tulis CPU dalam hitungan nanodetik. Modul ini dipasang di slot kedua (bukan pertama) agar mode dual-channel aktif bersama pasangannya.' },
-  { key:'ram2', type:'ram', cat:'brain', x:378,y:95,w:20,h:200, ex:95,ey:-95,er:5,es:1.15, z:6,
-    name:'RAM — Slot B2',
-    fungsi:'Memasang dua keping RAM sekaligus (dual-channel) membuat CPU bisa mengakses dua jalur memori bersamaan, meningkatkan bandwidth dibanding satu keping saja.',
-    cara:'Kedua modul bekerja paralel: satu permintaan data dipecah dan diproses lewat dua kanal secara bersamaan, sehingga transfer data ke CPU jadi lebih cepat.' },
-  { key:'cmos_battery', type:'cmos', cat:'brain', x:400,y:400,w:28,h:28, ex:75,ey:-25,er:0,es:2.4, z:5,
-    name:'Baterai CMOS',
-    fungsi:'Baterai kecil ini menjaga pengaturan BIOS — tanggal, waktu, konfigurasi hardware — tetap tersimpan meski komputer mati total dan dicabut dari listrik.',
-    cara:'Baterai koin CR2032 mengalirkan daya sangat kecil namun terus-menerus ke chip CMOS di motherboard, sehingga memori pengaturan tidak ikut hilang saat daya utama terputus.' },
+class SoundEngine {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+  }
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+  }
+  play(type) {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      
+      const t = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
 
-  { key:'m2_ssd', type:'m2', cat:'storage', x:215,y:465,w:105,h:33, ex:-70,ey:55,er:-3,es:1.3, z:5,
-    name:'SSD M.2 (NVMe)',
-    fungsi:'SSD M.2 adalah penyimpanan super cepat yang tertancap langsung ke motherboard tanpa kabel, umumnya dipakai sebagai drive utama sistem operasi.',
-    cara:'Modul ini terhubung lewat jalur PCI Express langsung ke CPU/chipset, sehingga transfer data berkali-kali lipat lebih cepat dibanding SATA karena tidak dibatasi bandwidth antarmuka SATA yang lebih tua.' },
-  { key:'hdd', type:'hdd', cat:'storage', x:500,y:160,w:150,h:90, ex:95,ey:-25,er:0,es:1.05, z:5,
-    name:'Hard Disk Drive (HDD)',
-    fungsi:'HDD adalah penyimpanan permanen berkapasitas besar dengan harga per-gigabyte murah, cocok untuk menyimpan file dalam jumlah banyak.',
-    cara:'Di dalamnya ada piringan magnetik yang berputar puluhan ribu RPM; sebuah lengan dengan head magnetik bergerak membaca dan menulis data pada piringan tersebut secara fisik.' },
-  { key:'ssd', type:'ssd', cat:'storage', x:510,y:265,w:120,h:44, ex:105,ey:25,er:0,es:1.2, z:5,
-    name:'SSD SATA 2.5"',
-    fungsi:'SSD SATA menyimpan data secara permanen jauh lebih cepat dari HDD karena tanpa komponen bergerak, mempercepat booting dan loading aplikasi.',
-    cara:'Data disimpan dalam chip flash NAND dan diakses langsung secara elektronik, tanpa piringan berputar atau head mekanis — lebih cepat dan lebih tahan guncangan dibanding HDD.' },
-
-  { key:'gpu', type:'gpu', cat:'power', x:85,y:608,w:270,h:92, ex:-95,ey:55,er:-2,es:1.0, z:5,
-    name:'Kartu Grafis (GPU)',
-    fungsi:'GPU mengolah dan merender gambar, video, serta efek 3D — penting untuk gaming, desain grafis, editing video, dan machine learning.',
-    cara:'Berbeda dari CPU yang punya sedikit inti serba-guna, GPU memiliki ribuan inti kecil yang bekerja paralel, sangat efisien untuk menghitung jutaan piksel dan polygon dalam waktu bersamaan.' },
-  { key:'psu', type:'psu', cat:'power', x:70,y:712,w:260,h:100, ex:45,ey:95,er:0,es:1.0, z:5,
-    name:'Power Supply (PSU)',
-    fungsi:'PSU mengubah arus listrik AC dari stopkontak menjadi arus DC bertegangan rendah dan stabil yang dibutuhkan seluruh komponen PC.',
-    cara:'Trafo dan rangkaian di dalam PSU menurunkan tegangan lalu menyearahkan arus AC menjadi DC (umumnya jalur 12V, 5V, 3.3V), kemudian mendistribusikannya lewat kabel ke motherboard, penyimpanan, dan GPU.' },
-
-  { key:'case_fan_front1', type:'fan', cat:'cooling', x:48,y:240,w:92,h:90, ex:-75,ey:-15,er:-8,es:1.05, z:7,
-    name:'Kipas Depan 1 (Intake)',
-    fungsi:'Kipas depan menghisap udara sejuk dari luar casing masuk ke dalam, menjadi pasokan udara utama untuk mendinginkan seluruh komponen.',
-    cara:'Bilah kipas berputar mendorong udara searah aliran yang tercetak di bodinya; posisinya di depan membuat udara segar langsung melewati drive menuju motherboard.' },
-  { key:'case_fan_front2', type:'fan', cat:'cooling', x:48,y:340,w:92,h:90, ex:-75,ey:25,er:8,es:1.05, z:7,
-    name:'Kipas Depan 2 (Intake)',
-    fungsi:'Kipas kedua menambah volume udara masuk, terutama membantu mendinginkan drive bay dan area bawah motherboard secara lebih merata.',
-    cara:'Bekerja paralel dengan kipas depan pertama, menciptakan aliran udara yang lebih besar dan merata dibanding hanya mengandalkan satu kipas saja.' },
-  { key:'case_fan_rear', type:'fan', cat:'cooling', x:580,y:60,w:82,h:82, ex:70,ey:-45,er:10,es:1.05, z:8,
-    name:'Kipas Belakang (Exhaust)',
-    fungsi:'Kipas belakang membuang udara panas yang sudah menyerap panas dari CPU dan GPU keluar dari casing, melengkapi siklus sirkulasi udara.',
-    cara:'Ditempatkan sejalur dengan aliran udara alami, kipas ini bekerja sama dengan kipas depan menciptakan tekanan udara positif agar debu lebih sulit menyelinap dari celah lain.' },
-  { key:'dust_filter', type:'filter', cat:'cooling', x:70,y:818,w:260,h:20, ex:20,ey:48,er:0,es:1.1, z:5,
-    name:'Filter Debu',
-    fungsi:'Filter mesh ini menyaring debu sebelum udara masuk ke casing, menjaga komponen tetap bersih dan aliran udara tetap optimal dalam jangka panjang.',
-    cara:'Anyaman mesh halus menahan partikel debu berukuran besar sementara udara tetap bisa lewat; filter ini bisa dilepas-pasang untuk dibersihkan secara berkala.' },
-
-  { key:'cable_24pin', type:'cable', cat:'cables', ax:200,ay:650, ex:130,ey:-70,er:0,
-    name:'Kabel 24-Pin ATX',
-    fungsi:'Kabel ini adalah jalur daya utama dari PSU ke motherboard, menyalakan seluruh papan sirkuit beserta komponen yang terpasang di atasnya.',
-    cara:'24 pin membawa beberapa jalur tegangan berbeda (12V, 5V, 3.3V) sekaligus; motherboard mendistribusikannya ke VRM yang menyesuaikan tegangan untuk CPU, RAM, dan chipset.' },
-  { key:'cable_eps', type:'cable', cat:'cables', ax:300,ay:600, ex:75,ey:-95,er:0,
-    name:'Kabel EPS 4+4 Pin (Daya CPU)',
-    fungsi:'Mengalirkan daya khusus dari PSU langsung ke area VRM di dekat CPU, terpisah dari jalur 24-pin karena CPU modern butuh arus besar dan stabil.',
-    cara:'Membawa jalur tegangan 12V berarus tinggi menuju VRM, yang kemudian menurunkannya menjadi tegangan rendah sesuai kebutuhan CPU. Konektornya berbentuk 4+4 pin agar kompatibel dengan motherboard kecil maupun besar.' },
-  { key:'cable_pcie', type:'cable', cat:'cables', ax:240,ay:660, ex:-45,ey:60,er:0,
-    name:'Kabel PCIe 6+2 Pin (Daya GPU)',
-    fungsi:'Kartu grafis kelas menengah ke atas butuh daya lebih dari yang bisa disuplai slot PCIe di motherboard saja, sehingga perlu kabel daya tambahan langsung dari PSU.',
-    cara:'Setiap konektor 6+2 pin mampu menyalurkan daya tambahan (umumnya hingga 150W per kabel); GPU berdaya tinggi bisa membutuhkan dua kabel ini atau lebih sekaligus.' },
-  { key:'cable_sata_power', type:'cable', cat:'cables', ax:140,ay:690, ex:135,ey:35,er:0,
-    name:'Kabel Daya SATA',
-    fungsi:'Menyalurkan daya dari PSU ke HDD maupun SSD 2.5" agar piringan atau chip di dalamnya bisa aktif dan beroperasi.',
-    cara:'Satu kabel daya SATA biasanya punya beberapa konektor berurutan sehingga bisa menyalakan lebih dari satu drive sekaligus dari satu jalur PSU yang sama.' },
-  { key:'cable_sata_data', type:'cable', cat:'cables', ax:430,ay:470, ex:110,ey:60,er:0,
-    name:'Kabel Data SATA',
-    fungsi:'Menghubungkan HDD/SSD ke motherboard agar data bisa dibaca dan ditulis sistem operasi — tanpa kabel ini, drive terpasang tapi tidak terdeteksi.',
-    cara:'Sinyal digital mengalir dua arah lewat kabel tipis ini antara controller SATA di chipset dan controller di dalam drive, dengan kecepatan hingga 6 Gbps pada SATA III.' },
-  { key:'cable_frontpanel', type:'cable', cat:'cables', ax:75,ay:480, ex:-60,ey:-45,er:0,
-    name:'Kabel Panel Depan',
-    fungsi:'Kumpulan kabel kecil ini menghubungkan tombol power, tombol reset, dan lampu indikator di casing ke motherboard.',
-    cara:'Tiap kabel kecil dipasang satu-satu ke pin header sesuai label di manual motherboard; tombol power misalnya hanya menghubungkan dua pin sesaat untuk memberi sinyal "nyalakan sistem".' },
-];
-
-const FIXED = [
-  { key:'chipset', x:215,y:395,w:75,h:53,
-    name:'Chipset (PCH)',
-    fungsi:'Chipset mengatur lalu lintas data antara CPU dan komponen lain seperti port USB, SATA, dan slot ekspansi — semacam "pengatur lalu lintas" di dalam motherboard.',
-    cara:'Chipset disolder permanen ke motherboard dan terhubung ke CPU lewat jalur khusus berkecepatan tinggi; ia menentukan fitur apa saja yang didukung, seperti jumlah port USB atau jalur PCIe tambahan.' },
-  { key:'vrm', x:112,y:85,w:76,h:55,
-    name:'VRM (Voltage Regulator Module)',
-    fungsi:'VRM mengubah tegangan 12V dari PSU menjadi tegangan rendah dan stabil yang dibutuhkan CPU agar bekerja dengan aman, biasanya di bawah 1.5V.',
-    cara:'Rangkaian MOSFET dan induktor di VRM menurunkan dan menghaluskan tegangan berkali-kali per detik; heatsink di atasnya membuang panas dari proses konversi ini, terutama saat CPU bekerja berat.' },
-  { key:'top_io', x:440,y:36,w:120,h:18,
-    name:'Panel I/O Depan',
-    fungsi:'Panel ini berisi tombol power, port USB, dan jack audio yang mudah dijangkau tanpa perlu menjangkau bagian belakang casing.',
-    cara:'Kabel-kabel kecil dari panel ini terhubung ke header USB dan front panel header di motherboard, meneruskan sinyal tombol tekan dan koneksi data USB ke sistem.' },
-];
-
-const CATS = {
-  brain:   { title:'Otak & Memori' },
-  storage: { title:'Penyimpanan' },
-  power:   { title:'Grafis & Daya' },
-  cooling: { title:'Pendinginan & Casing' },
-  cables:  { title:'Kabel-Kabel' },
-};
-
-const WATT = {board:30,cpu:65,cooler:5,ram:5,cmos:0,m2:6,hdd:7,ssd:3,gpu:170,psu:0,fan:2,filter:0,cable:0};
-
-const ICON = {
-  board:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><path d="M13 3v4M17 3v4M3 13h4M3 17h4"/>',
-  cpu:'<rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v3M12 2v3M15 2v3M9 19v3M12 19v3M15 19v3M2 9h3M2 12h3M2 15h3M19 9h3M19 12h3M19 15h3"/>',
-  cooler:'<circle cx="12" cy="12" r="7"/><path d="M12 5c1.5 0 2 2 1 3M19 12c0 1.5-2 2-3 1M12 19c-1.5 0-2-2-1-3M5 12c0-1.5 2-2 3-1"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-  ram:'<rect x="7" y="2" width="4" height="17" rx="1"/><rect x="13" y="2" width="4" height="17" rx="1"/><path d="M5 21h14" stroke-linecap="round"/>',
-  cmos:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/>',
-  m2:'<rect x="3" y="9" width="18" height="7" rx="1.5"/><path d="M6 9V7M10 9V7" stroke-linecap="round"/>',
-  hdd:'<rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="9" cy="12" r="3.2"/><path d="M15 8h3M15 16h3" stroke-linecap="round"/>',
-  ssd:'<rect x="3" y="6" width="18" height="12" rx="1.5"/><rect x="7" y="10" width="4" height="4"/><rect x="13" y="10" width="4" height="4"/>',
-  gpu:'<rect x="2" y="7" width="20" height="11" rx="1.5"/><circle cx="8" cy="12.5" r="3"/><circle cx="16" cy="12.5" r="3"/><path d="M2 18v2M22 18v2" stroke-linecap="round"/>',
-  psu:'<rect x="3" y="4" width="18" height="16" rx="1.5"/><circle cx="9" cy="10" r="3.4"/><path d="M6 16h9M6 18h6" stroke-linecap="round"/>',
-  fan:'<circle cx="12" cy="12" r="9"/><path d="M12 12c0-3 2-6 5-6-1 3-1 6 0 8-3 1-5-1-5-2ZM12 12c0 3-2 6-5 6 1-3 1-6 0-8 3-1 5 1 5 2Z" fill="currentColor" stroke="none" opacity=".85"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
-  filter:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M6 6v12M9.5 6v12M13 6v12M16.5 6v12" opacity=".6"/>',
-  cable:'<path d="M4 6c4 0 4 5 8 5s4-5 8-5M4 18c4 0 4-5 8-5s4 5 8 5" stroke-linecap="round"/><rect x="1.5" y="4" width="4" height="4" rx="1"/><rect x="18.5" y="4" width="4" height="4" rx="1"/>',
-};
-
-const RENDER = {
-  board:function(){return '<div class="v-board sheen"><div class="v-io"></div>'+
-      '<div class="v-pad" style="left:340px;top:18px;width:52px;height:32px;"></div>'+
-      '<div class="v-pad" style="left:60px;top:520px;width:70px;height:16px;"></div>'+
-      '<div class="v-screwhole" style="left:14px;top:14px;"></div>'+
-      '<div class="v-screwhole" style="left:380px;top:14px;"></div>'+
-      '<div class="v-screwhole" style="left:14px;top:540px;"></div>'+
-      '<div class="v-screwhole" style="left:380px;top:540px;"></div></div>';},
-  cpu:function(){return '<div class="v-cpu"><span class="lbl">CPU</span></div>';},
-  cooler:function(){return '<div class="v-cooler sheen">'+
-      '<div class="v-heatpipe" style="left:16px;"></div>'+
-      '<div class="v-heatpipe" style="left:28px;"></div>'+
-      '<div class="v-heatpipe" style="right:16px;"></div>'+
-      '<div class="v-fan"></div><div class="v-ring"></div></div>';},
-  ram:function(){return '<div class="v-ram"><div class="v-ram-top"></div><div class="v-ram-pins"></div></div>';},
-  cmos:function(){return '<div class="v-cmos"></div>';},
-  m2:function(){return '<div class="v-m2"><div class="v-m2-board"></div><div class="v-m2-hs"></div></div>';},
-  hdd:function(){return '<div class="v-hdd"><div class="v-hdd-sticker">1&nbsp;TB<br>7200 RPM</div><div class="v-hdd-conn"><span></span><span></span></div></div>';},
-  ssd:function(){return '<div class="v-ssd sheen"><div class="v-ssd-strip"></div>'+
-      '<div class="v-pad" style="left:10px;top:14px;width:24px;height:18px;"></div>'+
-      '<div class="v-pad" style="left:42px;top:10px;width:14px;height:26px;"></div>'+
-      '<div class="v-pad" style="left:64px;top:10px;width:14px;height:26px;"></div>'+
-      '<div class="v-ssd-edge"></div></div>';},
-  gpu:function(){return '<div class="v-gpu sheen"><div class="v-gpu-strip"></div><div class="v-gpu-back"></div>'+
-      '<div class="v-gpu-fan" style="left:14%;"></div><div class="v-gpu-fan" style="left:56%;"></div>'+
-      '<div class="v-gpu-edge"></div></div>';},
-  psu:function(){return '<div class="v-psu sheen"><div class="v-psu-fan"></div><div class="v-psu-label">80+ BRONZE<br>650W ATX</div>'+
-      '<div class="v-psu-ports"><span></span><span></span><span></span><span></span></div></div>';},
-  fan:function(){return '<div class="v-casefan sheen">'+
-      '<div class="screw" style="left:4px;top:4px;"></div><div class="screw" style="right:4px;top:4px;"></div>'+
-      '<div class="screw" style="left:4px;bottom:4px;"></div><div class="screw" style="right:4px;bottom:4px;"></div>'+
-      '<div class="v-fan"></div></div>';},
-  filter:function(){return '<div class="v-filter"><div class="v-filter-frame"></div></div>';},
-};
-
-/* ============================================================
-   BUILD CASE CANVAS
-   ============================================================ */
-const canvas = document.getElementById('caseCanvas');
-function addHTML(html){ canvas.insertAdjacentHTML('beforeend', html); }
-
-addHTML('<div class="case-shell" style="left:40px;top:30px;width:640px;height:820px;"></div>'+
-  '<div class="screw" style="left:52px;top:42px;"></div><div class="screw" style="left:668px;top:42px;"></div>'+
-  '<div class="screw" style="left:52px;top:838px;"></div><div class="screw" style="left:668px;top:838px;"></div>'+
-  '<div class="case-tag">ATX Mid Tower — Panel Samping Terbuka</div>');
-
-addHTML('<div class="ghost" style="left:300px;top:95px;width:20px;height:200px;"></div>'+
-  '<div class="ghost-label" style="left:284px;top:300px;">Slot Kosong</div>'+
-  '<div class="ghost" style="left:352px;top:95px;width:20px;height:200px;"></div>'+
-  '<div class="ghost-label" style="left:336px;top:300px;">Slot Kosong</div>');
-
-addHTML('<div class="cage" style="left:494px;top:154px;width:162px;height:102px;"></div>'+
-  '<div class="ghost-label" style="left:498px;top:142px;">Drive Bay 3.5"</div>'+
-  '<div class="cage" style="left:504px;top:259px;width:132px;height:56px;"></div>'+
-  '<div class="ghost-label" style="left:508px;top:326px;">Drive Bay 2.5"</div>');
-
-addHTML('<div style="position:absolute;left:440px;top:36px;width:120px;height:18px;border-radius:4px;'+
-    'background:linear-gradient(160deg,#2c3036,#131518);border:1px solid #000;display:flex;align-items:center;justify-content:space-evenly;z-index:3;">'+
-    '<div style="width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 5px var(--teal-glow);"></div>'+
-    '<div style="width:12px;height:5px;border-radius:1px;background:#555;"></div>'+
-    '<div style="width:12px;height:5px;border-radius:1px;background:#555;"></div>'+
-    '<div style="width:6px;height:6px;border-radius:50%;background:#444;"></div></div>');
-
-PARTS.filter(function(p){return p.type!=='cable';}).forEach(function(p){
-  addHTML('<div class="ghost" id="ghost-'+p.key+'" style="left:'+p.x+'px;top:'+p.y+'px;width:'+p.w+'px;height:'+p.h+'px;"></div>');
-  const inner = RENDER[p.type] ? RENDER[p.type](p) : '';
-  addHTML('<div class="part-slot" id="'+p.key+'" data-key="'+p.key+'" '+
-      'style="left:'+p.x+'px;top:'+p.y+'px;width:'+p.w+'px;height:'+p.h+'px;z-index:'+p.z+';--ex:'+p.ex+'px;--ey:'+p.ey+'px;--er:'+p.er+'deg;--es:'+p.es+';">'+
-      '<div class="part-tag">'+p.name+'</div>'+
-      '<div class="part-visual">'+inner+'</div></div>');
-});
-
-FIXED.forEach(function(f){
-  addHTML('<div class="hotspot" id="'+f.key+'" data-key="'+f.key+'" style="left:'+f.x+'px;top:'+f.y+'px;width:'+f.w+'px;height:'+f.h+'px;z-index:3;">'+
-      '<div class="hotspot-badge">i</div><div class="ping"></div></div>');
-});
-
-function cablePath(p){
-  const routes = {
-    cable_24pin:{d:'M180 712 C 260 550, 380 300, 452 195', plug:[440,175,24,20], cls:''},
-    cable_eps:{d:'M280 712 C 340 500, 380 200, 400 84', plug:[388,72,26,18], cls:''},
-    cable_pcie:{d:'M220 712 C 260 670, 280 640, 300 610', plug:[286,600,26,16], cls:''},
-    cable_sata_power:{d:'M110 712 C 300 760, 550 400, 645 205', plug:[636,196,18,16], cls:'sata'},
-    cable_sata_data:{d:'M450 558 C 480 420, 490 300, 500 215', plug:[490,206,18,16], cls:'sata'},
-    cable_frontpanel:{d:'M110 570 C 80 450, 60 200, 60 68', plug:[50,58,18,16], cls:''},
-  };
-  return routes[p.key];
+      if (type === 'snap') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, t);
+        osc.frequency.exponentialRampToValueAtTime(80, t + 0.08);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        osc.start(t);
+        osc.stop(t + 0.08);
+      } else if (type === 'click') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, t);
+        osc.frequency.exponentialRampToValueAtTime(400, t + 0.04);
+        gain.gain.setValueAtTime(0.2, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        osc.start(t);
+        osc.stop(t + 0.04);
+      } else if (type === 'beep') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, t);
+        gain.gain.setValueAtTime(0.25, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        osc.start(t);
+        osc.stop(t + 0.22);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, t);
+        osc.frequency.setValueAtTime(180, t + 0.12);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        osc.start(t);
+        osc.stop(t + 0.3);
+      }
+    } catch(e) {}
+  }
 }
-let svg = '<svg class="cable-svg" viewBox="0 0 720 890">';
-PARTS.filter(function(p){return p.type==='cable';}).forEach(function(p){
-  const r = cablePath(p);
-  svg += '<g class="cable-g" id="'+p.key+'" data-key="'+p.key+'" style="--ex:'+p.ex+'px;--ey:'+p.ey+'px;--er:'+p.er+'deg;">'+
-      '<g class="cable-installed">'+
-        '<path class="cable-line '+r.cls+'" d="'+r.d+'"/>'+
-        '<path class="cable-core" style="stroke:var(--teal)" d="'+r.d+'"/>'+
-        '<rect class="cable-plug" x="'+r.plug[0]+'" y="'+r.plug[1]+'" width="'+r.plug[2]+'" height="'+r.plug[3]+'" rx="2"/>'+
-      '</g>'+
-      '<g class="cable-coiled" transform="translate('+(p.ax-24)+','+(p.ay-14)+')">'+
-        '<path class="cable-line '+r.cls+'" d="M4 14 Q14 -2 24 14 Q34 30 44 14" style="stroke-width:6"/>'+
-        '<rect class="cable-plug" x="0" y="8" width="10" height="12" rx="2"/>'+
-      '</g>'+
-      '<rect class="cable-tagbg" x="'+(p.ax-46)+'" y="'+(p.ay-30)+'" width="92" height="18" rx="5"/>'+
-      '<text class="cable-tagtxt" x="'+p.ax+'" y="'+(p.ay-17)+'" text-anchor="middle">'+p.name+'</text>'+
-    '</g>';
-});
-svg += '</svg>';
-canvas.insertAdjacentHTML('beforeend', svg);
+const SFX = new SoundEngine();
 
 /* ============================================================
-   TRAY (free mode)
+   2. HARDWARE COMPONENT DATABASE & SPECS
    ============================================================ */
-const tray = document.getElementById('trayPanel');
-function renderFreeTray(){
-  let trayHTML = '';
-  Object.keys(CATS).forEach(function(catKey){
-    const items = PARTS.filter(function(p){return p.cat===catKey;});
-    trayHTML += '<div class="tray-section"><div class="tray-head"><h3>'+CATS[catKey].title+'</h3><span>'+items.length+' bagian</span></div><div class="tray-grid">';
-    items.forEach(function(p){
-      trayHTML += '<div class="tray-card" data-key="'+p.key+'" id="card-'+p.key+'">'+
-          '<span class="dot"></span>'+
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
-          '<span class="lbl">'+p.name+'</span></div>';
+const HARDWARE_PARTS = [
+  {
+    key: 'motherboard',
+    name: 'Motherboard (ATX Pro Gaming)',
+    type: 'board',
+    cat: 'core',
+    watt: 35,
+    x: 95, y: 110, w: 420, h: 580,
+    ex: -75, ey: 40, er: -2, es: 1.0, z: 2,
+    fungsi: 'Motherboard adalah papan sirkuit utama (PCB) tempat seluruh komponen PC saling terpasang dan berkomunikasi, mulai dari CPU, RAM, Storage, Kartu Grafis hingga konektor I/O eksternal.',
+    cara: 'Menggunakan jalur konduktif tembaga multi-layer untuk menyalurkan arus listrik stabil dan data berkecepatan tinggi antar chipset, VRM, bus PCIe, dan slot memori.'
+  },
+  {
+    key: 'cpu',
+    name: 'Processor (CPU 8-Core/16-Thread)',
+    type: 'cpu',
+    cat: 'core',
+    watt: 105,
+    x: 230, y: 195, w: 72, h: 72,
+    ex: -70, ey: -80, er: 0, es: 1.6, z: 6,
+    fungsi: 'CPU bertindak sebagai otak utama komputer yang mengeksekusi milyaran instruksi logika, kalkulasi matematika, serta mengkoordinasikan tugas sistem operasi dan aplikasi.',
+    cara: 'Membaca data dari memori RAM, memprosesnya dalam rangkaian register & core mikroarsitektur melalui instruksi clock speed, lalu mengembalikan hasilnya secara simultan.'
+  },
+  {
+    key: 'thermal_paste',
+    name: 'Thermal Paste (Compound Termal)',
+    type: 'paste',
+    cat: 'cooling',
+    watt: 0,
+    x: 230, y: 195, w: 72, h: 72,
+    ex: -70, ey: -80, er: 0, es: 1.6, z: 7,
+    fungsi: 'Pasta termal mengisi celah mikro (pori-pori udara mikroskopis) di antara permukaan atas CPU (IHS) dan dasar pendingin (cooler base plate) agar konduksi panas optimal.',
+    cara: 'Pasta berbahan partikel mikro seng oksida / perak mengalirkan panas secara langsung ke heatsink tanpa ada udara yang menjadi insulator panas.'
+  },
+  {
+    key: 'cpu_cooler',
+    name: 'CPU Cooler (Dual-Tower ARGB)',
+    type: 'cooler',
+    cat: 'cooling',
+    watt: 8,
+    x: 200, y: 160, w: 135, h: 160,
+    ex: 180, ey: -90, er: 6, es: 1.05, z: 12,
+    fungsi: 'Mencegah overheating pada prosesor saat beban komputasi tinggi, menjaga suhu operasi di bawah 80°C agar tidak terjadi thermal throttling atau restart mendadak.',
+    cara: 'Pipa tembaga (heatpipes) berisi cairan fluida menyerap panas dari CPU, menguap ke sirip aluminium, dan dihembuskan keluar oleh kipas berkecepatan tinggi.'
+  },
+  {
+    key: 'ram1',
+    name: 'RAM DDR5 16GB — Slot A2',
+    type: 'ram',
+    cat: 'core',
+    watt: 6,
+    x: 365, y: 180, w: 22, h: 185,
+    ex: 45, ey: -110, er: -4, es: 1.15, z: 8,
+    fungsi: 'Menyimpan data dan program yang sedang aktif dijalankan secara temporer (volatil) dengan akses kecepatan sangat tinggi dalam hitungan nanodetik.',
+    cara: 'Dipasang pada slot prioritas ke-2 (A2) untuk mengaktifkan konfigurasi Dual-Channel bersama keping kedua agar bandwidth transfer data ke CPU berlipat ganda.'
+  },
+  {
+    key: 'ram2',
+    name: 'RAM DDR5 16GB — Slot B2',
+    type: 'ram',
+    cat: 'core',
+    watt: 6,
+    x: 415, y: 180, w: 22, h: 185,
+    ex: 105, ey: -90, er: 4, es: 1.15, z: 8,
+    fungsi: 'Keping RAM kedua untuk melengkapi kapasitas total menjadi 32GB serta memaksimalkan performa gaming dan multitasking berat tanpa lag.',
+    cara: 'Bekerja secara paralel bersama Slot A2 melalui dua bus memori independen 64-bit/32-bit (Dual Channel Architecture).'
+  },
+  {
+    key: 'm2_ssd',
+    name: 'SSD M.2 NVMe Gen4 (1TB)',
+    type: 'm2',
+    cat: 'storage',
+    watt: 7,
+    x: 235, y: 440, w: 110, h: 32,
+    ex: -80, ey: 60, er: -2, es: 1.3, z: 6,
+    fungsi: 'Penyimpanan utama berkecepatan tinggi (hingga 7000 MB/s) untuk sistem operasi Windows/Linux, software rendering, dan game AAA.',
+    cara: 'Terhubung langsung ke jalur PCIe 4.0 x4 CPU tanpa perantara kabel SATA, menghasilkan waktu boot sistem hanya dalam hitungan detik.'
+  },
+  {
+    key: 'gpu',
+    name: 'Kartu Grafis (GPU RTX Gaming)',
+    type: 'gpu',
+    cat: 'core',
+    watt: 220,
+    x: 120, y: 495, w: 320, h: 105,
+    ex: -110, ey: 65, er: -3, es: 1.02, z: 9,
+    fungsi: 'Memproses rendering visual 3D, resolusi grafis tinggi, ray tracing realistis, video editing 4K, dan komputasi kecerdasan buatan (AI).',
+    cara: 'Memiliki ribuan CUDA/Stream cores dan VRAM dedicated (12GB) yang bekerja secara paralel untuk menghitung jutaan poligon frame per detik.'
+  },
+  {
+    key: 'psu',
+    name: 'Power Supply (PSU 750W 80+ Gold)',
+    type: 'psu',
+    cat: 'power',
+    watt: 0,
+    x: 95, y: 775, w: 280, h: 105,
+    ex: 50, ey: 110, er: 0, es: 1.0, z: 5,
+    fungsi: 'Mengonversi arus listrik bolak-balik (AC) 220V dari stopkontak dinding menjadi tegangan searah (DC) stabil: +12V, +5V, dan +3.3V.',
+    cara: 'Dilengkapi sertifikasi 80+ Gold dengan efisiensi daya di atas 90%, filter ripple kapasitor kelas industri jepang, dan proteksi lonjakan arus (OVP, OCP, SCP).'
+  },
+  {
+    key: 'sata_ssd',
+    name: 'SSD SATA 2.5" (500GB)',
+    type: 'ssd',
+    cat: 'storage',
+    watt: 4,
+    x: 545, y: 380, w: 130, h: 55,
+    ex: 110, ey: 20, er: 0, es: 1.15, z: 6,
+    fungsi: 'Drive penyimpanan sekunder untuk aplikasi umum dan dokumen kerja dengan ketahanan getaran tanpa piringan mekanik.',
+    cara: 'Menggunakan memori Flash NAND dan protokol antarmuka SATA 6 Gbps dengan kecepatan transfer hingga 550 MB/s.'
+  },
+  {
+    key: 'hdd_35',
+    name: 'Hard Disk (HDD 3.5" 2TB)',
+    type: 'hdd',
+    cat: 'storage',
+    watt: 8,
+    x: 535, y: 240, w: 155, h: 95,
+    ex: 115, ey: -35, er: 0, es: 1.05, z: 6,
+    fungsi: 'Penyimpanan berkapasitas besar dan ekonomis untuk arsip file multimedia, backup data penting, dan instalasi game berukuran masif.',
+    cara: 'Piringan magnetik (platter) berputar pada 7200 RPM dan dibaca oleh actuator arm magnetik elektromagnetis presisi tinggi.'
+  },
+  {
+    key: 'fan_front1',
+    name: 'Kipas Depan 1 (Intake Udara Dingin)',
+    type: 'fan',
+    cat: 'cooling',
+    watt: 3,
+    x: 48, y: 170, w: 85, h: 85,
+    ex: -80, ey: -20, er: -8, es: 1.05, z: 10,
+    fungsi: 'Menyedot udara segar dan dingin dari luar casing masuk ke bagian dalam komponen.',
+    cara: 'Bilah kipas aerodinamis mendorong volume aliran udara (CFM tinggi) melewati filter debu depan.'
+  },
+  {
+    key: 'fan_front2',
+    name: 'Kipas Depan 2 (Intake Udara Dingin)',
+    type: 'fan',
+    cat: 'cooling',
+    watt: 3,
+    x: 48, y: 285, w: 85, h: 85,
+    ex: -80, ey: 20, er: -8, es: 1.05, z: 10,
+    fungsi: 'Memberikan pasokan udara dingin ke area kartu grafis GPU dan motherboard bagian tengah.',
+    cara: 'Berputar sinkron menciptakan tekanan udara positif di dalam casing agar debu tidak mudah masuk dari celah tanpa filter.'
+  },
+  {
+    key: 'fan_rear',
+    name: 'Kipas Belakang (Exhaust Udara Panas)',
+    type: 'fan',
+    cat: 'cooling',
+    watt: 3,
+    x: 620, y: 130, w: 80, h: 80,
+    ex: 85, ey: -45, er: 10, es: 1.05, z: 10,
+    fungsi: 'Membuang akumulasi udara panas hasil pembuangan CPU cooler dan GPU langsung ke luar casing.',
+    cara: 'Dipasang sejajar dengan aliran udara CPU Cooler di bagian belakang atas casing (jalur pembuangan termal alami).'
+  }
+];
+
+/* Cable Data */
+const CABLE_PARTS = [
+  {
+    key: 'cable_24pin',
+    name: 'Kabel Daya 24-Pin ATX',
+    type: 'cable',
+    cat: 'cables',
+    ax: 260, ay: 700, ex: 140, ey: -70, er: 0,
+    d: 'M 210 775 C 320 620, 460 380, 495 240',
+    plug: [484, 222, 24, 20],
+    fungsi: 'Kabel utama penyuplai daya dari PSU ke seluruh rangkaian motherboard, chipset, dan slot PCIe onboard.',
+    cara: 'Membawa 24 pin kombinasi voltase +12V, +5V, +3.3V, Ground, dan kabel sinyal Power-Good (PS-ON).'
+  },
+  {
+    key: 'cable_eps_cpu',
+    name: 'Kabel Daya EPS 8-Pin CPU',
+    type: 'cable',
+    cat: 'cables',
+    ax: 340, ay: 640, ex: 80, ey: -110, er: 0,
+    d: 'M 310 775 C 390 520, 430 200, 440 120',
+    plug: [428, 108, 26, 18],
+    fungsi: 'Kabel daya dedicated khusus untuk menyuplai arus besar ke sirkuit VRM prosesor CPU.',
+    cara: 'Menghantarkan daya +12V murni berarus tinggi agar CPU dapat bekerja stabil saat boost clock tanpa drop tegangan.'
+  },
+  {
+    key: 'cable_pcie_gpu',
+    name: 'Kabel Daya PCIe 8-Pin GPU',
+    type: 'cable',
+    cat: 'cables',
+    ax: 270, ay: 720, ex: -50, ey: 70, er: 0,
+    d: 'M 240 775 C 290 700, 320 640, 350 590',
+    plug: [338, 580, 26, 16],
+    fungsi: 'Menyuplai daya ekstra ke kartu grafis gaming (hingga 150W-300W tambahan).',
+    cara: 'Mengalirkan daya 12V langsung dari rail PSU ke konektor power GPU di bagian samping.'
+  },
+  {
+    key: 'cable_sata_data_power',
+    name: 'Kabel SATA (Power & Data)',
+    type: 'cable',
+    cat: 'cables',
+    ax: 460, ay: 530, ex: 120, ey: 50, er: 0,
+    d: 'M 170 775 C 380 820, 580 490, 600 280',
+    plug: [590, 270, 22, 16],
+    fungsi: 'Menghubungkan Hardisk/SSD SATA ke motherboard dan menyuplai listrik penggerak motor disk.',
+    cara: 'Meneruskan sinyal data digital SATA 3.0 dan daya 5V/12V DC ke controller storage.'
+  },
+  {
+    key: 'cable_front_panel',
+    name: 'Kabel Front Panel (Power/Reset SW)',
+    type: 'cable',
+    cat: 'cables',
+    ax: 110, ay: 530, ex: -70, ey: -50, er: 0,
+    d: 'M 140 670 C 110 520, 90 280, 90 140',
+    plug: [80, 130, 20, 14],
+    fungsi: 'Menghubungkan tombol power casing, tombol reset, dan lampu LED indikator ke motherboard.',
+    cara: 'Ketika tombol power casing ditekan, dua pin dihubungkan sesaat (grounding) untuk mengirim sinyal boot ke IC Super I/O.'
+  }
+];
+
+const ALL_COMPONENTS = [...HARDWARE_PARTS, ...CABLE_PARTS];
+
+/* ============================================================
+   3. APP STATE MANAGEMENT
+   ============================================================ */
+const state = {
+  currentMode: 'sandbox', // sandbox | guide | encyclopedia | troubleshoot
+  installed: {},
+  thermalPasteApplied: false,
+  glassInstalled: true,
+  airflowActive: false,
+  soundEnabled: true,
+  powerState: 'off', // off | booting | bios | desktop | failed
+  activeGuideStep: 0,
+  guideScore: 0,
+  selectedComponentKey: 'motherboard'
+};
+
+// Initialize all parts as installed by default
+ALL_COMPONENTS.forEach(p => { state.installed[p.key] = true; });
+state.thermalPasteApplied = true;
+
+/* ============================================================
+   4. RENDERERS & CANVAS BUILDER
+   ============================================================ */
+const caseCanvas = document.getElementById('caseCanvas');
+const cableSvgCanvas = document.getElementById('cableSvgCanvas');
+
+function renderComponentVisual(p) {
+  switch (p.type) {
+    case 'board':
+      return `
+        <div class="mobo-pcb">
+          <div class="pcb-trace-grid"></div>
+          <div class="io-shield-block"></div>
+          <div class="vrm-heatsink" style="left:120px;top:40px;width:110px;height:50px;"></div>
+          <div class="vrm-heatsink" style="left:50px;top:100px;width:50px;height:120px;"></div>
+          <div class="pch-chipset-shield" style="left:260px;top:410px;width:110px;height:85px;">
+            <span>STRIX Z790</span>
+          </div>
+          <!-- PCIe Shield -->
+          <div style="position:absolute;left:40px;top:385px;width:240px;height:14px;background:#384252;border:1px solid #64748b;border-radius:2px;"></div>
+          <!-- Audio Capacitors -->
+          <div style="position:absolute;left:25px;top:510px;display:flex;gap:4px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#fbbf24;border:1px solid #000;"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:#fbbf24;border:1px solid #000;"></div>
+            <div style="width:10px;height:10px;border-radius:50%;background:#fbbf24;border:1px solid #000;"></div>
+          </div>
+        </div>`;
+    case 'cpu':
+      return `
+        <div class="cpu-chip">
+          <div class="cpu-golden-triangle"></div>
+          <div class="cpu-ihs-text">RYZEN 7<br><span style="font-size:6.5px;color:#64748b;">7800X3D</span></div>
+          <div class="thermal-paste-blob ${state.thermalPasteApplied ? 'applied' : ''}" id="pasteBlobVisual"></div>
+        </div>`;
+    case 'paste':
+      return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+        <span style="font-size:9px;font-family:var(--font-mono);color:var(--cyan);background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;">PASTE LAYER</span>
+      </div>`;
+    case 'cooler':
+      return `
+        <div class="cooler-air-tower">
+          <div class="cooler-copper-pipes" style="left:20px;"></div>
+          <div class="cooler-copper-pipes" style="left:35px;"></div>
+          <div class="cooler-copper-pipes" style="right:20px;"></div>
+          <div class="cooler-copper-pipes" style="right:35px;"></div>
+          <div class="cooler-fan-rotator"></div>
+          <div class="cooler-rgb-ring"></div>
+        </div>`;
+    case 'ram':
+      return `
+        <div class="ram-stick">
+          <div class="ram-rgb-diffuser"></div>
+          <div class="ram-gold-pins"></div>
+        </div>`;
+    case 'm2':
+      return `
+        <div class="m2-nvme-card">
+          <div class="m2-nand-chip"></div>
+          <div class="m2-nand-chip"></div>
+          <div class="m2-armor-shield">NVMe Gen4 1TB</div>
+        </div>`;
+    case 'gpu':
+      return `
+        <div class="gpu-card">
+          <div class="gpu-backplate-strip"></div>
+          <div class="gpu-fan-unit"></div>
+          <div class="gpu-fan-unit"></div>
+          <div class="gpu-fan-unit"></div>
+          <div class="gpu-pcie-pins"></div>
+        </div>`;
+    case 'psu':
+      return `
+        <div class="psu-unit">
+          <div class="psu-fan-grill"></div>
+          <div class="psu-badge-label">80 PLUS<br>GOLD 750W</div>
+        </div>`;
+    case 'ssd':
+      return `
+        <div class="sata-ssd-25">
+          <div class="sata-ssd-brand">SAMSUNG</div>
+          <div class="sata-ssd-capacity">870 EVO • 500GB</div>
+        </div>`;
+    case 'hdd':
+      return `
+        <div class="hdd-35">
+          <div class="hdd-label-sticker">SEAGATE BARRACUDA<br>2000GB 7200 RPM</div>
+        </div>`;
+    case 'fan':
+      return `
+        <div class="case-fan-frame">
+          <div class="case-fan-blades"></div>
+          <div class="case-fan-rgb-halo"></div>
+        </div>`;
+    default:
+      return '';
+  }
+}
+
+function buildCaseDOM() {
+  HARDWARE_PARTS.forEach(p => {
+    // Ghost slot outline
+    const ghost = document.createElement('div');
+    ghost.className = 'ghost-slot';
+    ghost.id = `ghost-${p.key}`;
+    ghost.style.left = `${p.x}px`;
+    ghost.style.top = `${p.y}px`;
+    ghost.style.width = `${p.w}px`;
+    ghost.style.height = `${p.h}px`;
+    caseCanvas.appendChild(ghost);
+
+    // Actual Part Slot
+    const slot = document.createElement('div');
+    slot.className = 'part-slot';
+    slot.id = p.key;
+    slot.dataset.key = p.key;
+    slot.style.left = `${p.x}px`;
+    slot.style.top = `${p.y}px`;
+    slot.style.width = `${p.w}px`;
+    slot.style.height = `${p.h}px`;
+    slot.style.zIndex = p.z;
+    slot.style.setProperty('--ex', `${p.ex}px`);
+    slot.style.setProperty('--ey', `${p.ey}px`);
+    slot.style.setProperty('--er', `${p.er}deg`);
+    slot.style.setProperty('--es', p.es);
+
+    slot.innerHTML = `
+      <div class="part-tooltip-tag">${p.name}</div>
+      <div style="width:100%;height:100%;">${renderComponentVisual(p)}</div>
+    `;
+
+    slot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      handlePartClick(p.key);
     });
-    trayHTML += '</div></div>';
+
+    caseCanvas.appendChild(slot);
   });
-  trayHTML += '<div class="tray-section"><div class="tray-head"><h3>Fitur Tetap di Board</h3><span>'+FIXED.length+' bagian</span></div><div class="fixed-row">';
-  FIXED.forEach(function(f){ trayHTML += '<div class="fixed-chip" data-key="'+f.key+'" id="chip-'+f.key+'">'+f.name+'</div>'; });
-  trayHTML += '</div></div>';
-  tray.innerHTML = trayHTML;
-  PARTS.forEach(function(p){
-    const card = document.getElementById('card-'+p.key);
-    if(card) card.addEventListener('click', function(){ toggle(p.key); });
-    applyState(p.key);
+
+  // Render Cable SVGs
+  let svgHTML = '';
+  CABLE_PARTS.forEach(c => {
+    svgHTML += `
+      <g class="cable-group" id="${c.key}" data-key="${c.key}" style="--ex:${c.ex}px;--ey:${c.ey}px;--er:${c.er}deg;">
+        <path class="cable-path-main" d="${c.d}" />
+        <path class="cable-path-braided" d="${c.d}" />
+        <rect x="${c.plug[0]}" y="${c.plug[1]}" width="${c.plug[2]}" height="${c.plug[3]}" rx="3" fill="#0f172a" stroke="#00f2fe" stroke-width="1.5" />
+      </g>
+    `;
   });
-  FIXED.forEach(function(f){
-    const chip = document.getElementById('chip-'+f.key);
-    if(chip) chip.addEventListener('click', function(){ ping(f.key); });
-  });
-  if(guidedActive) updateTourTarget();
-}
+  cableSvgCanvas.innerHTML = svgHTML;
 
-/* ============================================================
-   STATE / INTERACTION (free mode)
-   ============================================================ */
-const state = {};
-PARTS.forEach(function(p){ state[p.key]=false; });
-function installed(key){ return !state[key]; }
-
-function applyState(key){
-  const pulled = state[key];
-  const el = document.getElementById(key);
-  if(el) el.classList.toggle('pulled', pulled);
-  const ghost = document.getElementById('ghost-'+key);
-  if(ghost) ghost.classList.toggle('active', pulled);
-  const card = document.getElementById('card-'+key);
-  if(card) card.classList.toggle('active', pulled);
-  renderSpec();
-}
-
-function showInfo(cfg, isFixed){
-  const info = document.getElementById('info');
-  info.innerHTML = '<p class="kicker '+(isFixed?'fixed-kicker':'')+'">'+(isFixed?'Fitur Tetap · Info':'Komponen Terpilih')+'</p>'+
-    '<h2>'+cfg.name+'</h2>'+
-    '<div class="info-grid">'+
-      '<div><h3>Fungsi</h3><p>'+cfg.fungsi+'</p></div>'+
-      '<div><h3>Cara Kerja</h3><p>'+cfg.cara+'</p></div>'+
-    '</div>';
-}
-
-const PARTS_BY_KEY = {}; PARTS.forEach(function(p){ PARTS_BY_KEY[p.key]=p; });
-const FIXED_BY_KEY = {}; FIXED.forEach(function(f){ FIXED_BY_KEY[f.key]=f; });
-
-function toggle(key){
-  if(assemblyActive) return;
-  if(tutorialActive){ handleTutorialClick(key); return; }
-  state[key] = !state[key];
-  applyState(key);
-  showInfo(PARTS_BY_KEY[key], false);
-  if(powerState==='on') showMonitorCard(PARTS_BY_KEY[key].name, PARTS_BY_KEY[key].fungsi);
-  checkGuidedProgress(key);
-}
-
-function ping(key){
-  showInfo(FIXED_BY_KEY[key], true);
-  [document.getElementById(key), document.getElementById('chip-'+key)].forEach(function(el){
-    if(!el) return;
-    el.classList.remove('pinged'); void el.offsetWidth; el.classList.add('pinged');
-  });
-  if(powerState==='on') showMonitorCard(FIXED_BY_KEY[key].name, FIXED_BY_KEY[key].fungsi);
-}
-
-PARTS.forEach(function(p){
-  const el = document.getElementById(p.key);
-  if(el) el.addEventListener('click', function(){ toggle(p.key); });
-});
-FIXED.forEach(function(f){
-  const el = document.getElementById(f.key);
-  if(el) el.addEventListener('click', function(){ ping(f.key); });
-});
-
-document.getElementById('explodeAll').addEventListener('click', function(){
-  if(tutorialActive || assemblyActive) return;
-  PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=true; applyState(p.key); }, i*26); });
-});
-document.getElementById('assembleAll').addEventListener('click', function(){
-  if(tutorialActive || assemblyActive) return;
-  PARTS.forEach(function(p,i){ setTimeout(function(){ state[p.key]=false; applyState(p.key); }, i*26); });
-});
-
-/* ============================================================
-   SPEC / WATTAGE CALCULATOR
-   ============================================================ */
-function calcSpec(){
-  let total=0;
-  PARTS.forEach(function(p){ if(installed(p.key)) total += (WATT[p.type]||0); });
-  const psuOptions=[450,550,650,750,850,1000];
-  let rec = 1000;
-  for(let i=0;i<psuOptions.length;i++){ if(psuOptions[i] >= total*1.35){ rec=psuOptions[i]; break; } }
-  const hasGpu = installed('gpu');
-  const useCase = hasGpu ? 'Gaming + Editing' : (installed('cpu') ? 'Produktivitas & Office' : '—');
-  return {total:total, rec:rec, useCase:useCase};
-}
-function renderSpec(){
-  const s = calcSpec();
-  const el = document.getElementById('specCard');
-  if(!el) return;
-  el.innerHTML = '<h3>Spesifikasi Rakitan</h3>'+
-    '<div class="spec-row"><span>Estimasi Daya</span><b>'+s.total+' W</b></div>'+
-    '<div class="spec-row"><span>Rekomendasi PSU</span><b>'+s.rec+' W</b></div>'+
-    '<div class="spec-row"><span>Cocok untuk</span><b>'+s.useCase+'</b></div>';
-}
-
-/* ============================================================
-   MONITOR / POWER-ON / POST / DASHBOARD
-   ============================================================ */
-let powerState = 'off';
-let dashInterval = null;
-let monTimers = [];
-let cardTimer = null;
-
-function clearMonTimers(){ monTimers.forEach(function(t){ clearTimeout(t); }); monTimers=[]; }
-
-function getChecks(){
-  const ramCount = (installed('ram1')?1:0)+(installed('ram2')?1:0);
-  const storageCount = ['hdd','ssd','m2_ssd'].filter(installed).length;
-  return [
-    {label:'PSU', ok:installed('psu'), critical:true, msg:'Tidak ada daya — PSU belum terpasang'},
-    {label:'Power Cable', ok:installed('cable_24pin'), critical:true, msg:'Motherboard tidak menerima daya — kabel 24-pin belum terhubung'},
-    {label:'Motherboard', ok:installed('motherboard'), critical:true, msg:'Tidak ada motherboard terpasang di case'},
-    {label:'CPU', ok:installed('cpu'), critical:true, msg:'CPU tidak terdeteksi'},
-    {label:'Cooling', ok:installed('cpu_cooler'), critical:false, msg:'Tidak ada pendingin — risiko overheat tinggi'},
-    {label:'RAM', ok:ramCount>0, critical:true, msg:'Memory not found — tidak ada RAM terpasang'},
-    {label:'Storage', ok:storageCount>0, critical:true, msg:'Storage not found — tidak ada media untuk boot OS'},
-    {label:'GPU', ok:installed('gpu'), critical:false, msg:'Tidak terdeteksi — pakai grafis onboard bila tersedia'},
-  ];
-}
-
-function powerOff(){
-  powerState='off';
-  clearInterval(dashInterval); dashInterval=null;
-  clearMonTimers();
-  document.getElementById('monitorGlass').className='monitor-glass off';
-  document.getElementById('monitorContent').innerHTML='';
-  const btn = document.getElementById('powerBtn');
-  btn.classList.remove('is-on');
-  btn.innerHTML = '<span class="power-dot"></span> POWER ON';
-}
-
-function runPOST(){
-  powerState='booting';
-  clearMonTimers();
-  const glass = document.getElementById('monitorGlass');
-  glass.className = 'monitor-glass on waking';
-  const content = document.getElementById('monitorContent');
-  content.innerHTML = '';
-  monTimers.push(setTimeout(function(){
-    glass.classList.remove('waking');
-    content.innerHTML = '<div class="bios-splash" id="biosSplash">'+
-        '<div class="bios-logo">&#9889;</div>'+
-        '<div class="bios-brand">HARDWARE EXPLORER BIOS</div>'+
-        '<div class="bios-ver">v2.4.1 &middot; PC Builder Simulator</div>'+
-      '</div>';
-    monTimers.push(setTimeout(function(){
-      const splash = document.getElementById('biosSplash');
-      if(splash) splash.classList.add('fade-out');
-      monTimers.push(setTimeout(startPostChecks, 320));
-    }, 1150));
-  }, 650));
-}
-
-function startPostChecks(){
-  const content = document.getElementById('monitorContent');
-  content.innerHTML = '<div class="post-header">POWER ON SELF TEST</div>';
-  const checks = getChecks();
-  let failed = null;
-  checks.forEach(function(c,i){
-    monTimers.push(setTimeout(function(){
-      const statusWord = c.ok ? 'OK' : (c.critical ? 'FAIL' : 'WARN');
-      const statusCls = c.ok ? 'ok' : (c.critical ? 'fail' : 'warn');
-      const line = document.createElement('div');
-      line.className='post-line';
-      line.innerHTML = '<span class="plabel">Checking '+c.label+'</span><span class="pdots"></span><span class="pstatus '+statusCls+'">'+statusWord+'</span>';
-      content.appendChild(line);
-      if(!c.ok && c.critical && !failed){ failed=c; }
-      if(i===checks.length-1){
-        monTimers.push(setTimeout(function(){
-          if(failed){
-            const block=document.createElement('div');
-            block.className='mon-fail-block';
-            block.innerHTML='&#9888; BOOT FAILED<br><br>Penyebab:<br>'+failed.msg+'<br><br>Solusi:<br>Pasang kembali komponen yang hilang, lalu tekan tombol lagi.';
-            content.appendChild(block);
-            powerState='failed';
-            document.getElementById('monitorGlass').className='monitor-glass failed';
-            const btn=document.getElementById('powerBtn');
-            btn.classList.remove('is-on');
-            btn.innerHTML='<span class="power-dot"></span> COBA LAGI';
-          } else {
-            const l2=document.createElement('div');
-            l2.className='post-line'; l2.style.marginTop='10px';
-            l2.innerHTML='<span class="plabel" style="color:var(--teal)">Booting sistem operasi...</span>';
-            content.appendChild(l2);
-            monTimers.push(setTimeout(startDashboard,700));
-          }
-        },320));
-      }
-    }, 260*i + 150));
-  });
-}
-
-function storageTotalGB(){
-  let t=0;
-  if(installed('hdd')) t+=1000;
-  if(installed('ssd')) t+=512;
-  if(installed('m2_ssd')) t+=1000;
-  return t;
-}
-
-function startDashboard(){
-  powerState='on';
-  const btn = document.getElementById('powerBtn');
-  btn.classList.add('is-on');
-  btn.innerHTML = '<span class="power-dot"></span> POWER OFF';
-  renderDashboard();
-  clearInterval(dashInterval);
-  dashInterval = setInterval(renderDashboard, 2600);
-}
-
-function renderDashboard(){
-  if(powerState!=='on') return;
-  const cpuTemp = Math.round(42+Math.random()*30);
-  const ramPct = Math.round(35+Math.random()*40);
-  const gpuOn = installed('gpu');
-  const gpuPct = gpuOn ? Math.round(15+Math.random()*70) : 0;
-  const totalGB = storageTotalGB();
-  const usedGB = totalGB ? Math.round(totalGB*(0.3+Math.random()*0.35)) : 0;
-  document.getElementById('monitorContent').innerHTML =
-    '<div class="dash-title">SYSTEM MONITOR</div>'+
-    '<div class="dash-row"><span class="lbl">CPU Temperature</span><div class="bar"><div class="bar-fill" style="width:'+(cpuTemp/90*100)+'%"></div></div><span class="val">'+cpuTemp+'&deg;C</span></div>'+
-    '<div class="dash-row"><span class="lbl">RAM Usage</span><div class="bar"><div class="bar-fill" style="width:'+ramPct+'%"></div></div><span class="val">'+ramPct+'%</span></div>'+
-    '<div class="dash-row"><span class="lbl">GPU Usage</span><div class="bar"><div class="bar-fill" style="width:'+(gpuOn?gpuPct:0)+'%"></div></div><span class="val">'+(gpuOn?gpuPct+'%':'N/A')+'</span></div>'+
-    '<div class="dash-row"><span class="lbl">Storage Status</span><div class="bar"><div class="bar-fill" style="width:'+(totalGB?(usedGB/totalGB*100):0)+'%"></div></div><span class="val">'+(totalGB?usedGB+'/'+totalGB+'GB':'&mdash;')+'</span></div>'+
-    '<div class="dash-row"><span class="lbl">Network Status</span><span style="color:var(--teal);margin-left:4px;">&#9679; Connected</span></div>';
-}
-
-function showMonitorCard(name, fungsi){
-  if(powerState!=='on') return;
-  clearTimeout(cardTimer);
-  document.getElementById('monitorContent').innerHTML = '<div class="mon-card"><h4>'+name+'</h4><p>'+fungsi+'</p></div>';
-  cardTimer = setTimeout(renderDashboard, 4200);
-}
-
-document.getElementById('powerBtn').addEventListener('click', function(){
-  if(powerState==='on'){ powerOff(); } else { runPOST(); }
-});
-
-/* ============================================================
-   TUTORIAL MODE (build-from-scratch, scored)
-   ============================================================ */
-const TUTORIAL_STEPS = [
-  {label:'Pasang CPU ke Socket', type:'part', key:'cpu'},
-  {label:'Oleskan Thermal Paste', type:'action'},
-  {label:'Pasang Cooler CPU', type:'part', key:'cpu_cooler'},
-  {label:'Pasang RAM (2 slot)', type:'multi', keys:['ram1','ram2']},
-  {label:'Pasang Motherboard ke Case', type:'part', key:'motherboard'},
-  {label:'Pasang PSU', type:'part', key:'psu'},
-  {label:'Hubungkan Semua Kabel', type:'multi', keys:['cable_24pin','cable_eps','cable_pcie','cable_sata_power','cable_sata_data','cable_frontpanel']},
-];
-let tutorialActive=false, tutorialStep=0, tutorialScore=0, tutFeedback=null, tutFeedbackType='ok';
-
-function isBeforeCurrentStep(key){
-  for(let i=0;i<tutorialStep;i++){
-    const st=TUTORIAL_STEPS[i];
-    if(st.type==='part' && st.key===key) return true;
-    if(st.type==='multi' && st.keys.indexOf(key)!==-1) return true;
-  }
-  return false;
-}
-
-function startTutorial(){
-  if(guidedActive) exitGuided();
-  if(assemblyActive) exitAssembly();
-  tutorialActive=true; tutorialStep=0; tutorialScore=0;
-  tutFeedback='Mulai dengan memasang CPU ke socket motherboard.'; tutFeedbackType='ok';
-  PARTS.forEach(function(p){ state[p.key]=true; applyState(p.key); });
-  const cpuEl=document.getElementById('cpu'); if(cpuEl) cpuEl.classList.remove('has-paste');
-  document.getElementById('tutorialBtn').classList.add('active');
-  renderTutorialPanel();
-}
-function exitTutorial(){
-  tutorialActive=false;
-  document.getElementById('tutorialBtn').classList.remove('active');
-  renderFreeTray();
-}
-window.exitTutorial = exitTutorial;
-
-function afterTutorialAdvance(){
-  if(tutorialStep>=TUTORIAL_STEPS.length){
-    tutFeedback='Rakitan selesai! Total skor: '+tutorialScore+'/70. Coba tekan POWER ON untuk menyalakannya.';
-    tutFeedbackType='ok';
-  }
-}
-
-function handleTutorialClick(key){
-  const step = TUTORIAL_STEPS[tutorialStep];
-  if(!step){ return; }
-  if(step.type==='part'){
-    if(key===step.key){
-      state[key]=false; applyState(key);
-      tutorialScore+=10; tutFeedback='Benar! '+step.label+' selesai. +10 poin'; tutFeedbackType='ok';
-      tutorialStep++; afterTutorialAdvance();
-    } else if(isBeforeCurrentStep(key)){
-      state[key]=!state[key]; applyState(key);
-    } else {
-      tutFeedback='Belum saatnya. Langkah sekarang: '+step.label; tutFeedbackType='warn';
+  // Add click events to cables
+  CABLE_PARTS.forEach(c => {
+    const el = document.getElementById(c.key);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handlePartClick(c.key);
+      });
     }
-  } else if(step.type==='multi'){
-    if(step.keys.indexOf(key)!==-1){
-      state[key]=false; applyState(key);
-      const doneCount = step.keys.filter(function(k){return !state[k];}).length;
-      if(doneCount===step.keys.length){
-        tutorialScore+=10; tutFeedback='Semua kabel terhubung! +10 poin'; tutFeedbackType='ok';
-        tutorialStep++; afterTutorialAdvance();
-      } else {
-        tutFeedback=doneCount+'/'+step.keys.length+' kabel terpasang, lanjutkan...'; tutFeedbackType='ok';
-      }
-    } else if(isBeforeCurrentStep(key)){
-      state[key]=!state[key]; applyState(key);
-    } else {
-      tutFeedback='Selesaikan dulu: '+step.label; tutFeedbackType='warn';
+  });
+}
+
+/* ============================================================
+   5. INTERACTION & LOGIC CONTROLLERS
+   ============================================================ */
+function handlePartClick(key) {
+  SFX.play('snap');
+  state.selectedComponentKey = key;
+  updateComponentDetails(key);
+
+  if (state.currentMode === 'sandbox') {
+    state.installed[key] = !state.installed[key];
+    syncVisualStates();
+    renderSidePanel();
+    updateTelemetry();
+  } else if (state.currentMode === 'guide') {
+    handleGuideStepAction(key);
+  }
+}
+
+function syncVisualStates() {
+  ALL_COMPONENTS.forEach(p => {
+    const el = document.getElementById(p.key);
+    const ghost = document.getElementById(`ghost-${p.key}`);
+    const isInstalled = state.installed[p.key];
+
+    if (el) {
+      el.classList.toggle('pulled', !isInstalled);
     }
-  }
-  renderTutorialPanel();
-}
-
-function applyPaste(){
-  if(tutorialActive && TUTORIAL_STEPS[tutorialStep] && TUTORIAL_STEPS[tutorialStep].type==='action'){
-    const cpuEl=document.getElementById('cpu'); if(cpuEl) cpuEl.classList.add('has-paste');
-    tutorialScore+=10; tutFeedback='Thermal paste dioleskan tipis dan merata. +10 poin'; tutFeedbackType='ok';
-    tutorialStep++; afterTutorialAdvance(); renderTutorialPanel();
-  }
-}
-window.applyPaste = applyPaste;
-
-function renderTutorialPanel(){
-  let html = '<div class="tut-head"><h3>Mode Tutorial</h3><span class="tut-score">Skor: '+tutorialScore+'</span></div>';
-  TUTORIAL_STEPS.forEach(function(st,i){
-    const done = i<tutorialStep, current = i===tutorialStep;
-    html += '<div class="tut-step '+(done?'done':'')+' '+(current?'current':'')+'">'+
-      '<div class="tut-num">'+(done?'&#10003;':(i+1))+'</div>'+
-      '<div class="txt">'+st.label+(st.type==='action' && current ? '<br><button class="tut-action-btn" onclick="applyPaste()">Oleskan Thermal Paste</button>' : '')+'</div></div>';
+    if (ghost) {
+      ghost.classList.toggle('active-guide', !isInstalled && state.currentMode === 'guide');
+    }
   });
-  if(tutFeedback){
-    html += '<div class="tut-feedback '+(tutFeedbackType==='warn'?'warn':'ok')+'">'+tutFeedback+'</div>';
-  }
-  html += '<button class="tut-exit" onclick="exitTutorial()">&larr; Kembali ke Mode Bebas</button>';
-  tray.innerHTML = html;
-}
 
-document.getElementById('tutorialBtn').addEventListener('click', function(){
-  if(tutorialActive) exitTutorial(); else startTutorial();
-});
-
-/* ============================================================
-   GUIDED TOUR — "Start Learning" (find & click each component)
-   ============================================================ */
-const GUIDED_STEPS = [
-  {label:'Cari Processor (CPU)', keys:['cpu']},
-  {label:'Cari RAM', keys:['ram1','ram2']},
-  {label:'Cari Motherboard', keys:['motherboard']},
-  {label:'Cari GPU (Kartu Grafis)', keys:['gpu']},
-  {label:'Cari SSD', keys:['ssd','m2_ssd']},
-  {label:'Cari Power Supply (PSU)', keys:['psu']},
-];
-let guidedActive=false, guidedStep=0;
-
-function clearTourTarget(){
-  document.querySelectorAll('.tour-target').forEach(function(el){ el.classList.remove('tour-target'); });
-}
-function updateTourTarget(){
-  clearTourTarget();
-  if(!guidedActive || guidedStep>=GUIDED_STEPS.length) return;
-  const step = GUIDED_STEPS[guidedStep];
-  step.keys.forEach(function(k){
-    const el=document.getElementById(k); if(el) el.classList.add('tour-target');
-    const card=document.getElementById('card-'+k); if(card) card.classList.add('tour-target');
-  });
-}
-
-function startGuided(){
-  if(tutorialActive) exitTutorial();
-  if(assemblyActive) exitAssembly();
-  guidedActive=true; guidedStep=0;
-  document.getElementById('startLearningBtn').classList.add('active');
-  renderGuidedBar();
-  updateTourTarget();
-}
-function exitGuided(){
-  guidedActive=false;
-  clearTourTarget();
-  document.getElementById('startLearningBtn').classList.remove('active');
-  const bar = document.getElementById('tourBar');
-  bar.classList.remove('show');
-}
-window.exitGuided = exitGuided;
-window.startGuided = startGuided;
-
-function renderGuidedBar(){
-  const bar = document.getElementById('tourBar');
-  bar.classList.add('show');
-  if(guidedStep>=GUIDED_STEPS.length){
-    bar.innerHTML = '<div class="tour-top"><div class="tour-instruction tour-done-msg">Tutorial selesai! Kamu sudah menemukan semua komponen inti.</div>'+
-      '<button class="btn" onclick="startGuided()">Ulangi</button></div>'+
-      '<div class="tour-track"><div class="tour-fill" style="width:100%"></div></div>';
-    return;
-  }
-  const step = GUIDED_STEPS[guidedStep];
-  const pct = Math.round((guidedStep/GUIDED_STEPS.length)*100);
-  let dots='';
-  GUIDED_STEPS.forEach(function(s,i){
-    dots += '<div class="tour-dot '+(i<guidedStep?'done':(i===guidedStep?'current':''))+'"></div>';
-  });
-  bar.innerHTML = '<div class="tour-top"><div class="tour-instruction">Langkah '+(guidedStep+1)+' dari '+GUIDED_STEPS.length+': <span class="accent">'+step.label+'</span></div>'+
-    '<div class="tour-count"><a href="#" onclick="exitGuided();return false;">selesai / keluar</a></div></div>'+
-    '<div class="tour-track"><div class="tour-fill" style="width:'+pct+'%"></div></div>'+
-    '<div class="tour-dots">'+dots+'</div>';
-}
-
-function showTourToast(msg, type){
-  const t = document.getElementById('tourToast');
-  t.textContent = msg;
-  t.className = 'tour-toast show' + (type==='error' ? ' error' : '');
-  clearTimeout(window._tourToastTimer);
-  window._tourToastTimer = setTimeout(function(){ t.classList.remove('show'); }, type==='error' ? 2200 : 1400);
-}
-
-function checkGuidedProgress(key){
-  if(!guidedActive) return;
-  const step = GUIDED_STEPS[guidedStep];
-  if(!step) return;
-  if(step.keys.indexOf(key)!==-1){
-    showTourToast('Bagus! 🎉');
-    guidedStep++;
-    updateTourTarget();
-    renderGuidedBar();
+  const pasteBlob = document.getElementById('pasteBlobVisual');
+  if (pasteBlob) {
+    pasteBlob.classList.toggle('applied', state.thermalPasteApplied);
   }
 }
 
-document.getElementById('startLearningBtn').addEventListener('click', function(){
-  if(guidedActive) exitGuided(); else startGuided();
-});
+function updateComponentDetails(key) {
+  const comp = ALL_COMPONENTS.find(c => c.key === key);
+  if (!comp) return;
 
-/* ============================================================
-   PC ASSEMBLY SIMULATOR — real drag & drop
-   ============================================================ */
-const ASSEMBLY_PARTS_KEYS = ['cpu','cpu_cooler','ram1','motherboard','ssd','gpu','psu'];
-let assemblyActive = false;
-let assemblyPlaced = new Set();
-let dragKey = null;
-let dragGhostEl = null;
+  document.getElementById('detailKicker').innerText = `KOMPONEN: ${comp.cat.toUpperCase()}`;
+  document.getElementById('detailTitle').innerText = comp.name;
+  document.getElementById('detailFungsi').innerText = comp.fungsi;
+  document.getElementById('detailCara').innerText = comp.cara;
+}
 
-function updateAssemblyHighlights(on){
-  ASSEMBLY_PARTS_KEYS.forEach(function(key){
-    const g = document.getElementById('ghost-'+key);
-    if(g) g.classList.toggle('assembly-highlight', on && !assemblyPlaced.has(key));
+function updateTelemetry() {
+  let totalW = 0;
+  HARDWARE_PARTS.forEach(p => {
+    if (state.installed[p.key]) totalW += p.watt;
   });
-}
 
-function startAssembly(){
-  if(tutorialActive) exitTutorial();
-  if(guidedActive) exitGuided();
-  assemblyActive = true;
-  assemblyPlaced = new Set();
-  ASSEMBLY_PARTS_KEYS.forEach(function(key){
-    state[key] = true;
-    const el = document.getElementById(key);
-    if(el){ el.classList.remove('pulled'); el.classList.add('assembly-pending'); }
-    const ghost = document.getElementById('ghost-'+key);
-    if(ghost) ghost.classList.remove('active');
-  });
-  renderSpec();
-  document.getElementById('assemblyBtn').classList.add('active');
-  updateAssemblyHighlights(true);
-  renderAssemblyTray();
-}
-
-function exitAssembly(){
-  assemblyActive = false;
-  document.getElementById('assemblyBtn').classList.remove('active');
-  updateAssemblyHighlights(false);
-  ASSEMBLY_PARTS_KEYS.forEach(function(key){
-    if(assemblyPlaced.has(key)) return;
-    const el = document.getElementById(key);
-    if(el) el.classList.remove('assembly-pending');
-    state[key] = false;
-    applyState(key);
-  });
-  renderFreeTray();
-}
-window.exitAssembly = exitAssembly;
-
-function renderAssemblyTray(){
-  const remaining = ASSEMBLY_PARTS_KEYS.filter(function(k){ return !assemblyPlaced.has(k); });
-  let html = '<div class="tut-head"><h3>PC Assembly Simulator</h3><span class="tut-score">'+assemblyPlaced.size+'/'+ASSEMBLY_PARTS_KEYS.length+'</span></div>';
-  html += '<p class="assembly-hint">Seret (drag) tiap komponen dari sini, lalu lepaskan tepat di atas slot berwarna oranye yang berkedip di dalam casing.</p>';
-  html += '<div class="tray-grid">';
-  remaining.forEach(function(key){
-    const p = PARTS_BY_KEY[key];
-    html += '<div class="tray-card assembly-card" id="assembly-card-'+key+'" data-key="'+key+'">'+
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg>'+
-        '<span class="lbl">'+p.name+'</span></div>';
-  });
-  html += '</div>';
-  if(remaining.length===0){
-    html += '<div class="tut-feedback ok" style="margin-top:16px;">Semua komponen berhasil dipasang! PC siap dinyalakan.</div>'+
-      '<button class="btn primary assembly-complete-btn" onclick="runPOST()">&#9211; Power On</button>';
-  }
-  html += '<button class="tut-exit" onclick="exitAssembly()">&larr; Keluar dari Assembly Simulator</button>';
-  tray.innerHTML = html;
-  remaining.forEach(function(key){
-    const card = document.getElementById('assembly-card-'+key);
-    if(card) card.addEventListener('pointerdown', function(e){ onAssemblyDragStart(e, key); });
-  });
-}
-
-function positionGhostEl(x,y){
-  if(dragGhostEl){ dragGhostEl.style.left = x+'px'; dragGhostEl.style.top = y+'px'; }
-}
-
-function onAssemblyDragStart(e, key){
-  if(!assemblyActive) return;
-  e.preventDefault();
-  dragKey = key;
-  const p = PARTS_BY_KEY[key];
-  dragGhostEl = document.createElement('div');
-  dragGhostEl.className = 'assembly-ghost-drag';
-  dragGhostEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+ICON[p.type]+'</svg><span>'+p.name+'</span>';
-  document.body.appendChild(dragGhostEl);
-  positionGhostEl(e.clientX, e.clientY);
-  const card = document.getElementById('assembly-card-'+key);
-  if(card) card.style.opacity = '.35';
-  window.addEventListener('pointermove', onAssemblyDragMove);
-  window.addEventListener('pointerup', onAssemblyDragEnd);
-}
-
-function onAssemblyDragMove(e){
-  if(!dragKey) return;
-  positionGhostEl(e.clientX, e.clientY);
-}
-
-function onAssemblyDragEnd(e){
-  if(!dragKey) return;
-  const key = dragKey;
-  const dropX = e.clientX, dropY = e.clientY;
-  if(dragGhostEl){ dragGhostEl.remove(); dragGhostEl = null; }
-  const card = document.getElementById('assembly-card-'+key);
-  if(card) card.style.opacity = '';
-  window.removeEventListener('pointermove', onAssemblyDragMove);
-  window.removeEventListener('pointerup', onAssemblyDragEnd);
-
-  let hit = false;
-  const targetGhost = document.getElementById('ghost-'+key);
-  if(targetGhost){
-    const rect = targetGhost.getBoundingClientRect();
-    const pad = 26;
-    hit = dropX >= rect.left-pad && dropX <= rect.right+pad && dropY >= rect.top-pad && dropY <= rect.bottom+pad;
-  }
-  dragKey = null;
-  if(hit){
-    placeAssemblyPart(key);
+  document.getElementById('specWattage').innerText = `${totalW} W`;
+  
+  const ram1 = state.installed['ram1'];
+  const ram2 = state.installed['ram2'];
+  if (ram1 && ram2) {
+    document.getElementById('specRAM').innerText = 'Dual-Channel (32GB)';
+  } else if (ram1 || ram2) {
+    document.getElementById('specRAM').innerText = 'Single-Channel (16GB)';
   } else {
-    showTourToast('Komponen tidak dapat dipasang di posisi tersebut.', 'error');
+    document.getElementById('specRAM').innerText = 'No RAM Detected';
   }
 }
-
-function placeAssemblyPart(key){
-  const el = document.getElementById(key);
-  if(el){
-    el.classList.remove('assembly-pending');
-    el.classList.add('snap-in');
-    setTimeout(function(){ el.classList.remove('snap-in'); }, 520);
-  }
-  state[key] = false;
-  applyState(key);
-  assemblyPlaced.add(key);
-  showTourToast('Terpasang! ✓');
-  updateAssemblyHighlights(true);
-  renderAssemblyTray();
-}
-
-document.getElementById('assemblyBtn').addEventListener('click', function(){
-  if(assemblyActive) exitAssembly(); else startAssembly();
-});
 
 /* ============================================================
-   INIT
+   6. SIDE PANEL VIEWS (SANDBOX, GUIDE, ENCYCLOPEDIA, QUIZ)
    ============================================================ */
-renderFreeTray();
-renderSpec();
-powerOff();
+const sidePanel = document.getElementById('sidePanel');
 
-function resizeCanvas(){
-  const wrapper = document.querySelector('.case-canvas-wrapper');
-  const available = wrapper.clientWidth;
-  const scale = Math.min(1, available/720);
-  canvas.style.transform = 'scale('+scale+')';
-  wrapper.style.height = (890*scale + 36) + 'px';
+function renderSidePanel() {
+  if (state.currentMode === 'sandbox') {
+    renderSandboxTray();
+  } else if (state.currentMode === 'guide') {
+    renderGuidePanel();
+  } else if (state.currentMode === 'encyclopedia') {
+    renderEncyclopediaPanel();
+  } else if (state.currentMode === 'troubleshoot') {
+    renderQuizPanel();
+  }
+}
+
+function renderSandboxTray() {
+  let html = `
+    <div class="section-title-wrap">
+      <h3>Komponen Hardware PC</h3>
+      <span class="section-count-badge">${HARDWARE_PARTS.length} Komponen</span>
+    </div>
+    <div class="components-grid">
+  `;
+
+  HARDWARE_PARTS.forEach(p => {
+    const isInst = state.installed[p.key];
+    html += `
+      <div class="component-card ${isInst ? 'is-installed' : 'is-pulled'}" onclick="handlePartClick('${p.key}')">
+        <span class="status-dot"></span>
+        <div class="component-card-icon">📦</div>
+        <div class="component-card-name">${p.name}</div>
+      </div>
+    `;
+  });
+
+  html += `
+    </div>
+    <div class="section-title-wrap" style="margin-top:20px;">
+      <h3>Kabel & Konektor Daya</h3>
+      <span class="section-count-badge">${CABLE_PARTS.length} Kabel</span>
+    </div>
+    <div class="components-grid">
+  `;
+
+  CABLE_PARTS.forEach(c => {
+    const isInst = state.installed[c.key];
+    html += `
+      <div class="component-card ${isInst ? 'is-installed' : 'is-pulled'}" onclick="handlePartClick('${c.key}')">
+        <span class="status-dot"></span>
+        <div class="component-card-icon">🔌</div>
+        <div class="component-card-name">${c.name}</div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  sidePanel.innerHTML = html;
+}
+
+/* ==================== GUIDED ASSEMBLY STEPS ==================== */
+const ASSEMBLY_STEPS = [
+  {
+    step: 1,
+    title: 'Pasang Processor (CPU) ke Socket',
+    target: 'cpu',
+    desc: 'Buka tuas socket motherboard, luruskan segitiga emas di pojok CPU dengan tanda panah socket, lalu kunci tuas.',
+    tip: '⚠️ Jangan pernah menekan paksa CPU! Jika orientasinya benar, CPU akan masuk dengan sendirinya (Zero Insertion Force).'
+  },
+  {
+    step: 2,
+    title: 'Pasang SSD M.2 NVMe ke Slot Utama',
+    target: 'm2_ssd',
+    desc: 'Masukkan SSD M.2 dengan sudut kemiringan 30 derajat, tekan perlahan ke bawah lalu pasang heatsink pelindung.',
+    tip: '💡 Lepaskan plastik pelindung biru pada thermal pad heatsink M.2 sebelum memasangnya kembali.'
+  },
+  {
+    step: 3,
+    title: 'Pasang RAM Keping Pertama (Slot A2)',
+    target: 'ram1',
+    desc: 'Buka kait pengunci RAM, sejajarkan lekukan tengah (notch) DDR5 dengan slot A2, lalu tekan hingga berbunyi KLIK.',
+    tip: '💡 Slot A2 (slot nomor 2 dari kiri) adalah slot prioritas utama untuk stabilitas sinyal memori.'
+  },
+  {
+    step: 4,
+    title: 'Pasang RAM Keping Kedua (Slot B2)',
+    target: 'ram2',
+    desc: 'Pasang keping RAM kedua di slot B2 untuk mengaktifkan bandwidth Dual-Channel kecepatan tinggi.',
+    tip: '💡 Mode Dual-Channel melipatgandakan jalur data dari 64-bit menjadi 128-bit paralel.'
+  },
+  {
+    step: 5,
+    title: 'Aplikasikan Thermal Paste pada CPU',
+    target: 'thermal_paste',
+    desc: 'Oleskan pasta termal sebesar biji jagung (pea-size method) tepat di tengah permukaan logam CPU.',
+    tip: '⚠️ Jangan mengoleskan terlalu banyak agar pasta tidak meluber ke pin motherboard saat ditekan heatsink.'
+  },
+  {
+    step: 6,
+    title: 'Pasang CPU Cooler & Hubungkan CPU_FAN',
+    target: 'cpu_cooler',
+    desc: 'Kencangkan baut heatsink secara diagonal bertahap agar tekanan merata ke seluruh permukaan prosesor.',
+    tip: '⚠️ Selalu pastikan plastik pelindung transparan di dasar tembaga cooler sudah dilepas!'
+  },
+  {
+    step: 7,
+    title: 'Pasang Motherboard ke dalam Casing',
+    target: 'motherboard',
+    desc: 'Sejajarkan port belakang motherboard ke I/O shield casing, lalu kencangkan sekrup pada standoff tembaga.',
+    tip: '⚠️ Pastikan standoff terpasang sesuai lubang baut motherboard agar sirkuit belakang tidak korsleting ke bodi case.'
+  },
+  {
+    step: 8,
+    title: 'Pasang Power Supply (PSU) ke Ruang Bawah',
+    target: 'psu',
+    desc: 'Masukkan PSU 750W ke dalam PSU shroud dengan posisi kipas menghadap ke bawah agar menghisap udara dingin dari luar.',
+    tip: '💡 Kipas menghadap ke bawah menyedot udara segar melewati filter debu bawah tanpa memanaskan interior PC.'
+  },
+  {
+    step: 9,
+    title: 'Pasang Kipas Casing (Intake & Exhaust)',
+    target: 'fan_front1',
+    desc: 'Pasang kipas intake di bagian depan untuk memasok udara dingin dan kipas exhaust di belakang untuk membuang panas.',
+    tip: '💡 Sirkulasi tekanan udara positif (Intake > Exhaust) mencegah debu masuk lewat celah tanpa saringan.'
+  },
+  {
+    step: 10,
+    title: 'Pasang Kartu Grafis (GPU) ke Slot PCIe x16',
+    target: 'gpu',
+    desc: 'Lepaskan 2 cover bracket ekspansi di belakang casing, tekan GPU ke slot PCIe x16 utama sampai pengunci berbunyi klik.',
+    tip: '💡 Pasang GPU di slot PCIe x16 paling atas karena terhubung langsung ke jalur PCIe prosesor (bandwidth maksimal).'
+  },
+  {
+    step: 11,
+    title: 'Hubungkan Kabel Daya 24-Pin ATX & 8-Pin CPU',
+    target: 'cable_24pin',
+    desc: 'Tancapkan konektor 24-Pin ke sisi kanan motherboard dan konektor 8-Pin EPS di pojok kiri atas dekat VRM.',
+    tip: '⚠️ Kabel 8-pin CPU EPS berbeda dengan 8-pin PCIe GPU. Jangan sampai tertukar!'
+  },
+  {
+    step: 12,
+    title: 'Hubungkan Kabel Daya PCIe GPU',
+    target: 'cable_pcie_gpu',
+    desc: 'Colokkan kabel PCIe 8-pin dari PSU ke soket daya samping kartu grafis.',
+    tip: '⚠️ Jangan gunakan daisy-chain satu kabel untuk GPU berdaya di atas 250W; gunakan dua kabel terpisah dari PSU.'
+  },
+  {
+    step: 13,
+    title: 'Hubungkan Kabel Front Panel & Storage',
+    target: 'cable_front_panel',
+    desc: 'Pasang kabel Power SW, Reset SW, dan kabel SATA untuk storage drive.',
+    tip: '💡 Pin Power SW tidak memiliki polaritas plus/minus, tetapi LED indikator harus sesuai positif dan negatifnya.'
+  }
+];
+
+function renderGuidePanel() {
+  const current = ASSEMBLY_STEPS[state.activeGuideStep];
+  let html = `
+    <div class="guide-header">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);text-transform:uppercase;">Mode Perakitan Terpandu</div>
+        <div style="font-size:16px;font-weight:700;">Langkah ${state.activeGuideStep + 1} dari ${ASSEMBLY_STEPS.length}</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:12px;background:var(--panel);padding:6px 12px;border-radius:20px;border:1px solid var(--panel-border);">
+        Skor: <b style="color:var(--emerald);">${state.guideScore}</b> / 130
+      </div>
+    </div>
+  `;
+
+  if (current) {
+    html += `
+      <div class="guide-step-card active-step" style="margin-top:14px;">
+        <div class="guide-step-num">${current.step}</div>
+        <div class="guide-step-content">
+          <h4>${current.title}</h4>
+          <p>${current.desc}</p>
+          <div class="guide-tip-box">${current.tip}</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <button class="btn-action primary" style="width:100%;justify-content:center;" onclick="handleGuideStepAction('${current.target}')">
+          ✔ Pasang: ${current.title} (+10 Poin)
+        </button>
+      </div>
+    `;
+  } else {
+    html += `
+      <div class="guide-step-card active-step" style="margin-top:14px;border-color:var(--emerald);">
+        <div class="guide-step-num" style="background:var(--emerald);color:#000;">✔</div>
+        <div class="guide-step-content">
+          <h4 style="color:var(--emerald);">Selamat! PC Telah Selesai Dirakit Sempurna</h4>
+          <p>Seluruh komponen dan perkabelan telah terpasang dengan benar. Sekarang coba tekan tombol <b>POWER ON</b> di atas untuk menyalakan komputer dan melakukan First Boot POST Test!</p>
+        </div>
+      </div>
+    `;
+  }
+
+  sidePanel.innerHTML = html;
+}
+
+function handleGuideStepAction(key) {
+  const current = ASSEMBLY_STEPS[state.activeGuideStep];
+  if (!current) return;
+
+  if (key === current.target) {
+    SFX.play('snap');
+    state.installed[key] = true;
+    if (key === 'thermal_paste') state.thermalPasteApplied = true;
+    state.guideScore += 10;
+    state.activeGuideStep++;
+    syncVisualStates();
+    renderGuidePanel();
+    updateTelemetry();
+  } else {
+    SFX.play('error');
+    alert(`Langkah saat ini adalah: "${current.title}". Silakan pasang komponen tersebut terlebih dahulu!`);
+  }
+}
+
+/* ==================== HARDWARE ENCYCLOPEDIA PANEL ==================== */
+function renderEncyclopediaPanel() {
+  let html = `
+    <div class="section-title-wrap">
+      <h3>Ensiklopedia & Katalog Hardware</h3>
+      <span class="section-count-badge">Edukasi Lengkap</span>
+    </div>
+    <div style="font-size:12.5px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px;">
+      Pilih komponen di bawah untuk melihat anatomi fisik, spesifikasi standar industri, dan panduan memilih hardware terbaik:
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+  `;
+
+  ALL_COMPONENTS.forEach(p => {
+    html += `
+      <div class="component-card" style="text-align:left;display:flex;align-items:center;gap:12px;padding:10px 14px;" onclick="handleEncyclopediaSelect('${p.key}')">
+        <div style="font-size:20px;">📘</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--text-primary);">${p.name}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${p.cat.toUpperCase()} • ${p.watt ? p.watt + 'W' : 'Passive'}</div>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  sidePanel.innerHTML = html;
+}
+
+function handleEncyclopediaSelect(key) {
+  SFX.play('click');
+  updateComponentDetails(key);
+}
+
+/* ==================== TROUBLESHOOTING & QUIZ LAB ==================== */
+const QUIZ_SCENARIOS = [
+  {
+    id: 1,
+    title: 'PC Mati Total Saat Tombol Power Ditekan',
+    desc: 'Setelah selesai merakit, tombol power ditekan namun tidak ada lampu menyala dan kipas sama sekali tidak berputar. Apa penyebab paling umum?',
+    options: [
+      { text: 'A. Kabel Front Panel Power SW belum tercolok atau saklar switch I/O di belakang PSU masih posisi "O" (OFF).', correct: true, explain: 'Tepat! Saklar rocker I/O di belakang PSU harus pada posisi "I" (ON) dan kabel Power SW dari casing harus terhubung ke pin header motherboard.' },
+      { text: 'B. Thermal paste yang dioleskan kurang tebal.', correct: false, explain: 'Salah. Kurang thermal paste tidak membuat PC mati total, melainkan suhu CPU akan cepat panas saat menyala.' },
+      { text: 'C. Monitor belum terpasang kabel HDMI.', correct: false, explain: 'Salah. Monitor tidak mempengaruhi sirkuit daya listrik internal PC.' }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Kipas Berputar Normal tapi Layar "NO SIGNAL"',
+    desc: 'PC menyala, lampu RGB dan semua kipas berputar kencang, tetapi di monitor muncul pesan "NO SIGNAL / DISPLAY NOT DETECTED". Langkah pertama yang harus dicek adalah:',
+    options: [
+      { text: 'A. Memastikan kabel monitor (DP/HDMI) dicolokkan ke port GPU (bukan ke port motherboard) dan RAM terpasang rapat.', correct: true, explain: 'Tepat! Kesalahan paling sering pemula adalah mencolokkan kabel HDMI ke motherboard padahal PC menggunakan kartu grafis diskrit (GPU Dedicated).' },
+      { text: 'B. Mengganti casing komputer dengan ukuran lebih besar.', correct: false, explain: 'Salah. Ukuran casing tidak ada kaitannya dengan output sinyal display.' },
+      { text: 'C. Menambah hardisk baru.', correct: false, explain: 'Salah. Hardisk tidak mempengaruhi output sinyal video BIOS.' }
+    ]
+  },
+  {
+    id: 3,
+    title: 'PC Menyala lalu Mati Sendiri Setelah 1-2 Menit',
+    desc: 'Komputer berhasil booting masuk ke Windows, namun selang 1-2 menit kemudian komputer mati mendadak atau freeze total. Kemungkinan masalah utamanya adalah:',
+    options: [
+      { text: 'A. CPU mengalami Overheating parah (Thermal Shutdown) karena plastik pelindung cooler lupa dicopot atau kipas CPU_FAN tidak berputar.', correct: true, explain: 'Tepat! Jika plastik cooler lupa dilepas, panas tidak bisa disalurkan ke heatsink sehingga CPU mencapai suhu kritis 100°C dan mematikan diri secara otomatis untuk melindungi chip.' },
+      { text: 'B. Kapasitas SSD terlalu besar.', correct: false, explain: 'Salah. Kapasitas SSD tidak menyebabkan thermal shutdown.' },
+      { text: 'C. Kabel mouse terlalu panjang.', correct: false, explain: 'Salah. Tidak ada hubungan kabel periferal dengan shutdown suhu.' }
+    ]
+  }
+];
+
+function renderQuizPanel() {
+  let html = `
+    <div class="section-title-wrap">
+      <h3>Lab Diagnostik & Troubleshooting</h3>
+      <span class="section-count-badge">Studi Kasus Nyata</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+  `;
+
+  QUIZ_SCENARIOS.forEach((q, idx) => {
+    html += `
+      <div class="quiz-scenario-card">
+        <div class="quiz-scenario-header">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--cyan);">KASUS #${q.id}</span>
+          <span class="scenario-badge">Troubleshooting</span>
+        </div>
+        <h4 style="font-size:13.5px;font-weight:700;margin-bottom:6px;">${q.title}</h4>
+        <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;">${q.desc}</p>
+        <div class="quiz-options-list">
+    `;
+
+    q.options.forEach((opt, oIdx) => {
+      html += `
+        <button class="quiz-opt-btn" onclick="checkQuizAnswer(${idx}, ${oIdx})">${opt.text}</button>
+      `;
+    });
+
+    html += `
+        </div>
+        <div class="quiz-feedback-box" id="quizFeedback-${idx}"></div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  sidePanel.innerHTML = html;
+}
+
+function checkQuizAnswer(qIdx, oIdx) {
+  const q = QUIZ_SCENARIOS[qIdx];
+  const opt = q.options[oIdx];
+  const box = document.getElementById(`quizFeedback-${qIdx}`);
+  if (!box) return;
+
+  if (opt.correct) {
+    SFX.play('beep');
+    box.className = 'quiz-feedback-box correct';
+    box.innerHTML = `<b>✔ JAWABAN BENAR:</b> ${opt.explain}`;
+  } else {
+    SFX.play('error');
+    box.className = 'quiz-feedback-box wrong';
+    box.innerHTML = `<b>✖ KURANG TEPAT:</b> ${opt.explain}`;
+  }
+}
+
+/* ============================================================
+   7. MONITOR, POST DIAGNOSTIC, & BIOS SYSTEM
+   ============================================================ */
+let postTimer = null;
+let desktopInterval = null;
+
+function togglePower() {
+  if (state.powerState === 'off') {
+    startBootPOST();
+  } else {
+    shutdownPC();
+  }
+}
+
+function shutdownPC() {
+  SFX.play('click');
+  state.powerState = 'off';
+  clearInterval(desktopInterval);
+  clearTimeout(postTimer);
+
+  document.body.classList.remove('system-on');
+  const btn = document.getElementById('powerButton');
+  btn.classList.remove('is-active');
+  document.getElementById('powerBtnText').innerText = 'POWER ON (NYALAKAN PC)';
+
+  const screen = document.getElementById('monitorScreen');
+  screen.className = 'monitor-screen off';
+  screen.innerHTML = `
+    <div style="text-align:center;">
+      <div style="font-size:24px;margin-bottom:8px;opacity:0.4;">🖥️</div>
+      <div>NO SIGNAL</div>
+      <div style="font-size:10.5px;color:#475569;margin-top:4px;">Tekan tombol POWER ON untuk memulai POST Check</div>
+    </div>
+  `;
+}
+
+function startBootPOST() {
+  SFX.play('click');
+  state.powerState = 'booting';
+  document.body.classList.add('system-on');
+
+  const btn = document.getElementById('powerButton');
+  btn.classList.add('is-active');
+  document.getElementById('powerBtnText').innerText = 'SHUTDOWN (MATIKAN PC)';
+
+  const screen = document.getElementById('monitorScreen');
+  screen.className = 'monitor-screen';
+  screen.innerHTML = `
+    <div style="color:var(--cyan);font-weight:700;">>>> AMI UEFI BIOS v2.40 <<<</div>
+    <div style="color:var(--text-muted);margin:4px 0 12px;">Checking Hardware Subsystems...</div>
+    <div id="postLogList"></div>
+  `;
+
+  const logs = [
+    { name: 'Power Supply Unit (PSU 12V Rail)', key: 'psu', critical: true },
+    { name: 'Kabel Daya 24-Pin ATX Motherboard', key: 'cable_24pin', critical: true },
+    { name: 'Processor (CPU 8-Core Detection)', key: 'cpu', critical: true },
+    { name: 'Memory RAM Dual-Channel Check', key: 'ram1', critical: true },
+    { name: 'Primary NVMe Storage Drive', key: 'm2_ssd', critical: true },
+    { name: 'GPU Discrete Graphics PCIe x16', key: 'gpu', critical: false }
+  ];
+
+  let stepIdx = 0;
+  let hasFailed = false;
+
+  function runNextCheck() {
+    if (stepIdx >= logs.length) {
+      if (!hasFailed) {
+        SFX.play('beep');
+        const logList = document.getElementById('postLogList');
+        if (logList) {
+          logList.innerHTML += `<div style="color:var(--emerald);margin-top:8px;">✔ POST PASSED — Booting Operating System...</div>`;
+        }
+        postTimer = setTimeout(loadDesktopOS, 900);
+      }
+      return;
+    }
+
+    const item = logs[stepIdx];
+    const isOk = state.installed[item.key];
+    const logList = document.getElementById('postLogList');
+
+    if (logList) {
+      const line = document.createElement('div');
+      if (isOk) {
+        line.style.color = 'var(--emerald)';
+        line.innerHTML = `[ OK ] ${item.name}`;
+      } else {
+        line.style.color = 'var(--rose)';
+        line.innerHTML = `[ FAIL ] ${item.name} TIDAK TERDETEKSI!`;
+        if (item.critical && !hasFailed) {
+          hasFailed = true;
+          SFX.play('error');
+          setTimeout(() => {
+            logList.innerHTML += `
+              <div style="background:rgba(244,63,94,0.15);border:1px solid var(--rose);padding:8px;border-radius:4px;margin-top:10px;color:#fecdd3;">
+                <b>⚠️ BOOT FAILED (HALT)</b><br>
+                Komponen vital belum terpasang: <u>${item.name}</u>.<br>
+                Pasang komponen tersebut lalu nyalakan kembali.
+              </div>
+            `;
+          }, 300);
+        }
+      }
+      logList.appendChild(line);
+    }
+
+    if (!hasFailed) {
+      stepIdx++;
+      postTimer = setTimeout(runNextCheck, 260);
+    }
+  }
+
+  postTimer = setTimeout(runNextCheck, 400);
+}
+
+function loadDesktopOS() {
+  state.powerState = 'desktop';
+  const screen = document.getElementById('monitorScreen');
+  screen.className = 'monitor-screen desktop-mode';
+
+  function updateDesktopMetrics() {
+    if (state.powerState !== 'desktop') return;
+    const cpuLoad = Math.floor(18 + Math.random() * 25);
+    const cpuTemp = Math.floor(40 + Math.random() * 12);
+    const ramPct = Math.floor(32 + Math.random() * 10);
+    const gpuTemp = Math.floor(45 + Math.random() * 15);
+
+    screen.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:6px;margin-bottom:8px;">
+        <span style="font-weight:700;color:var(--cyan);font-size:11px;">SYSTEM MONITOR DASHBOARD</span>
+        <span style="font-size:10px;color:var(--emerald);">● ONLINE (Windows 11 Pro)</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;">
+        <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
+          <div style="color:var(--text-muted);">CPU Utilization</div>
+          <div style="font-weight:700;color:var(--cyan);font-size:13px;">${cpuLoad}% <span style="font-size:10px;color:var(--amber);">(${cpuTemp}°C)</span></div>
+        </div>
+        <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
+          <div style="color:var(--text-muted);">RAM Usage</div>
+          <div style="font-weight:700;color:var(--violet);font-size:13px;">${ramPct}% (10.2 / 32 GB)</div>
+        </div>
+        <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
+          <div style="color:var(--text-muted);">GPU Temperature</div>
+          <div style="font-weight:700;color:var(--emerald);font-size:13px;">${gpuTemp}°C <span style="font-size:10px;color:var(--text-muted);">(1450 RPM)</span></div>
+        </div>
+        <div style="background:rgba(0,0,0,0.5);padding:6px 8px;border-radius:4px;border:1px solid rgba(255,255,255,0.08);">
+          <div style="color:var(--text-muted);">NVMe Storage Health</div>
+          <div style="font-weight:700;color:var(--text-primary);font-size:13px;">100% Good <span style="font-size:10px;color:var(--cyan);">(38°C)</span></div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;">
+        <span>Fan Profile: Balanced (PWM)</span>
+        <span>Network: 2.5Gbps LAN Active</span>
+      </div>
+    `;
+  }
+
+  updateDesktopMetrics();
+  clearInterval(desktopInterval);
+  desktopInterval = setInterval(updateDesktopMetrics, 2000);
+}
+
+/* ============================================================
+   8. TOOLBAR ACTIONS & CANVAS SCALING
+   ============================================================ */
+document.getElementById('powerButton').addEventListener('click', togglePower);
+
+document.getElementById('btnExplodeAll').addEventListener('click', () => {
+  SFX.play('snap');
+  ALL_COMPONENTS.forEach(p => { state.installed[p.key] = false; });
+  state.thermalPasteApplied = false;
+  syncVisualStates();
+  renderSidePanel();
+  updateTelemetry();
+  if (state.powerState !== 'off') shutdownPC();
+});
+
+document.getElementById('btnAssembleAll').addEventListener('click', () => {
+  SFX.play('snap');
+  ALL_COMPONENTS.forEach(p => { state.installed[p.key] = true; });
+  state.thermalPasteApplied = true;
+  syncVisualStates();
+  renderSidePanel();
+  updateTelemetry();
+});
+
+document.getElementById('btnToggleAirflow').addEventListener('click', function() {
+  SFX.play('click');
+  state.airflowActive = !state.airflowActive;
+  const layer = document.getElementById('airflowLayer');
+  layer.classList.toggle('active', state.airflowActive);
+  this.innerText = `💨 Simulasi Airflow: ${state.airflowActive ? 'ON' : 'OFF'}`;
+  this.classList.toggle('active-toggle', state.airflowActive);
+});
+
+document.getElementById('btnToggleGlass').addEventListener('click', function() {
+  SFX.play('click');
+  state.glassInstalled = !state.glassInstalled;
+  const glass = document.getElementById('caseGlass');
+  glass.classList.toggle('removed', !state.glassInstalled);
+  this.innerText = `🪟 Panel Tempered Glass: ${state.glassInstalled ? 'BUKA' : 'PASANG'}`;
+});
+
+document.getElementById('btnSoundToggle').addEventListener('click', function() {
+  state.soundEnabled = !state.soundEnabled;
+  SFX.enabled = state.soundEnabled;
+  this.innerText = `🔊 Audio SFX: ${state.soundEnabled ? 'ON' : 'OFF'}`;
+  this.classList.toggle('active', state.soundEnabled);
+});
+
+document.getElementById('btnResetAll').addEventListener('click', () => {
+  SFX.play('click');
+  ALL_COMPONENTS.forEach(p => { state.installed[p.key] = true; });
+  state.thermalPasteApplied = true;
+  state.activeGuideStep = 0;
+  state.guideScore = 0;
+  syncVisualStates();
+  renderSidePanel();
+  updateTelemetry();
+  if (state.powerState !== 'off') shutdownPC();
+});
+
+// Mode Switching Navigation
+document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    SFX.play('click');
+    document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    state.currentMode = this.dataset.mode;
+
+    if (state.currentMode === 'guide') {
+      // Unmount components for guided assembly
+      ALL_COMPONENTS.forEach(p => { state.installed[p.key] = false; });
+      state.thermalPasteApplied = false;
+      state.activeGuideStep = 0;
+      state.guideScore = 0;
+      syncVisualStates();
+      updateTelemetry();
+    }
+
+    renderSidePanel();
+  });
+});
+
+// Responsive Canvas Auto-Scale
+function resizeCanvas() {
+  const container = document.querySelector('.case-view-container');
+  if (!container) return;
+  const availableWidth = container.clientWidth - 20;
+  const scale = Math.min(1, availableWidth / 740);
+  caseCanvas.style.transform = `scale(${scale})`;
+  container.style.height = `${(940 * scale) + 50}px`;
 }
 window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+
+/* ============================================================
+   9. INITIALIZATION
+   ============================================================ */
+buildCaseDOM();
+syncVisualStates();
+renderSidePanel();
+updateTelemetry();
+updateComponentDetails('motherboard');
+setTimeout(resizeCanvas, 50);
 </script>
 </body>
 </html>
