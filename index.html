@@ -705,13 +705,21 @@ p.app-subtitle {
     conic-gradient(from 0deg, #334155 0 30deg, #1e293b 30deg 60deg, #334155 60deg 90deg, #1e293b 90deg 120deg,
       #334155 120deg 150deg, #1e293b 150deg 180deg, #334155 180deg 210deg, #1e293b 210deg 240deg,
       #334155 240deg 270deg, #1e293b 270deg 300deg, #334155 300deg 330deg, #1e293b 330deg 360deg);
-  animation: fanSpin 2.5s linear infinite;
+  animation: spinCentered 2.5s linear infinite;
 }
-.system-on .cooler-fan-rotator, .system-on .case-fan-blades {
+.system-on .cooler-fan-rotator {
   animation-duration: 0.6s !important;
 }
-@keyframes fanSpin {
+.system-on .gpu-fan-unit, .system-on .case-fan-blades {
+  animation-duration: 0.5s !important;
+}
+@keyframes spinCentered {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
   to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes spinPure {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 .cooler-rgb-ring {
   position: absolute;
@@ -819,7 +827,7 @@ p.app-subtitle {
   background: 
     radial-gradient(circle at 50% 50%, #1e293b 0 24%, transparent 25%),
     repeating-conic-gradient(#334155 0deg 18deg, #0f172a 18deg 36deg);
-  animation: fanSpin 3s linear infinite;
+  animation: spinPure 3s linear infinite;
 }
 .gpu-pcie-pins {
   position: absolute;
@@ -885,7 +893,7 @@ p.app-subtitle {
   background: 
     radial-gradient(circle at 50% 50%, #1e2430 0 20%, transparent 21%),
     repeating-conic-gradient(#3a4556 0deg 24deg, #131720 24deg 48deg);
-  animation: fanSpin 2.8s linear infinite;
+  animation: spinPure 2.8s linear infinite;
 }
 .case-fan-rgb-halo {
   position: absolute;
@@ -2082,17 +2090,17 @@ function renderSandboxTray() {
 const ASSEMBLY_STEPS = [
   {
     step: 1,
+    title: 'Pasang Motherboard ke dalam Casing',
+    target: 'motherboard',
+    desc: 'Pasang motherboard ke dalam casing di atas standoff tembaga dan kencangkan sekrup penyangga. Ini adalah fondasi utama seluruh rakitan.',
+    tip: '⚠️ Pastikan standoff tembaga sudah terpasang di bodi casing sesuai lubang baut motherboard untuk mencegah korsleting sirkuit PCB.'
+  },
+  {
+    step: 2,
     title: 'Pasang Processor (CPU) ke Socket',
     target: 'cpu',
     desc: 'Buka tuas socket motherboard, luruskan segitiga emas di pojok CPU dengan tanda panah socket, lalu kunci tuas.',
     tip: '⚠️ Jangan pernah menekan paksa CPU! Jika orientasinya benar, CPU akan masuk dengan sendirinya (Zero Insertion Force).'
-  },
-  {
-    step: 2,
-    title: 'Pasang SSD M.2 NVMe ke Slot Utama',
-    target: 'm2_ssd',
-    desc: 'Masukkan SSD M.2 dengan sudut kemiringan 30 derajat, tekan perlahan ke bawah lalu pasang heatsink pelindung.',
-    tip: '💡 Lepaskan plastik pelindung biru pada thermal pad heatsink M.2 sebelum memasangnya kembali.'
   },
   {
     step: 3,
@@ -2110,24 +2118,24 @@ const ASSEMBLY_STEPS = [
   },
   {
     step: 5,
+    title: 'Pasang SSD M.2 NVMe ke Slot Utama',
+    target: 'm2_ssd',
+    desc: 'Masukkan SSD M.2 dengan sudut kemiringan 30 derajat, tekan perlahan ke bawah lalu pasang heatsink pelindung.',
+    tip: '💡 Lepaskan plastik pelindung biru pada thermal pad heatsink M.2 sebelum memasangnya kembali.'
+  },
+  {
+    step: 6,
     title: 'Aplikasikan Thermal Paste pada CPU',
     target: 'thermal_paste',
     desc: 'Oleskan pasta termal sebesar biji jagung (pea-size method) tepat di tengah permukaan logam CPU.',
     tip: '⚠️ Jangan mengoleskan terlalu banyak agar pasta tidak meluber ke pin motherboard saat ditekan heatsink.'
   },
   {
-    step: 6,
+    step: 7,
     title: 'Pasang CPU Cooler & Hubungkan CPU_FAN',
     target: 'cpu_cooler',
     desc: 'Kencangkan baut heatsink secara diagonal bertahap agar tekanan merata ke seluruh permukaan prosesor.',
     tip: '⚠️ Selalu pastikan plastik pelindung transparan di dasar tembaga cooler sudah dilepas!'
-  },
-  {
-    step: 7,
-    title: 'Pasang Motherboard ke dalam Casing',
-    target: 'motherboard',
-    desc: 'Sejajarkan port belakang motherboard ke I/O shield casing, lalu kencangkan sekrup pada standoff tembaga.',
-    tip: '⚠️ Pastikan standoff terpasang sesuai lubang baut motherboard agar sirkuit belakang tidak korsleting ke bodi case.'
   },
   {
     step: 8,
